@@ -1,19 +1,38 @@
 import React, { Component } from 'react';
-import { Layout, Tabs, Input, Icon, Table } from 'antd';
+import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown } from 'antd';
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
 
 
 const columns = [
     { title: 'Имя', dataIndex: 'name', key: 'name' },
-    { title: 'Действие', key: 'operation', fixed: 'right', width: 100, render: () => <a href="javascript:;"><Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} /></a> },
+    { title: 'Действие', key: 'operation', fixed: 'right', width: 100, render: () => <Dropdown overlay={menu} trigger={['click']}>
+    <a className="ant-dropdown-link" href="#">
+    <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
+    </a>
+  </Dropdown>},
 ];
+
+const menu = (
+    <Menu>
+      <Menu.Item key="0">
+        <a href="http://www.alipay.com/">Редактировать</a>
+      </Menu.Item>
+      <Menu.Item key="1">
+        <a href="http://www.taobao.com/">Копировать</a>
+      </Menu.Item>
+      <Menu.Item key="3">Удалить</Menu.Item>
+    </Menu>
+  );
+
+  
 
 const data = [
     { key: 1, name: 'John Brown', description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
     { key: 2, name: 'Jim Green', description: 'My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.' },
     { key: 3, name: 'Joe Black', description: 'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.' },
   ];
+
 
 
 class Categories extends Component {
