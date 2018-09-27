@@ -4,36 +4,6 @@ const { Content } = Layout;
 const TabPane = Tabs.TabPane;
 
 
-const columns = [
-    { title: 'Имя', dataIndex: 'name', key: 'name' },
-    { title: 'Действие', key: 'operation', fixed: 'right', width: 100, render: () => <Dropdown overlay={menu} trigger={['click']}>
-    <a className="ant-dropdown-link" href="#">
-    <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
-    </a>
-  </Dropdown>},
-];
-
-const menu = (
-    <Menu>
-      <Menu.Item key="0">
-        <a href="http://www.alipay.com/">Редактировать</a>
-      </Menu.Item>
-      <Menu.Item key="1">
-        <a href="http://www.taobao.com/">Копировать</a>
-      </Menu.Item>
-      <Menu.Item key="3">Удалить</Menu.Item>
-    </Menu>
-  );
-
-  
-
-const data = [
-    { key: 1, name: 'John Brown', description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
-    { key: 2, name: 'Jim Green', description: 'My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.' },
-    { key: 3, name: 'Joe Black', description: 'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.' },
-  ];
-
-
 
 class Categories extends Component {
 
@@ -41,8 +11,15 @@ class Categories extends Component {
         super(props);
         this.state = {
           searchString: '',
+          activeKey: "1",
         };
     }
+
+    handleMenuClick = (e) => {
+        console.log(e);
+        
+        this.setState({activeKey: "3"});
+      }
 
     emitEmpty = () => {
         this.searchStringInput.focus();
@@ -53,10 +30,37 @@ class Categories extends Component {
         this.setState({ searchString: e.target.value });
     }
 
+    onChange = (activeKey) => {
+        this.setState({ activeKey });
+    }
+
     render() {
 
         const { searchString } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
+        const columns = [
+            { title: 'Имя', dataIndex: 'name', key: 'name' },
+            { title: 'Действие', key: 'operation', fixed: 'right', width: 100, render: () => <Dropdown overlay={menu} trigger={['click']}>
+            <a className="ant-dropdown-link" href="#">
+            <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
+            </a>
+          </Dropdown>},
+        ];
+        
+        const menu = (
+            <Menu onClick={this.handleMenuClick}>
+              <Menu.Item key="0">Редактировать</Menu.Item>
+              <Menu.Item key="1">Копировать</Menu.Item>
+              <Menu.Item key="3">Удалить</Menu.Item>
+            </Menu>
+          );
+        
+          
+        const data = [
+            { key: 1, name: 'John Brown', description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
+            { key: 2, name: 'Jim Green', description: 'My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.' },
+            { key: 3, name: 'Joe Black', description: 'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.' },
+          ];
 
         return (<div>
         <Content style={{ background: '#fff'}}>
@@ -66,7 +70,9 @@ class Categories extends Component {
         </Content>
         <Content style={{ background: '#fff', margin: '16px 0' }}>
             <div style={{ padding: 10 }}>
-            <Tabs defaultActiveKey="1">
+            <Tabs 
+                onChange={this.onChange}
+                activeKey={this.state.activeKey}>
                 <TabPane tab="Обзор" key="1">
                     <Input
                         placeholder="Поиск"
