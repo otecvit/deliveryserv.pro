@@ -16,6 +16,7 @@ import 'antd/dist/antd.css';
 import allReducers from './reducers/index';
 import Dashboard from './components/Dashboard';
 import SiderMenu from './components/SiderMenu';
+import Categories from './components/Menu/Categories';
 
 
 const history = createHistory();
@@ -40,7 +41,8 @@ function handler() {
 
 const ContentPage =
 <div>
-        <Route exact path="/" component={Dashboard}/>
+    <Route exact path="/" component={Dashboard}/>
+    <Route exact path="/categories" component={Categories}/>
 </div>
 ;
 
@@ -52,8 +54,8 @@ class MainClass extends React.Component {
               <SiderMenu/>
             <Layout>
               <Header style={{ background: '#fff', padding: 0 }} />
-              <Content style={{ margin: '16px 16px', background: '#fff' }}>
-                <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+              <Content>
+                <div style={{ padding: 16, minHeight: 360 }}>
                  {ContentPage}
                 </div>
               </Content>
