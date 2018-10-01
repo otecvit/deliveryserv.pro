@@ -16,35 +16,41 @@ class CategoriesForm extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
+        const labelColSpan = 8;
 
         return (
-        <Form onSubmit={this.handleSubmit} className="login-form">
-        <FormItem>
-          {getFieldDecorator('userName', {
-            rules: [{ required: true, message: 'Please input your username!' }],
+        <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px"}}>
+        <FormItem
+          label="Имя"
+          abelCol={{ span: labelColSpan }}
+          style={{ marginBottom: 10 }}
+          hasFeedback
+        >
+          {getFieldDecorator('chName', {
+            rules: [{ required: true, message: 'Введите имя категории' }],
+            initialValue: this.props.param ? this.props.param : ""
           })(
-            <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
+            <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя категории" />
           )}
         </FormItem>
-        <FormItem>
-          {getFieldDecorator('password', {
-            rules: [{ required: true, message: 'Please input your Password!' }],
+        <FormItem
+          label="Отображаемое имя"  
+          abelCol={{ span: labelColSpan }}
+          style={{ marginBottom: 10 }}
+          hasFeedback
+        >
+          {getFieldDecorator('chNamePrint', {
+            rules: [{ }],
           })(
-            <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
+            <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
           )}
         </FormItem>
-        <FormItem>
-          {getFieldDecorator('remember', {
-            valuePropName: 'checked',
-            initialValue: true,
-          })(
-            <Checkbox>Remember me</Checkbox>
-          )}
-          <a className="login-form-forgot" href="">Forgot password</a>
-          <Button type="primary" htmlType="submit" className="login-form-button">
-            Log in
+        <FormItem
+        
+        >
+          <Button type="primary" htmlType="submit">
+            <Icon type="plus"/>Сохранить
           </Button>
-          Or <a href="">register now!</a>
         </FormItem>
       </Form>
         );

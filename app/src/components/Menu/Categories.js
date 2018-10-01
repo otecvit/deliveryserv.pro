@@ -136,7 +136,7 @@ class Categories extends Component {
                     <Option key="0">Выберите категорию для редактирования</Option>
                     {options}
                 </Select>
-                { currentEditCat === "0" ? "" : <CategoriesForm/> }
+                { currentEditCat === "0" ? null : <CategoriesForm param={currentEditCat}/> }
                 </TabPane>
             </Tabs>
             </div>
