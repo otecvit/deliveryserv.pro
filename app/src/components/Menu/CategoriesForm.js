@@ -15,18 +15,32 @@ class CategoriesForm extends React.Component {
         this.props.form.validateFields((err, values) => {
           if (!err) {
             var val = {};
+            if (this.props.param) {
 
-            val = {
-              dataload: { 
-                key: generateKey(),
-                idCategories: generateKey(),
-                chName: values.chName,
-                chNamePrint: values.chNamePrint,
+              val = {
+                dataload: { 
+                  key: generateKey(),
+                  idCategories: this.props.param,
+                  chName: values.chName,
+                  chNamePrint: values.chNamePrint,
+                }
               }
+              this.props.onEditCategory(val);  // вызываем action
+              message.success('Категория изменена');
+
+            } else {
+              val = {
+                dataload: { 
+                  key: generateKey(),
+                  idCategories: generateKey(),
+                  chName: values.chName,
+                  chNamePrint: values.chNamePrint,
+                }
+              }
+              this.props.onAddCategory(val);  // вызываем action
+              message.success('Категория создана'); 
+              this.props.form.resetFields(); // ресет полей
             }
-            this.props.onAddCategory(val);  // вызываем action
-            message.success('Категория создана'); 
-            this.props.form.resetFields(); // ресет полей
           }
         });
       }
@@ -131,6 +145,9 @@ export default connect (
   dispatch => ({
     onAddCategory: (categoryData) => {
       dispatch({ type: 'ADD_CATEGORY', payload: categoryData});
+    },
+    onEditCategory: (categoryData) => {
+      dispatch({ type: 'EDIT_CATEGORY', payload: categoryData});
     },
     onDeleteCategory: (categoryData) => {
       dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});

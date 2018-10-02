@@ -18,14 +18,15 @@ export default function categories (state = initialState, action) {
           ...state,
           action.payload.dataload
         ];   
-      case "EDIT_ROOT_CATEGORY": 
+      case "EDIT_CATEGORY": 
         // проходим по основному state
         const updatedRootItems = state.map(item => {
-          if(item.key === action.payload.key){
+          if(item.idCategories === action.payload.dataload.idCategories){
             return {...item, ...action.payload.dataload};
           }
           return item;
         });
+    
         return updatedRootItems;
 
         case "DELETE_CATEGORY": 

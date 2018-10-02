@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select } from 'antd';
+import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
 
 import CategoriesForm from './CategoriesForm';
 
@@ -8,6 +8,7 @@ const { Content } = Layout;
 const TabPane = Tabs.TabPane;
 const FormItem = Form.Item;
 const Option = Select.Option;
+const confirm = Modal.confirm;
 
 const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
@@ -33,6 +34,7 @@ class Categories extends Component {
         switch (e.key) {
             case "0": this.editCategory(record); break; //Редактировать
             case "1": this.setState({activeKey: "2"}); break; //Копировать
+            case "2": this.DeleteCategory(record); break; 
             default: this.setState({activeKey: "1"});    
         }        
       }
@@ -44,6 +46,16 @@ class Categories extends Component {
         });
 
     }
+
+    DeleteCategory = (e) => {
+        var val = {
+            idCategories: e.record.idCategories,
+        }
+        this.props.onDeleteCategory(val);  // вызываем action
+               
+    }
+
+    
 
     emitEmpty = () => {
         this.searchStringInput.focus();
@@ -97,7 +109,7 @@ class Categories extends Component {
             <Menu onClick={e => this.handleMenuClick(e, record)}>
               <Menu.Item key="0">Редактировать</Menu.Item>
               <Menu.Item key="1">Копировать</Menu.Item>
-              <Menu.Item key="2">Удалить</Menu.Item>
+              <Menu.Item key="2"> Удалить </Menu.Item>
             </Menu>
           );
         
@@ -190,6 +202,16 @@ export default connect (
         categories: state.categories,
     }),
     dispatch => ({
+        onDeleteCategory: (categoryData) => {
+            confirm({
+                title: 'Удалить категорию?',
+                content: 'Будет удалена категория и все товары',
+                onOk() {
+                    dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
+                    message.success('Категория удалена'); 
+                },
+              });
+        },
     })
   )(Categories);
 
