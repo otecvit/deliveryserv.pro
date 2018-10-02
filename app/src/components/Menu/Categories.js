@@ -9,15 +9,23 @@ const TabPane = Tabs.TabPane;
 const FormItem = Form.Item;
 const Option = Select.Option;
 
+const generateKey = (pre) => {
+    return `${ new Date().getTime() }`;
+  }
+
 
 class Categories extends Component {
 
     constructor(props) {
         super(props);
+        this.handler = this.handler.bind(this)
+
         this.state = {
           searchString: '',
           activeKey: "1",
           currentEditCat: "0",
+          filtered: false,
+          dataSource: {},
         };
     }
 
@@ -29,9 +37,11 @@ class Categories extends Component {
         }        
       }
 
-    editCategory = (record) => {
-        this.setState({activeKey: "3"});
-
+    editCategory = (e) => {
+        this.setState({
+            activeKey: "3",
+            currentEditCat: e.record.idCategories,
+        });
 
     }
 
@@ -39,9 +49,41 @@ class Categories extends Component {
         this.searchStringInput.focus();
         this.setState({ searchString: '' });
     }
+
+    handler = () => {
+        this.setState({
+            currentEditCat: "0",
+        });
+        
+      }
     
-    onChangeSearchString = (e) => {
-        this.setState({ searchString: e.target.value });
+
+    onChangeSearchString = (e) => { 
+        const reg = new RegExp(e.target.value, 'gi');
+        this.setState({ 
+            searchString: e.target.value,
+            filtered: !!e.target.value,
+            dataSource: this.props.categories.map((record) => {
+                if (record.chName.length)
+                { 
+                const match = record.chName.match(reg);
+            
+                if (!match) {
+                return null;
+                }
+                return {
+                ...record,
+                chName: (
+                    <span>
+                    {record.chName.split(reg).map((text, i) => (
+                        i > 0 ? [<span className="highlight" key={generateKey()}>{match[0]}</span>, text] : text
+                    ))}
+                    </span>
+                ),
+                };
+            }
+            }).filter(record => !!record), 
+        });
     }
 
     onChange = (activeKey) => {
@@ -63,16 +105,18 @@ class Categories extends Component {
     }
 
     onChangeCategory = (e) => {
-        console.log(e.key);
-        this.setState ({ currentEditCat: e.key});
+        //console.log(e);
+        this.setState ({ 
+            currentEditCat: e.key
+        });
     }
 
     render() {
 
-        const { searchString, currentEditCat } = this.state;
+        const { searchString, currentEditCat, dataSource } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
-            { title: 'Имя', dataIndex: 'name', key: 'name' },
+            { title: 'Имя', dataIndex: 'chName', key: 'name' },
             { title: 'Действие', key: 'operation', fixed: 'right', width: 100, render: (record) => <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">
             <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
@@ -84,14 +128,8 @@ class Categories extends Component {
         //const { getFieldDecorator } = form;
         const labelColSpan = 8;
         const wrapperColSpan = 16;
-        
-        const data = [
-            { key: 1, name: 'John Brown', description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
-            { key: 2, name: 'Jim Green', description: 'My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.' },
-            { key: 3, name: 'Joe Black', description: 'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.' },
-          ];
-
-        const options = data.map(item => <Option key={item.key}>{item.name}</Option>);
+                
+        const options = this.props.categories.map(item => <Option key={item.idCategories}>{item.chName}</Option>);
 
         return (<div>
         <Content style={{ background: '#fff'}}>
@@ -117,13 +155,15 @@ class Categories extends Component {
                     <Table
                         columns={columns}
                         expandedRowRender={record => <p style={{ margin: 0 }}>{record.description}</p>}
-                        dataSource={data}
+                        dataSource={!this.state.filtered ? this.props.categories : dataSource}
                         size="small"  
                         pagination={false}
 
                     />,            
                 </TabPane>
-                <TabPane tab="Создать" key="2">Content of Tab Pane 2</TabPane>
+                <TabPane tab="Создать" key="2">
+                    <CategoriesForm/>
+                </TabPane>
                 <TabPane tab="Редактировать" key="3">
                     <Select
                     showSearch
@@ -131,12 +171,12 @@ class Categories extends Component {
                     onChange={this.onChangeCategory}
                     style={{ width: "100%" }}
                     labelInValue 
-                    defaultValue={{ key: "0" }}
+                    value={{ key: currentEditCat }}
                     >
                     <Option key="0">Выберите категорию для редактирования</Option>
                     {options}
                 </Select>
-                { currentEditCat === "0" ? null : <CategoriesForm param={currentEditCat}/> }
+                { currentEditCat === "0" ? null : <CategoriesForm handler = {this.handler} param={currentEditCat}/> }
                 </TabPane>
             </Tabs>
             </div>
@@ -147,7 +187,7 @@ class Categories extends Component {
 
 export default connect (
     state => ({
-
+        categories: state.categories,
     }),
     dispatch => ({
     })
