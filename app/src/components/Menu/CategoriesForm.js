@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Popconfirm, Upload, message } from 'antd';
+import { Form, Icon, Input, Button, Popconfirm, Upload, message, Switch } from 'antd';
 import { connect } from 'react-redux';
 
 const FormItem = Form.Item;
@@ -19,22 +19,27 @@ class CategoriesForm extends React.Component {
 
               val = {
                 dataload: { 
-                  key: generateKey(),
+                  key: this.props.param,
                   idCategories: this.props.param,
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
+                  enShow: values.enShow ? "1" : "0",
                 }
               }
               this.props.onEditCategory(val);  // вызываем action
               message.success('Категория изменена');
+              this.props.form.resetFields(); // ресет полей
+              
 
             } else {
+              
               val = {
                 dataload: { 
                   key: generateKey(),
                   idCategories: generateKey(),
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
+                  enShow: values.enShow ? "1" : "0",
                 }
               }
               this.props.onAddCategory(val);  // вызываем action
@@ -57,6 +62,23 @@ class CategoriesForm extends React.Component {
     render() {
         const { getFieldDecorator } = this.props.form;
         const labelColSpan = 8;
+        //console.log(this.props.categories.find(x => x.idCategories ===  this.props.param).chName);
+        const props = {
+          name: 'file',
+          multiple: true,
+          action: '//jsonplaceholder.typicode.com/posts/',
+          onChange(info) {
+            const status = info.file.status;
+            if (status !== 'uploading') {
+              console.log(info.file, info.fileList);
+            }
+            if (status === 'done') {
+              message.success(`${info.file.name} file uploaded successfully.`);
+            } else if (status === 'error') {
+              message.error(`${info.file.name} file upload failed.`);
+            }
+          },
+        };
 
         return (
           <div>
@@ -80,6 +102,16 @@ class CategoriesForm extends React.Component {
             </div>) : null
             }
             <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px"}}>
+            <FormItem
+              label="Активность"
+            >
+              {getFieldDecorator('enShow', { 
+                initialValue: this.props.param ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "1" ? true : false ) : true,
+                valuePropName: 'checked',
+              })(
+                <Switch />
+              )}
+            </FormItem>
             <FormItem
               label="Имя"
               abelCol={{ span: labelColSpan }}
@@ -114,7 +146,10 @@ class CategoriesForm extends React.Component {
                   valuePropName: 'fileList',
                   getValueFromEvent: this.normFile,
                 })(
-                  <Upload.Dragger name="files" action="/upload.do">
+                  <Upload.Dragger 
+                    {...props}
+                    
+                    >
                     <p className="ant-upload-drag-icon">
                       <Icon type="inbox" />
                     </p>
