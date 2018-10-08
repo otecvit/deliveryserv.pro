@@ -12,11 +12,13 @@ import { Route } from 'react-router';
 import { ConnectedRouter} from 'react-router-redux';
 
 import 'antd/dist/antd.css';
+import './index.css';
 
 import allReducers from './reducers/index';
 import Dashboard from './components/Dashboard';
 import SiderMenu from './components/SiderMenu';
 import Categories from './components/Menu/Categories';
+import OptionSets from './components/Menu/OptionSets';
 
 
 const history = createHistory();
@@ -43,6 +45,7 @@ const ContentPage =
 <div>
     <Route exact path="/" component={Dashboard}/>
     <Route exact path="/categories" component={Categories}/>
+    <Route exact path="/option-sets" component={OptionSets}/>
 </div>
 ;
 
