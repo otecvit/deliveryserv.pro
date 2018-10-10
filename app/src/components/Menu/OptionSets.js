@@ -23,7 +23,7 @@ class OptionSets extends Component {
         this.state = {
           searchString: '',
           activeKey: "1",
-          currentEditCat: "0",
+          currentEditOptionSets: "0",
           filtered: false,
           dataSource: {},
         };
@@ -41,7 +41,7 @@ class OptionSets extends Component {
     editCategory = (e) => {
         this.setState({
             activeKey: "3",
-            currentEditCat: e.record.idCategories,
+            currentEditOptionSets: e.record.idOptionSets,
         });
 
     }
@@ -63,7 +63,7 @@ class OptionSets extends Component {
 
     handler = () => {
         this.setState({
-            currentEditCat: "0",
+            currentEditOptionSets: "0",
         });
         
       }
@@ -117,13 +117,13 @@ class OptionSets extends Component {
 
     onChangeCategory = (e) => {
         this.setState ({ 
-            currentEditCat: e.key
+            currentEditOptionSets: e.key
         });
     }
     
     render() {
 
-        const { searchString, currentEditCat, dataSource } = this.state;
+        const { searchString, currentEditOptionSets, dataSource } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
@@ -181,26 +181,15 @@ class OptionSets extends Component {
                         onChange={this.onChangeCategory}
                         style={{ width: "100%" }}
                         labelInValue 
-                        value={{ key: currentEditCat }}
+                        value={{ key: currentEditOptionSets }}
                         >
                         <Option key="0">Выберите категорию для редактирования</Option>
                         {options}
                     </Select>
-                    { currentEditCat === "0" ? null : <OptionSetsForm handler = {this.handler} param={currentEditCat}/> }
+                    { currentEditOptionSets === "0" ? null : <OptionSetsForm handler = {this.handler} param={currentEditOptionSets}/> }
                     </TabPane>
                     <TabPane tab="Сортировка" key="4">
-                        <Select
-                        showSearch
-                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                        onChange={this.onChangeCategory}
-                        style={{ width: "100%" }}
-                        labelInValue 
-                        value={{ key: currentEditCat }}
-                        >
-                        <Option key="0">Выберите категорию для редактирования</Option>
-                        {options}
-                    </Select>
-                    { currentEditCat === "0" ? null : <OptionSetsForm handler = {this.handler} param={currentEditCat}/> }
+
                     </TabPane>
                 </Tabs>
                 </div>

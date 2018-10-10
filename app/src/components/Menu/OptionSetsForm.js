@@ -121,17 +121,17 @@ class OptionSetsForm extends React.Component {
         super(props);
         this.columns = [{
           title: 'Наименивание',
-          dataIndex: 'name',
+          dataIndex: 'chName',
           width: '25%',
           editable: true,
         }, {
           title: 'Сортировка',
-          dataIndex: 'age',
+          dataIndex: 'iSort',
           width: '25%',
           editable: true,
         }, {
           title: 'Изменение цены',
-          dataIndex: 'address',
+          dataIndex: 'chPriceChange',
           width: '25%',
           editable: true,
         }, {
@@ -150,19 +150,11 @@ class OptionSetsForm extends React.Component {
         }];
     
         this.state = {
-         dataSource: [{
-            key: '0',
-            name: 'Edward King 0',
-            age: '32',
-            address: 'London, Park Lane no. 0',
-          }, {
-            key: '1',
-            name: 'Edward King 1',
-            age: '32',
-            address: 'London, Park Lane no. 1',
-          }],
+          dataSource: this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options,
+          blMultiple: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blMultiple === "1" ? true : false ) : false,
           count: 2,
         };
+
       }
 
       handleDelete = (key) => {
@@ -246,10 +238,16 @@ class OptionSetsForm extends React.Component {
       message.success('Категория удалена'); 
     }
 
+    onChangeMultiple = (checked) => {
+      this.setState({
+        blMultiple: checked,
+      })
+    }
+
     render() {
         const { getFieldDecorator } = this.props.form;
         const labelColSpan = 8;
-        const { dataSource } = this.state;
+        const { dataSource, blMultiple } = this.state;
         const components = {
             body: {
               row: EditableFormRow,
@@ -272,8 +270,10 @@ class OptionSetsForm extends React.Component {
         };
         });
 
-         //console.log(this.props.categories.find(x => x.idCategories ===  this.props.param).chName);
+        console.log(this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).enShow);
         
+        var stateSelection = blMultiple ? { rowSelection: {columnTitle: 'По умолчанию', type: 'radio', columnWidth: '13%'} } : null; // добавляем или удаляем столбец "По умолчанию"
+        var stateAction = { initialValue: true, valuePropName: 'checked', }; 
 
         return (
           <div>
@@ -301,10 +301,12 @@ class OptionSetsForm extends React.Component {
               label="Активность"
             >
               {getFieldDecorator('enShow', { 
-                initialValue: this.props.param ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "1" ? true : false ) : true,
-                valuePropName: 'checked',
+                initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).enShow === "1" ? true : false ) : true,
+                /*initialValue: true,*/
+                valuePropName: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).enShow === "1" ? 'checked' : 'checked' ) : 'checked'
+                
               })(
-                <Switch />
+                <Switch/>
               )}
             </FormItem>
             <FormItem
@@ -314,10 +316,10 @@ class OptionSetsForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chName', {
-                rules: [{ required: true, message: 'Введите имя категории' }],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chName : ""
+                rules: [{ required: true, message: 'Введите имя набора опций' }],
+                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chName : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя категории" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя набора опций" />
               )}
             </FormItem>
             <FormItem
@@ -328,7 +330,7 @@ class OptionSetsForm extends React.Component {
             >
               {getFieldDecorator('chNamePrint', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chNamePrint : ""
+                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chNamePrint : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
               )}
@@ -336,8 +338,8 @@ class OptionSetsForm extends React.Component {
             <FormItem
               label="Обязательный набор"
             >
-              {getFieldDecorator('enShow', { 
-                initialValue: this.props.param ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "1" ? true : false ) : false,
+              {getFieldDecorator('blNecessarily', { 
+                initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blNecessarily === "1" ? true : false ) : false,
                 valuePropName: 'checked',
               })(
                 <Switch />
@@ -346,11 +348,11 @@ class OptionSetsForm extends React.Component {
             <FormItem
               label="Множественный выбор"
             >
-              {getFieldDecorator('enShow', { 
-                initialValue: this.props.param ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "1" ? true : false ) : false,
+              {getFieldDecorator('blMultiple', { 
+                initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blMultiple === "1" ? true : false ) : false,
                 valuePropName: 'checked',
               })(
-                <Switch />
+                <Switch onChange={this.onChangeMultiple}/>
               )}
             </FormItem>
             <div>
@@ -364,6 +366,8 @@ class OptionSetsForm extends React.Component {
                 dataSource={dataSource}
                 columns={columns}
                 pagination={false}
+                {...stateSelection}
+                
                 />
             </div>
 
