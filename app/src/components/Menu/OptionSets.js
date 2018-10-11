@@ -186,7 +186,7 @@ class OptionSets extends Component {
                         <Option key="0">Выберите категорию для редактирования</Option>
                         {options}
                     </Select>
-                    { currentEditOptionSets === "0" ? null : <OptionSetsForm handler = {this.handler} param={currentEditOptionSets}/> }
+                    { currentEditOptionSets === "0" ? null : <OptionSetsForm handler = {this.handler} param={currentEditOptionSets} /> }
                     </TabPane>
                     <TabPane tab="Сортировка" key="4">
 
