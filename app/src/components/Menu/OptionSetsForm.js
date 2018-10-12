@@ -153,7 +153,10 @@ class OptionSetsForm extends React.Component {
           dataSource: this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options,
           blMultiple: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blMultiple === "true" : false,
           count: this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options.length + 1,
+          selectedRowKeys: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options.find(y => y.blDefault === "true").key : null,
         };
+        console.log(this.state.selectedRowKeys);
+        
       }
 
       handleDelete = (key) => {
@@ -250,6 +253,12 @@ class OptionSetsForm extends React.Component {
       })
     }
 
+    onSelectChange = (selectedRowKeys) => {
+      console.log('selectedRowKeys changed: ', selectedRowKeys);
+      this.setState({ selectedRowKeys });
+    }
+  
+
     componentWillReceiveProps(nextProps) {
       if(nextProps.param !== this.props.param) {
         console.log("+");
@@ -267,7 +276,7 @@ class OptionSetsForm extends React.Component {
     render() {
         const { getFieldDecorator } = this.props.form;
         const labelColSpan = 8;
-        const { dataSource, blMultiple } = this.state;
+        const { dataSource, blMultiple, selectedRowKeys } = this.state;
         const components = {
             body: {
               row: EditableFormRow,
@@ -295,9 +304,8 @@ class OptionSetsForm extends React.Component {
             columnTitle: 'По умолчанию', 
             type: 'radio', 
             columnWidth: '13%',
-            onChange: (selectedRowKeys, selectedRows) => {
-              //console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            },
+            selectedRowKeys,
+            onChange: this.onSelectChange,
           } 
         } : null; // добавляем или удаляем столбец "По умолчанию"
 

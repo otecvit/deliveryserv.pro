@@ -1,5 +1,5 @@
 const initialState = [
-    { key: "1", idOptionSets: "1", chName: 'Размер для Чикиты', chNamePrint: "Размер", enShow: "true", blMultiple: "false", blNecessarily: "true", options: 
+    { key: "1", idOptionSets: "1", chName: 'Размер для Чикиты', chNamePrint: "Размер", enShow: "true", blMultiple: "true", blNecessarily: "true", options: 
       [
         {key: "1", chName: "150 см", chPriceChange: "0", iSort: "100", blDefault: "false"},
         {key: "2", chName: "250 см", chPriceChange: "5", iSort: "200", blDefault: "true"},
@@ -13,14 +13,14 @@ const initialState = [
       ], description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
     { key: "3", idOptionSets: "3", chName: 'Объем для колы', chNamePrint: "Объём", enShow: "true", blMultiple: "true", blNecessarily: "false", options: 
       [
-        {key: "1", chName: "0.5 л", chPriceChange: "0", iSort: "100", blDefault: "false"},
-        {key: "2", chName: "1 л", chPriceChange: "1", iSort: "200", blDefault: "false"},
-        {key: "3", chName: "2 л", chPriceChange: "2", iSort: "300", blDefault: "false"}
+        {key: "11", chName: "0.5 л", chPriceChange: "0", iSort: "100", blDefault: "false"},
+        {key: "22", chName: "1 л", chPriceChange: "1", iSort: "200", blDefault: "false"},
+        {key: "33", chName: "2 л", chPriceChange: "2", iSort: "300", blDefault: "true"}
       ], description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
     { key: "4", idOptionSets: "4", chName: 'Вес для пирога', chNamePrint: "Вес", enShow: "true", blMultiple: "true", blNecessarily: "true", options: 
       [
         {key: "1", chName: "0,5 кг", chPriceChange: "0", iSort: "100", blDefault: "false"},
-        {key: "2", chName: "0,8 кг", chPriceChange: "3", iSort: "200", blDefault: "false"},
+        {key: "2", chName: "0,8 кг", chPriceChange: "3", iSort: "200", blDefault: "true"},
         {key: "3", chName: "1 кг", chPriceChange: "6", iSort: "300", blDefault: "false"}
       ], description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
   ];
