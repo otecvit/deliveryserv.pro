@@ -150,13 +150,18 @@ class OptionSetsForm extends React.Component {
         }];
     
         this.state = {
-          dataSource: this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options,
-          blMultiple: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blMultiple === "true" : false,
-          count: this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options.length + 1,
-          selectedRowKeys: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options.find(y => y.blDefault === "true").key : null,
+          dataSource: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options : [],
+          blNecessarily: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blNecessarily === "true" : false,
+          count: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options.length + 1 : 0,
+          selectedRowKeys: this.props.param ? this.searchSelectedRow(this.props.param) : null,
         };
-        console.log(this.state.selectedRowKeys);
-        
+      }
+
+      searchSelectedRow = (param) => { // возвращает значение key для множественного выбора
+        if (this.props.optionSets.find(x => x.idOptionSets ===  param).blNecessarily === "true")
+          return this.props.optionSets.find(x => x.idOptionSets ===  param).options.find(y => y.blDefault === "true").key;
+        else
+          return "0";
       }
 
       handleDelete = (key) => {
@@ -194,6 +199,13 @@ class OptionSetsForm extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
+
+          // при включеном обязательном выборе, проверяем выбранную опцию по умолчанию
+          if ((this.state.dataSource.findIndex(item => item.blDefault === "true") === -1)&&(values.blNecessarily)) {
+            message.error('Выберите опцию по умолчанию');
+            return;
+          }////////////////
+
           if (!err) {
             var val = {};
             if (this.props.param) {
@@ -205,13 +217,13 @@ class OptionSetsForm extends React.Component {
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
                   enShow: values.enShow.toString(),
-                  blMultiple: values.blMultiple.toString(),
                   blNecessarily: values.blNecessarily.toString(),
+                  blMultiple: values.blMultiple.toString(),
                   options: this.state.dataSource,
                 }
               }
               
-              console.log(val);
+              //console.log(val);
               
               this.props.onEditOptionSets(val);  // вызываем action
               message.success('Набор опций изменен');
@@ -219,64 +231,78 @@ class OptionSetsForm extends React.Component {
               
 
             } else {
-              /*
+              
               val = {
                 dataload: { 
                   key: generateKey(),
-                  idCategories: generateKey(),
+                  idOptionSets: generateKey(),
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
-                  enShow: values.enShow ? "1" : "0",
+                  enShow: values.enShow.toString(),
+                  blNecessarily: values.blNecessarily.toString(),
+                  blMultiple: values.blMultiple.toString(),
+                  options: this.state.dataSource,
                 }
               }
-              this.props.onAddCategory(val);  // вызываем action
+
+              console.log(val);
+              
+              //this.props.onAddCategory(val);  // вызываем action
               message.success('Категория создана'); 
               this.props.form.resetFields(); // ресет полей
-              */
+              
             }
           }
         });
       }
 
-    DeleteCategory = () => {
+      DeleteOption = () => {
       var val = {
-          idCategories: this.props.param,
+          idOptionSets: this.props.param,
       }
-      this.props.onDeleteCategory(val);  // вызываем action
+      this.props.onDeleteOptionSet(val);  // вызываем action
       this.props.handler();
-      message.success('Категория удалена'); 
+      message.success('Набор опций удален'); 
     }
 
     onChangeMultiple = (checked) => {
       this.setState({
-        blMultiple: checked,
+        blNecessarily: checked,
       })
+
     }
 
     onSelectChange = (selectedRowKeys) => {
-      console.log('selectedRowKeys changed: ', selectedRowKeys);
-      this.setState({ selectedRowKeys });
+      this.setState({ 
+        selectedRowKeys,
+        dataSource: this.state.dataSource.map(item => {
+          selectedRowKeys[0] === item.key ? item.blDefault = "true" : item.blDefault = "false"
+          return item;
+        })
+      });
+      
     }
-  
 
     componentWillReceiveProps(nextProps) {
       if(nextProps.param !== this.props.param) {
-        console.log("+");
-        
         this.props.form.setFieldsValue({
           'enShow': this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).enShow === "true",
-          'blNecessarily': this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).blNecessarily === "true",
           'blMultiple': this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).blMultiple === "true",
+          'blNecessarily': this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).blNecessarily === "true",
         });
-        this.setState({ dataSource: this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).options })
-        this.onChangeMultiple(this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).blMultiple === "true");
+        this.setState(
+          { 
+            dataSource: this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).options,
+            selectedRowKeys: this.searchSelectedRow(nextProps.param),
+          })
+        this.onChangeMultiple(this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).blNecessarily === "true");
       }
     }
 
     render() {
         const { getFieldDecorator } = this.props.form;
         const labelColSpan = 8;
-        const { dataSource, blMultiple, selectedRowKeys } = this.state;
+        const { dataSource, blNecessarily, selectedRowKeys } = this.state;
         const components = {
             body: {
               row: EditableFormRow,
@@ -299,7 +325,7 @@ class OptionSetsForm extends React.Component {
         };
         });
         
-        var stateSelection = blMultiple ? { 
+        var stateSelection = blNecessarily ? { 
           rowSelection: {
             columnTitle: 'По умолчанию', 
             type: 'radio', 
@@ -323,7 +349,7 @@ class OptionSetsForm extends React.Component {
               borderBottomColor: "#cecece",
                }}>
                <h4>Удалить категорию</h4>
-               <Popconfirm title="Удалить категорию?" onConfirm={() => this.DeleteCategory()} okText="Да" cancelText="Нет">
+               <Popconfirm title="Удалить набор опций?" onConfirm={() => this.DeleteOption()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>
@@ -374,17 +400,17 @@ class OptionSetsForm extends React.Component {
                 initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blNecessarily  === "true" ) : false,
                 valuePropName: 'checked',
               })(
-                <Switch />
+                <Switch onChange={this.onChangeMultiple}/>
               )}
             </FormItem>
-            <FormItem
+            <FormItem 
               label="Множественный выбор"
             >
               {getFieldDecorator('blMultiple', { 
                 initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blMultiple  === "true" ) : false,
                 valuePropName: 'checked',
               })(
-                <Switch onChange={this.onChangeMultiple}/>
+                <Switch />
               )}
             </FormItem>
             <div>
@@ -429,8 +455,8 @@ export default connect (
     onEditOptionSets: (optionSetsData) => {
       dispatch({ type: 'EDIT_OPTION_SETS', payload: optionSetsData});
     },
-    onDeleteCategory: (categoryData) => {
-      dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
+    onDeleteOptionSet: (optionSetsData) => {
+      dispatch({ type: 'DELETE_OPTION_SETS', payload: optionSetsData});
     },
   })
 )(WrappedNormalLoginForm);

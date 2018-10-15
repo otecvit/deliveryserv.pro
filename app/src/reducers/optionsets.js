@@ -11,11 +11,11 @@ const initialState = [
         {key: "2", chName: "ветчина", chPriceChange: "1", iSort: "200", blDefault: "false"},
         {key: "3", chName: "ананас", chPriceChange: "1", iSort: "300", blDefault: "false"}
       ], description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
-    { key: "3", idOptionSets: "3", chName: 'Объем для колы', chNamePrint: "Объём", enShow: "true", blMultiple: "true", blNecessarily: "false", options: 
+    { key: "3", idOptionSets: "3", chName: 'Объем для колы', chNamePrint: "Объём", enShow: "true", blMultiple: "false", blNecessarily: "false", options: 
       [
         {key: "11", chName: "0.5 л", chPriceChange: "0", iSort: "100", blDefault: "false"},
         {key: "22", chName: "1 л", chPriceChange: "1", iSort: "200", blDefault: "false"},
-        {key: "33", chName: "2 л", chPriceChange: "2", iSort: "300", blDefault: "true"}
+        {key: "33", chName: "2 л", chPriceChange: "2", iSort: "300", blDefault: "false"}
       ], description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
     { key: "4", idOptionSets: "4", chName: 'Вес для пирога', chNamePrint: "Вес", enShow: "true", blMultiple: "true", blNecessarily: "true", options: 
       [
@@ -50,7 +50,7 @@ export default function optionSets (state = initialState, action) {
         return updatedRootItems;
 
         case "DELETE_OPTION_SETS": 
-          return state.filter(category => category.idCategories !== action.payload.idCategories );
+          return state.filter(optionset => optionset.idOptionSets !== action.payload.idOptionSets );
       default:
         return state;
     }
