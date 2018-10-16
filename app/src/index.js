@@ -19,6 +19,7 @@ import Dashboard from './components/Dashboard';
 import SiderMenu from './components/SiderMenu';
 import Categories from './components/Menu/Categories';
 import OptionSets from './components/Menu/OptionSets';
+import Dishes from './components/Menu/Dishes';
 
 
 const history = createHistory();
@@ -46,6 +47,7 @@ const ContentPage =
     <Route exact path="/" component={Dashboard}/>
     <Route exact path="/categories" component={Categories}/>
     <Route exact path="/option-sets" component={OptionSets}/>
+    <Route exact path="/dishes" component={Dishes}/>
 </div>
 ;
 

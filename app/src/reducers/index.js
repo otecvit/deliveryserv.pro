@@ -3,11 +3,13 @@ import {routerReducer} from 'react-router-redux';
 
 import Categories from './categories';
 import OptionSets from './optionsets';
+import Disches from './dishes';
 
 const allReducers = combineReducers ({
     routing: routerReducer,
     categories: Categories,
     optionSets: OptionSets,
+    dishes: Disches,
 });
 
 export default allReducers;

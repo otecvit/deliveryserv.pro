@@ -18,7 +18,7 @@ const EditableRow = ({ form, index, ...props }) => (
 
 const EditableFormRow = Form.create()(EditableRow);
 
-class EditableCell extends React.Component {
+class EditableCell extends Component {
   state = {
     editing: false,
   }
@@ -115,7 +115,7 @@ class EditableCell extends React.Component {
 
 
 
-class OptionSetsForm extends React.Component {
+class DishesForm extends React.Component {
 
     constructor(props) {
         super(props);
@@ -443,7 +443,7 @@ class OptionSetsForm extends React.Component {
     }
 }
 
-const WrappedNormalLoginForm = Form.create()(OptionSetsForm);
+const WrappedNormalLoginForm = Form.create()(DishesForm);
 
 export default connect (
   state => ({

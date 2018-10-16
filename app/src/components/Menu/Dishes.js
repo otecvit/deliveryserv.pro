@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
 
-import OptionSetsForm from './OptionSetsForm';
+import DishesForm from './DishesForm';
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -14,7 +14,7 @@ const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
   }
 
-class OptionSets extends Component {
+class Dishes extends Component {
     
     constructor(props) {
         super(props);
@@ -41,14 +41,14 @@ class OptionSets extends Component {
     editCategory = (e) => {
         this.setState({
             activeKey: "3",
-            currentEditOptionSets: e.record.idOptionSets,
+            currentEditOptionSets: e.record.idDishes,
         });
 
     }
 
     DeleteCategory = (e) => {
         var val = {
-            idOptionSets: e.record.idOptionSets,
+            idDishes: e.record.idDishes,
         }
         this.props.onDeleteCategory(val);  // вызываем action
                
@@ -136,8 +136,11 @@ class OptionSets extends Component {
         //const { getFieldDecorator } = form;
         const labelColSpan = 8;
         const wrapperColSpan = 16;
-                
-        const options = this.props.optionSets.map(item => <Option key={item.idOptionSets}>{item.chName}</Option>);
+        
+        console.log(this.props.dishes);
+        
+
+        const options = this.props.dishes.map(item => <Option key={item.idDishes}>{item.chName}</Option>);
 
         return (<div>
             <Content style={{ background: '#fff'}}>
@@ -171,14 +174,14 @@ class OptionSets extends Component {
 
                                 </div>
                                 }
-                            dataSource={!this.state.filtered ? this.props.optionSets : dataSource}
+                            dataSource={!this.state.filtered ? this.props.dishes : dataSource}
                             size="small"  
                             pagination={false}
     
                         />,            
                     </TabPane>
                     <TabPane tab="Создать" key="2">
-                        <OptionSetsForm/>
+                        <DishesForm/>
                     </TabPane>
                     <TabPane tab="Редактировать" key="3">
                         <Select
@@ -192,7 +195,7 @@ class OptionSets extends Component {
                         <Option key="0">Выберите категорию для редактирования</Option>
                         {options}
                     </Select>
-                    { currentEditOptionSets === "0" ? null : <OptionSetsForm handler = {this.handler} param={currentEditOptionSets} /> }
+                    { currentEditOptionSets === "0" ? null : <DishesForm handler = {this.handler} param={currentEditOptionSets} /> }
                     </TabPane>
                     <TabPane tab="Сортировка" key="4">
 
@@ -206,7 +209,7 @@ class OptionSets extends Component {
 
 export default connect (
     state => ({
-        optionSets: state.optionSets,
+        dishes: state.dishes,
     }),
     dispatch => ({
         onDeleteCategory: (optionSetsData) => {
@@ -220,4 +223,4 @@ export default connect (
               });
         },
     })
-  )(OptionSets);
+  )(Dishes);
