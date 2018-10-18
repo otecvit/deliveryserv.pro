@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Popconfirm, Table, message, Switch } from 'antd';
+import { Form, Icon, Input, Button, Popconfirm, Table, message, Switch, Select } from 'antd';
 import { connect } from 'react-redux';
 
 const FormItem = Form.Item;
+const Option = Select.Option;
 const generateKey = (pre) => {
   return `${ new Date().getTime() }`;
 }
@@ -130,11 +131,6 @@ class DishesForm extends React.Component {
           width: '25%',
           editable: true,
         }, {
-          title: 'Изменение цены',
-          dataIndex: 'chPriceChange',
-          width: '25%',
-          editable: true,
-        }, {
           title: 'Действие',
           dataIndex: 'operation',
           render: (text, record) => {
@@ -150,10 +146,10 @@ class DishesForm extends React.Component {
         }];
     
         this.state = {
-          dataSource: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options : [],
-          blNecessarily: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blNecessarily === "true" : false,
-          count: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options.length + 1 : 0,
-          selectedRowKeys: this.props.param ? this.searchSelectedRow(this.props.param) : null,
+          dataSource: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).ingredients : [],
+          count: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).ingredients.length + 1 : 0,
+          iCategories: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).iCategories : '',
+          chOptionSets: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chOptionSets : [],
         };
       }
 
@@ -213,20 +209,28 @@ class DishesForm extends React.Component {
               val = {
                 dataload: { 
                   key: this.props.param,
-                  idOptionSets: this.props.param,
+                  idDishes: this.props.param,
+                  enShow: values.enShow.toString(),
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
-                  enShow: values.enShow.toString(),
-                  blNecessarily: values.blNecessarily.toString(),
-                  blMultiple: values.blMultiple.toString(),
-                  options: this.state.dataSource,
+                  chSubtitle: values.chSubtitle,
+                  chPrice: values.chPrice,
+                  chOldPrice: values.chOldPrice,
+                  chDescription: values.chDescription,
+                  iCategories: this.state.iCategories,
+                  chOptionSets: values.chOptionSets,
+                  /*
+                  //chDefOptionSet: values.chDefOptionSet
+                  chTags: values.chTags,
+                  ingredients: this.state.dataSource,*/
                 }
               }
+
               
-              //console.log(val);
+              console.log(val);
               
-              this.props.onEditOptionSets(val);  // вызываем action
-              message.success('Набор опций изменен');
+              this.props.onEdit(val);  // вызываем action
+              message.success('Блюдо изменено');
               this.props.form.resetFields(); // ресет полей
               
 
@@ -273,6 +277,18 @@ class DishesForm extends React.Component {
 
     }
 
+    onChangeCategories = (value) => {
+      this.setState({
+        iCategories: value,
+      })
+    }
+
+    onChangeOptionSets = (value) => {
+      this.setState({
+        chOptionSets: value,
+      })
+    }
+
     onSelectChange = (selectedRowKeys) => {
       this.setState({ 
         selectedRowKeys,
@@ -288,8 +304,6 @@ class DishesForm extends React.Component {
       if(nextProps.param !== this.props.param) {
         this.props.form.setFieldsValue({
           'enShow': this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).enShow === "true",
-          'blMultiple': this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).blMultiple === "true",
-          'blNecessarily': this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).blNecessarily === "true",
         });
         this.setState(
           { 
@@ -303,13 +317,24 @@ class DishesForm extends React.Component {
     render() {
         const { getFieldDecorator } = this.props.form;
         const labelColSpan = 8;
-        const { dataSource, blNecessarily, selectedRowKeys } = this.state;
+        const { dataSource, blNecessarily, selectedRowKeys, iCategories, chOptionSets } = this.state;
         const components = {
             body: {
               row: EditableFormRow,
               cell: EditableCell,
             },
           };
+
+        const options = this.props.categories.map(d => <Option key={d.idCategories}>{d.chName}</Option>)
+        const children = [
+          <Option key="1">Острая</Option>,
+          <Option key="2">Веган</Option>,
+          <Option key="3">Супер цена</Option>,
+        ];
+        const childrenOptionSets = this.props.optionSets.map(d => <Option key={d.idOptionSets}>{d.chName}</Option>)
+
+
+        
         const columns = this.columns.map((col) => {
         if (!col.editable) {
             return col;
@@ -349,8 +374,8 @@ class DishesForm extends React.Component {
               borderBottomWidth: "1px", 
               borderBottomColor: "#cecece",
                }}>
-               <h4>Удалить набор опций</h4>
-               <Popconfirm title="Удалить набор опций?" onConfirm={() => this.DeleteOption()} okText="Да" cancelText="Нет">
+               <h4>Удалить блюдо</h4>
+               <Popconfirm title="Удалить блюдо?" onConfirm={() => this.DeleteOption()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>
@@ -362,7 +387,7 @@ class DishesForm extends React.Component {
               label="Активность"
             >
               {getFieldDecorator('enShow', { 
-                initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).enShow === "true" ) : true,
+                initialValue: this.props.param ? (this.props.dishes.find(x => x.idDishes ===  this.props.param).enShow === "true" ) : true,
                 valuePropName: 'checked'
               })(
                 <Switch/>
@@ -375,10 +400,10 @@ class DishesForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chName', {
-                rules: [{ required: true, message: 'Введите имя набора опций' }],
-                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chName : ""
+                rules: [{ required: true, message: 'Введите наименование блюда' }],
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chName : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя набора опций" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Наименование блюда" />
               )}
             </FormItem>
             <FormItem
@@ -389,34 +414,116 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chNamePrint', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chNamePrint : ""
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chNamePrint : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
               )}
             </FormItem>
             <FormItem
-              label="Обязательный набор"
+              label="Подзаголовок"  
+              abelCol={{ span: labelColSpan }}
+              style={{ marginBottom: 10 }}
+              hasFeedback
             >
-              {getFieldDecorator('blNecessarily', { 
-                initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blNecessarily  === "true" ) : false,
-                valuePropName: 'checked',
+              {getFieldDecorator('chSubtitle', {
+                rules: [{ }],
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chSubtitle : ""
               })(
-                <Switch onChange={this.onChangeMultiple}/>
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Подзаголовок" />
+              )}
+            </FormItem>
+            <FormItem
+              label="Цена"  
+              abelCol={{ span: labelColSpan }}
+              style={{ marginBottom: 10 }}
+              hasFeedback
+            >
+              {getFieldDecorator('chPrice', {
+                rules: [{ required: true, message: 'Введите стоимость блюда' }],
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chPrice : ""
+              })(
+                <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Цена" />
+              )}
+            </FormItem>
+            <FormItem
+              label="Старая цена"  
+              abelCol={{ span: labelColSpan }}
+              style={{ marginBottom: 10 }}
+              hasFeedback
+            >
+              {getFieldDecorator('chOldPrice', {
+                rules: [{ }],
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chOldPrice : ""
+              })(
+                <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Старая цена" />
+              )}
+            </FormItem>
+            <FormItem
+              label="Описание"  
+              abelCol={{ span: labelColSpan }}
+              style={{ marginBottom: 10 }}
+              hasFeedback
+            >
+              {getFieldDecorator('chDescription', {
+                rules: [{ }],
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chDescription : ""
+              })(
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Описание" />
               )}
             </FormItem>
             <FormItem 
-              label="Множественный выбор"
+              label="Категория"
+               style={{ marginBottom: 10 }}
+              hasFeedback
             >
-              {getFieldDecorator('blMultiple', { 
-                initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blMultiple  === "true" ) : false,
-                valuePropName: 'checked',
+              {getFieldDecorator('iCategories', {
+                rules: [{ required: true, message: 'Выберите категорию' }],
+                initialValue: iCategories,
               })(
-                <Switch />
+                <Select
+                  showSearch
+                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  onChange={this.onChangeCategories}
+                >
+                {options}
+              </Select>
+              )}
+            </FormItem>
+            <FormItem 
+              label="Набор опций"
+               style={{ marginBottom: 10 }}
+              hasFeedback
+            >
+              {getFieldDecorator('chOptionSets', {
+                initialValue: chOptionSets,
+              })(
+                <Select
+                  mode="tags"
+                  onChange={this.onChangeOptionSets}
+                >
+                {childrenOptionSets}
+              </Select>
+              )}
+            </FormItem>
+            <FormItem 
+              label="Тэги"
+               style={{ marginBottom: 10 }}
+              hasFeedback
+            >
+              {getFieldDecorator('chTags', {
+                initialValue: "Острая",
+              })(
+                <Select
+                  mode="tags"
+                  /*onChange={this.onChangeClient}*/
+                >
+                {children}
+              </Select>
               )}
             </FormItem>
             <div>
                 <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
-                Добавить опцию
+                Добавить ингридиент
                 </Button>
                 <Table
                 components={components}
@@ -447,14 +554,16 @@ const WrappedNormalLoginForm = Form.create()(DishesForm);
 
 export default connect (
   state => ({
+      dishes: state.dishes,
+      categories: state.categories,
       optionSets: state.optionSets,
   }),
   dispatch => ({
     onAddOptionSets: (optionSetsData) => {
       dispatch({ type: 'ADD_OPTION_SETS', payload: optionSetsData});
     },
-    onEditOptionSets: (optionSetsData) => {
-      dispatch({ type: 'EDIT_OPTION_SETS', payload: optionSetsData});
+    onEdit: (data) => {
+      dispatch({ type: 'EDIT_DISHES', payload: data});
     },
     onDeleteOptionSet: (optionSetsData) => {
       dispatch({ type: 'DELETE_OPTION_SETS', payload: optionSetsData});

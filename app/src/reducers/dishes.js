@@ -1,10 +1,24 @@
 const initialState = [
-    { key: "1", idDishes: "1", chName: 'Пицца Чикита', chNamePrint: "Чикита", enShow: "true", blMultiple: "true", blNecessarily: "true", options: 
-      [
-        {key: "1", chName: "150 см", chPriceChange: "0", iSort: "100", blDefault: "false"},
-        {key: "2", chName: "250 см", chPriceChange: "5", iSort: "200", blDefault: "true"},
-        {key: "3", chName: "350 см", chPriceChange: "10", iSort: "300", blDefault: "false"}
-      ], description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' }
+    { 
+      key: "1", 
+      idDishes: "1", 
+      chName: 'Пицца Чикита', 
+      chNamePrint: "Чикита", 
+      chSubtitle: "супер пицца", 
+      chPrice: "15.50",
+      chOldPrice: "20",
+      chDescription: "Пицца которую можно поглощать круглосуточно",
+      iCategories: "1",
+      enShow: "true", 
+      chOptionSets: ["1","3"],
+      chDefOptionSet: "Размер для Чикиты",
+      chTags: "Острая",
+      ingredients: [
+        {key: "1", chName: "Сыр", iSort: "100"},
+        {key: "2", chName: "Ананас", iSort: "200"},
+        {key: "3", chName: "Курица", iSort: "300"},
+      ]
+    }
     
 ];
 
@@ -15,7 +29,7 @@ export default function dishes (state = initialState, action) {
           ...state,
           action.payload
         ];  
-      case "ADD__DISHES":
+      case "ADD_DISHES":
         return [
           ...state,
           action.payload.dataload

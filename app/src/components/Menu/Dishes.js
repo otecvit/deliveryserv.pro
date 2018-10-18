@@ -6,7 +6,6 @@ import DishesForm from './DishesForm';
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
-const FormItem = Form.Item;
 const Option = Select.Option;
 const confirm = Modal.confirm;
 
@@ -132,20 +131,13 @@ class Dishes extends Component {
           </Dropdown>},
         ];
 
-        //const { form } = this.props;
-        //const { getFieldDecorator } = form;
-        const labelColSpan = 8;
-        const wrapperColSpan = 16;
-        
-        console.log(this.props.dishes);
-        
 
         const options = this.props.dishes.map(item => <Option key={item.idDishes}>{item.chName}</Option>);
 
         return (<div>
             <Content style={{ background: '#fff'}}>
                 <div style={{ padding: 10 }}>
-                    Наборы
+                    Блюда
                 </div>
             </Content>
             <Content style={{ background: '#fff', margin: '16px 0' }}>
