@@ -112,7 +112,7 @@ class Dishes extends Component {
         return menu;
     }
 
-    onChangeCategory = (e) => {
+    onChangeDishes = (e) => {
         this.setState ({ 
             currentEditOptionSets: e.key
         });
@@ -179,12 +179,12 @@ class Dishes extends Component {
                         <Select
                         showSearch
                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                        onChange={this.onChangeCategory}
+                        onChange={this.onChangeDishes}
                         style={{ width: "100%" }}
                         labelInValue 
                         value={{ key: currentEditOptionSets }}
                         >
-                        <Option key="0">Выберите категорию для редактирования</Option>
+                        <Option key="0">Выберите блюдо для редактирования</Option>
                         {options}
                     </Select>
                     { currentEditOptionSets === "0" ? null : <DishesForm handler = {this.handler} param={currentEditOptionSets} /> }

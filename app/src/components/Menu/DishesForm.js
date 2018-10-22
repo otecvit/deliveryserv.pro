@@ -144,12 +144,20 @@ class DishesForm extends React.Component {
             );
           },
         }];
+
+        
     
         this.state = {
           dataSource: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).ingredients : [],
           count: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).ingredients.length + 1 : 0,
           iCategories: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).iCategories : '',
           chOptionSets: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chOptionSets : [],
+          chTags: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chTags : [],
+          arrTags: [
+            {key: "1", chName: "Острая"},
+            {key: "2", chName: "Веган"},
+            {key: "3", chName: "Рекомендуем"},
+          ],
         };
       }
 
@@ -171,7 +179,6 @@ class DishesForm extends React.Component {
           key: count.toString(),
           chName: 'Введите наименование',
           iSort: '100',
-          chPriceChange: '0',
         };
         this.setState({
           dataSource: [...dataSource, newData],
@@ -196,12 +203,6 @@ class DishesForm extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
 
-          // при включеном обязательном выборе, проверяем выбранную опцию по умолчанию
-          if ((this.state.dataSource.findIndex(item => item.blDefault === "true") === -1)&&(values.blNecessarily)) {
-            message.error('Выберите опцию по умолчанию');
-            return;
-          }////////////////
-
           if (!err) {
             var val = {};
             if (this.props.param) {
@@ -219,10 +220,8 @@ class DishesForm extends React.Component {
                   chDescription: values.chDescription,
                   iCategories: this.state.iCategories,
                   chOptionSets: values.chOptionSets,
-                  /*
-                  //chDefOptionSet: values.chDefOptionSet
                   chTags: values.chTags,
-                  ingredients: this.state.dataSource,*/
+                  ingredients: this.state.dataSource,
                 }
               }
 
@@ -261,21 +260,15 @@ class DishesForm extends React.Component {
         });
       }
 
-      DeleteOption = () => {
+      DeleteDishes = () => {
       var val = {
-          idOptionSets: this.props.param,
+          idDishes: this.props.param,
       }
       this.props.onDeleteOptionSet(val);  // вызываем action
       this.props.handler();
       message.success('Набор опций удален'); 
     }
 
-    onChangeMultiple = (checked) => {
-      this.setState({
-        blNecessarily: checked,
-      })
-
-    }
 
     onChangeCategories = (value) => {
       this.setState({
@@ -286,6 +279,12 @@ class DishesForm extends React.Component {
     onChangeOptionSets = (value) => {
       this.setState({
         chOptionSets: value,
+      })
+    }
+
+    onChangeTag = (value) => {
+      this.setState({
+        chTags: value,
       })
     }
 
@@ -303,21 +302,19 @@ class DishesForm extends React.Component {
     componentWillReceiveProps(nextProps) {
       if(nextProps.param !== this.props.param) {
         this.props.form.setFieldsValue({
-          'enShow': this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).enShow === "true",
+          'enShow': this.props.dishes.find(x => x.idDishes ===  nextProps.param).enShow === "true",
         });
         this.setState(
           { 
-            dataSource: this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).options,
-            selectedRowKeys: this.searchSelectedRow(nextProps.param),
+            dataSource: this.props.dishes.find(x => x.idDishes ===  nextProps.param).ingredients,
           })
-        this.onChangeMultiple(this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).blNecessarily === "true");
       }
     }
 
     render() {
         const { getFieldDecorator } = this.props.form;
         const labelColSpan = 8;
-        const { dataSource, blNecessarily, selectedRowKeys, iCategories, chOptionSets } = this.state;
+        const { dataSource, iCategories, chOptionSets, chTags } = this.state;
         const components = {
             body: {
               row: EditableFormRow,
@@ -326,11 +323,7 @@ class DishesForm extends React.Component {
           };
 
         const options = this.props.categories.map(d => <Option key={d.idCategories}>{d.chName}</Option>)
-        const children = [
-          <Option key="1">Острая</Option>,
-          <Option key="2">Веган</Option>,
-          <Option key="3">Супер цена</Option>,
-        ];
+        const children = this.state.arrTags.map(d => <Option key={d.key}>{d.chName}</Option>);
         const childrenOptionSets = this.props.optionSets.map(d => <Option key={d.idOptionSets}>{d.chName}</Option>)
 
 
@@ -351,16 +344,6 @@ class DishesForm extends React.Component {
         };
         });
         
-        var stateSelection = blNecessarily ? { 
-          rowSelection: {
-            columnTitle: 'По умолчанию', 
-            type: 'radio', 
-            columnWidth: '13%',
-            selectedRowKeys,
-            onChange: this.onSelectChange,
-          } 
-        } : null; // добавляем или удаляем столбец "По умолчанию"
-
         return (
           <div>
             { this.props.param ? (       
@@ -375,7 +358,7 @@ class DishesForm extends React.Component {
               borderBottomColor: "#cecece",
                }}>
                <h4>Удалить блюдо</h4>
-               <Popconfirm title="Удалить блюдо?" onConfirm={() => this.DeleteOption()} okText="Да" cancelText="Нет">
+               <Popconfirm title="Удалить блюдо?" onConfirm={() => this.DeleteDishes()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>
@@ -511,11 +494,11 @@ class DishesForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chTags', {
-                initialValue: "Острая",
+                initialValue: chTags,
               })(
                 <Select
                   mode="tags"
-                  /*onChange={this.onChangeClient}*/
+                  onChange={this.onChangeTag}
                 >
                 {children}
               </Select>
@@ -532,8 +515,6 @@ class DishesForm extends React.Component {
                 dataSource={dataSource}
                 columns={columns}
                 pagination={false}
-                {...stateSelection}
-                
                 />
             </div>
 
