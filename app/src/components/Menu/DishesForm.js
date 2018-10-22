@@ -238,22 +238,33 @@ class DishesForm extends React.Component {
               val = {
                 dataload: { 
                   key: generateKey(),
-                  idOptionSets: generateKey(),
+                  idDishes: generateKey(),
+                  enShow: values.enShow.toString(),
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
-                  enShow: values.enShow.toString(),
-                  blNecessarily: values.blNecessarily.toString(),
-                  blMultiple: values.blMultiple.toString(),
-                  options: this.state.dataSource,
+                  chSubtitle: values.chSubtitle,
+                  chPrice: values.chPrice,
+                  chOldPrice: values.chOldPrice,
+                  chDescription: values.chDescription,
+                  iCategories: this.state.iCategories,
+                  chOptionSets: values.chOptionSets,
+                  chTags: values.chTags,
+                  ingredients: this.state.dataSource,
                 }
               }
 
               console.log(val);
               
-              this.props.onAddOptionSets(val);  // вызываем action
-              message.success('Набор опций создан'); 
+              this.props.onAdd(val);  // вызываем action
+              message.success('Блюдо создано'); 
               this.props.form.resetFields(); // ресет полей
-              this.setState({ dataSource: [] });
+              this.setState({ 
+                count: 0,
+                iCategories: '',
+                chOptionSets: [],
+                chTags: [],
+                dataSource: [], 
+              });
               
             }
           }
@@ -540,8 +551,8 @@ export default connect (
       optionSets: state.optionSets,
   }),
   dispatch => ({
-    onAddOptionSets: (optionSetsData) => {
-      dispatch({ type: 'ADD_OPTION_SETS', payload: optionSetsData});
+    onAdd: (data) => {
+      dispatch({ type: 'ADD_DISHES', payload: data});
     },
     onEdit: (data) => {
       dispatch({ type: 'EDIT_DISHES', payload: data});

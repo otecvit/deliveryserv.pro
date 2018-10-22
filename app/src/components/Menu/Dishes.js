@@ -71,7 +71,7 @@ class Dishes extends Component {
         this.setState({ 
             searchString: e.target.value,
             filtered: !!e.target.value,
-            dataSource: this.props.categories.map((record) => {
+            dataSource: this.props.dishes.map((record) => {
                 if (record.chName.length)
                 { 
                 const match = record.chName.match(reg);

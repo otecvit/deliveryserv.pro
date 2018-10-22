@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Popconfirm, Upload, message, Switch } from 'antd';
+import { Form, Icon, Input, Button, Popconfirm, Upload, message, Switch, Modal } from 'antd';
 import { connect } from 'react-redux';
 
 const FormItem = Form.Item;
@@ -9,6 +9,32 @@ const generateKey = (pre) => {
 
 
 class CategoriesForm extends React.Component {
+
+    constructor(props) {
+      super(props);
+      this.state = {
+        previewVisible: false,
+        previewImage: '',
+        fileList: [/*{
+          uid: '-1',
+          name: 'xxx.png',
+          status: 'done',
+          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        }*/],
+      };
+    }
+
+    handleCancel = () => this.setState({ previewVisible: false })
+
+    handlePreview = (file) => {
+      this.setState({
+        previewImage: file.url || file.thumbUrl,
+        previewVisible: true,
+      });
+    }
+
+    handleChange = ({ fileList }) => this.setState({ fileList })
+
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -61,24 +87,16 @@ class CategoriesForm extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
+        const { previewVisible, previewImage, fileList } = this.state;
         const labelColSpan = 8;
         //console.log(this.props.categories.find(x => x.idCategories ===  this.props.param).chName);
-        const props = {
-          name: 'file',
-          multiple: true,
-          action: '//jsonplaceholder.typicode.com/posts/',
-          onChange(info) {
-            const status = info.file.status;
-            if (status !== 'uploading') {
-              console.log(info.file, info.fileList);
-            }
-            if (status === 'done') {
-              message.success(`${info.file.name} file uploaded successfully.`);
-            } else if (status === 'error') {
-              message.error(`${info.file.name} file upload failed.`);
-            }
-          },
-        };
+        
+        const uploadButton = (
+          <div>
+            <Icon type="plus" />
+            <div className="ant-upload-text">Загрузить</div>
+          </div>
+        );
 
         return (
           <div>
@@ -143,19 +161,23 @@ class CategoriesForm extends React.Component {
             >
               <div className="dropbox">
                 {getFieldDecorator('dragger', {
-                  valuePropName: 'fileList',
-                  getValueFromEvent: this.normFile,
+                  /*valuePropName: 'fileList',
+                  getValueFromEvent: this.normFile,*/
                 })(
-                  <Upload.Dragger 
-                    {...props}
-                    
-                    >
-                    <p className="ant-upload-drag-icon">
-                      <Icon type="inbox" />
-                    </p>
-                    <p className="ant-upload-text">Нажмите или перетащите файл для загрузки</p>
-                    <p className="ant-upload-hint">Поддерживается одиночная загрузка файла.</p>
-                  </Upload.Dragger>
+                  <div>
+                  <Upload
+                    action="//jsonplaceholder.typicode.com/posts/"
+                    listType="picture-card"
+                    fileList={fileList}
+                    onPreview={this.handlePreview}
+                    onChange={this.handleChange}
+                  >
+                    {fileList.length >= 1 ? null : uploadButton}
+                  </Upload>
+                  <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                  </Modal>
+                  </div>
                 )}
               </div>
             </FormItem>
