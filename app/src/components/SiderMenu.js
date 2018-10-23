@@ -29,7 +29,7 @@ class SiderMenu extends Component {
                 <Menu.Item key="3"><Icon type="team" /><span>Клиенты</span></Menu.Item>
                 <Menu.Item key="4"><Icon type="environment" /><span>Рестораны</span></Menu.Item>
                 <SubMenu key="sub1" title={<span><Icon type="bars" /><span>Меню</span></span>}>
-                    <Menu.Item key="5">Меню</Menu.Item>
+                    <Menu.Item key="5"><Link to="menus">Меню</Link></Menu.Item>
                     <Menu.Item key="6"><Link to="categories">Категории</Link></Menu.Item>
                     <Menu.Item key="7"><Link to="dishes">Блюда</Link></Menu.Item>
                     <Menu.Item key="8"><Link to="option-sets">Наборы</Link></Menu.Item>
