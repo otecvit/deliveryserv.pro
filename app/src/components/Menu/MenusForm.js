@@ -129,8 +129,8 @@ class MenusForm extends React.Component {
         this.state = {
           arrCategories: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).arrCategories : [],
           arrDays: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).arrDays : [],
-          blDays: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).blDays === "true" : false,
-          blTimes: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).blTimes === "true" : false,
+          blDays: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).blDays === "true" : true,
+          blTimes: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).blTimes === "true" : true,
         };
       }
 
@@ -183,18 +183,17 @@ class MenusForm extends React.Component {
               val = {
                 dataload: { 
                   key: this.props.param,
-                  idDishes: this.props.param,
+                  idMenus: this.props.param,
                   enShow: values.enShow.toString(),
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
-                  chSubtitle: values.chSubtitle,
-                  chPrice: values.chPrice,
-                  chOldPrice: values.chOldPrice,
                   chDescription: values.chDescription,
-                  iCategories: this.state.iCategories,
-                  chOptionSets: values.chOptionSets,
-                  chTags: values.chTags,
-                  ingredients: this.state.dataSource,
+                  arrCategories: this.state.arrCategories,
+                  blDays: this.state.blDays ? "true" : "false",
+                  arrDays: this.state.blDays ? [] : this.state.arrDays,
+                  blTimes: this.state.blTimes ? "true" : "false",
+                  chStartInterval: this.state.blTimes ? "0:00:00" : values.chStartInterval._i,
+                  chEndInterval: this.state.blTimes ? "23:59:59" : values.chEndInterval._i,
                 }
               }
 
@@ -202,7 +201,7 @@ class MenusForm extends React.Component {
               console.log(val);
               
               this.props.onEdit(val);  // вызываем action
-              message.success('Блюдо изменено');
+              message.success('Меню изменено');
               this.props.form.resetFields(); // ресет полей
               
 
@@ -211,32 +210,30 @@ class MenusForm extends React.Component {
               val = {
                 dataload: { 
                   key: generateKey(),
-                  idDishes: generateKey(),
+                  idMenus: generateKey(),
                   enShow: values.enShow.toString(),
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
-                  chSubtitle: values.chSubtitle,
-                  chPrice: values.chPrice,
-                  chOldPrice: values.chOldPrice,
                   chDescription: values.chDescription,
-                  iCategories: this.state.iCategories,
-                  chOptionSets: values.chOptionSets,
-                  chTags: values.chTags,
-                  ingredients: this.state.dataSource,
+                  arrCategories: this.state.arrCategories,
+                  blDays: this.state.blDays ? "true" : "false",
+                  arrDays: this.state.blDays ? [] : this.state.arrDays,
+                  blTimes: this.state.blTimes ? "true" : "false",
+                  chStartInterval: this.state.blTimes ? "0:00:00" : values.chStartInterval._i,
+                  chEndInterval: this.state.blTimes ? "23:59:59" : values.chEndInterval._i,
                 }
               }
 
               console.log(val);
               
               this.props.onAdd(val);  // вызываем action
-              message.success('Блюдо создано'); 
+              message.success('Меню создано'); 
               this.props.form.resetFields(); // ресет полей
               this.setState({ 
-                count: 0,
-                iCategories: '',
-                chOptionSets: [],
-                chTags: [],
-                dataSource: [], 
+                arrCategories: [],
+                arrDays: [],
+                blDays: true,
+                blTimes: true,
               });
               
             }
@@ -272,6 +269,18 @@ class MenusForm extends React.Component {
             blDays: !this.state.blDays,
         })
     }
+
+    onChangeArrDays = (checkedValues) => {
+      this.setState({
+          arrDays: checkedValues,
+      })
+  }
+
+  onChangeArrCategories = (checkedValues) => {
+    this.setState({
+        arrCategories: checkedValues,
+    })
+}
 
     onChangeBlTimes = (e) => {
         this.setState({
@@ -393,9 +402,10 @@ class MenusForm extends React.Component {
             style={{ marginBottom: 10 }}
             >
             {getFieldDecorator('arrCategories', {
+                rules: [{ required: true, message: 'Выберите категорию' }],
                 initialValue: arrCategories
             })(
-                <Checkbox.Group>
+                <Checkbox.Group onChange={this.onChangeArrCategories}>
                 <Row>
                     {listCategories}
                 </Row>
@@ -423,9 +433,10 @@ class MenusForm extends React.Component {
                 style={{ marginBottom: 10 }}
                 >
                 {getFieldDecorator('arrDays', {
+                    rules: [{ required: true, message: 'Выберите день недели' }],
                     initialValue: arrDays
                 })(
-                    <Checkbox.Group>
+                    <Checkbox.Group onChange={this.onChangeArrDays} >
                     <Row>
                         <Col span={24}><Checkbox value="1">Понедельник</Checkbox></Col>
                         <Col span={24}><Checkbox value="2">Вторник</Checkbox></Col>
@@ -498,10 +509,10 @@ export default connect (
   }),
   dispatch => ({
     onAdd: (data) => {
-      dispatch({ type: 'ADD_DISHES', payload: data});
+      dispatch({ type: 'ADD_MENUS', payload: data});
     },
     onEdit: (data) => {
-      dispatch({ type: 'EDIT_DISHES', payload: data});
+      dispatch({ type: 'EDIT_MENUS', payload: data});
     },
     onDeleteOptionSet: (optionSetsData) => {
       dispatch({ type: 'DELETE_OPTION_SETS', payload: optionSetsData});

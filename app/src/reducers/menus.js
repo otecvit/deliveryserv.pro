@@ -57,7 +57,7 @@ export default function menus (state = initialState, action) {
       case "EDIT_MENUS": 
         // проходим по основному state
         const updatedRootItems = state.map(item => {
-          if(item.idDishes === action.payload.dataload.idDishes){
+          if(item.idMenus === action.payload.dataload.idMenus){
             return {...item, ...action.payload.dataload};
           }
           return item;
