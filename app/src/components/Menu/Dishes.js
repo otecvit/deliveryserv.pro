@@ -170,7 +170,7 @@ class Dishes extends Component {
                             size="small"  
                             pagination={false}
     
-                        />,            
+                        />            
                     </TabPane>
                     <TabPane tab="Создать" key="2">
                         <DishesForm/>

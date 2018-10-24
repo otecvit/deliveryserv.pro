@@ -5,6 +5,7 @@ import Categories from './categories';
 import OptionSets from './optionsets';
 import Disches from './dishes';
 import Menus from './menus';
+import Orders from './orders';
 
 const allReducers = combineReducers ({
     routing: routerReducer,
@@ -12,6 +13,7 @@ const allReducers = combineReducers ({
     optionSets: OptionSets,
     dishes: Disches,
     menus: Menus,
+    orders: Orders,
 });
 
 export default allReducers;
