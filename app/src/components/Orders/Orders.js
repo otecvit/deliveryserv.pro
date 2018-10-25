@@ -18,14 +18,17 @@ class Dishes extends Component {
         //this.handler = this.handler.bind(this)
 
         this.state = {
-            dataSource: this.props.orders,
+            dataSource: [],
             newOrderCount: this.props.optionapp[0].newOrderCount,
+            flLoading: true,
         };
     }
 
-    createDropdownMenu = (record) => {
+    componentDidMount() {
+        this.loadingData();
+    }
 
-        //console.log(record);
+    createDropdownMenu = (record) => {
         const menu = (
             <Menu /*onClick={e => this.handleMenuClick(e, record)}*/>
               <Menu.Item key="0">Редактировать</Menu.Item>
@@ -33,12 +36,30 @@ class Dishes extends Component {
               <Menu.Item key="2"> Удалить </Menu.Item>
             </Menu>
           );
-        
         return menu;
     }
 
+    loadingData = () => {
+        //const proxyurl = "https://cors-anywhere.herokuapp.com/";
+        const url = "http://mircoffee.by/deliveryserv/app/SelectOrders.php";
+
+        fetch(url)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            //this.checkCountOrder(responseJson.orders_count);
+            console.log(responseJson.orders);
+            this.setState({
+                dataSource: responseJson.orders,
+                flLoading: false,
+            })
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+
     render() {
-        const { dataSource, newOrderCount } = this.state;
+        const { dataSource, newOrderCount, flLoading } = this.state;
         const columns = [{ 
                 title: 'Тип', 
                 dataIndex: 'iStatus',
@@ -56,6 +77,9 @@ class Dishes extends Component {
 
                     return <IconFont type="icon-delivery" style={{ fontSize: '36px', color: color }}/>
                 }
+            },{ 
+                title: 'idOrder', 
+                dataIndex: 'idOrder', 
             },{ 
                 title: 'Номер заказа', 
                 dataIndex: 'chNameOrder', 
@@ -110,13 +134,17 @@ class Dishes extends Component {
             
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
+                
                 { newOrderCount ? <Alert message="Error Text" type="error" style={{ margin: '16px 0', textAlign: 'center' }} /> : null }
                 <Table
                             columns={columns}
-                            dataSource={!this.state.filtered ? this.props.orders : dataSource}
+                            dataSource={dataSource}
                             size="small"  
                             pagination={false}
-                            loading={true}
+                            loading={flLoading}
+                            onRow={(record, index) => ({
+                                onClick: (event) => { /*onRowClick(record, index, event)*/ } 
+                              })}
     
                         />
                 </div>
