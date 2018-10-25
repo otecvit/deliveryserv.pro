@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
+import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal, Alert  } from 'antd';
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -19,6 +19,7 @@ class Dishes extends Component {
 
         this.state = {
             dataSource: this.props.orders,
+            newOrderCount: this.props.optionapp[0].newOrderCount,
         };
     }
 
@@ -37,7 +38,7 @@ class Dishes extends Component {
     }
 
     render() {
-        const { dataSource } = this.state;
+        const { dataSource, newOrderCount } = this.state;
         const columns = [{ 
                 title: 'Тип', 
                 dataIndex: 'iStatus',
@@ -83,11 +84,13 @@ class Dishes extends Component {
                 fixed: 'right', 
                 width: 100, 
                 render: (record) => 
-                <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
-                    <a className="ant-dropdown-link" href="#">
-                        <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
-                    </a>
-                </Dropdown>
+                <div style={{ textAlign: 'center' }}>
+                    <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
+                        <a className="ant-dropdown-link" href="#">
+                            <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
+                        </a>
+                    </Dropdown>
+                </div>
             },
         ];
 
@@ -104,14 +107,16 @@ class Dishes extends Component {
                     Заказы
                 </div>
             </Content>
+            
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
-                
+                { newOrderCount ? <Alert message="Error Text" type="error" style={{ margin: '16px 0', textAlign: 'center' }} /> : null }
                 <Table
                             columns={columns}
                             dataSource={!this.state.filtered ? this.props.orders : dataSource}
                             size="small"  
                             pagination={false}
+                            loading={true}
     
                         />
                 </div>
@@ -123,6 +128,7 @@ class Dishes extends Component {
 export default connect (
     state => ({
         orders: state.orders,
+        optionapp: state.optionapp,
     }),
     dispatch => ({
         onDeleteCategory: (optionSetsData) => {

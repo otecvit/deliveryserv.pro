@@ -23,6 +23,7 @@ import Dishes from './components/Menu/Dishes';
 import Menus from './components/Menu/Menus';
 import Orders from './components/Orders/Orders';
 
+import СheckNewOrder from './components/СheckNewOrder';
 
 const history = createHistory();
 const { Header, Content, Footer } = Layout;
@@ -56,11 +57,38 @@ const ContentPage =
 ;
 
 class MainClass extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loadStatus: false,
+    };
+}
+
+    componentDidMount() {
+      this.timer = setInterval(()=> this.getItems(), 1000);
+    }
+  
+    componentWillUnmount() {
+      this.timer = null; // here...
+    }
+    
+    getItems() {
+      //console.log("+");
+      this.setState({loadStatus: !this.state.loadStatus})
+        
+      /*
+      fetch(this.getEndpoint('api url endpoint"))
+        .then(result => result.json())
+        .then(result => this.setState({ items: result }));
+        */
+    }
 
     render() {
+      
         return (
           <Layout style={{ minHeight: '100vh' }}>
               <SiderMenu/>
+              {this.state.loadStatus ? <СheckNewOrder/> : null}
             <Layout>
               <Header style={{ background: '#fff', padding: 0 }} />
               <Content>
@@ -76,6 +104,7 @@ class MainClass extends React.Component {
         );
       }
 }
+
 
 ReactDOM.render(
     <Provider store = {store}>
