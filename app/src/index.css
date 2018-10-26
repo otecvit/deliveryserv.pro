@@ -19,3 +19,7 @@ body {
   padding: 4px 11px;
 }
 
+thead[class*="ant-table-thead"] th{
+  text-align: center;
+}
+

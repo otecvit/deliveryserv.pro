@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal, Alert  } from 'antd';
+import moment from 'moment';
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -75,20 +76,48 @@ class Dishes extends Component {
                         case "5": color = '#bd362f'; break; // отменен
                     };
 
-                    return <IconFont type="icon-delivery" style={{ fontSize: '36px', color: color }}/>
+                    return (
+                        <div style={{ textAlign: 'center' }}>
+                            <IconFont type="icon-delivery" style={{ fontSize: '36px', color: color }}/>
+                        </div>
+                    )
                 }
             },{ 
-                title: 'idOrder', 
-                dataIndex: 'idOrder', 
-            },{ 
-                title: 'Номер заказа', 
+                title: '№ Заказа / Клиент', 
                 dataIndex: 'chNameOrder', 
+                render: (record) => {
+                    const chNameClient = dataSource.find(x => x.chNameOrder ===  record).chNameClient
+                    
+                    return (
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold' }}>{record}</div>
+                        <div>{chNameClient}</div>
+                    </div>);
+                }
             },{ 
-                title: 'Имя клиента', 
-                dataIndex: 'chNameClient', 
+                title: 'Номер телефона', 
+                dataIndex: 'chPhone', 
+                render: (record) => {
+                    return (
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '14px' }}>{record}</div>
+                    </div>);
+                }
             },{ 
                 title: 'Ко времени', 
                 dataIndex: 'chDue', 
+                render: (record) => {
+                    //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
+                    return (
+                    <div style={{ textAlign: 'center' }}>
+                        {moment(record, "DD.MM.YYYY HH:mm", true).isValid() ? 
+                        <div>
+                            <div style={{ fontSize: '18px' }}>к {record.split(' ')[1]}</div>
+                            <div style={{ fontSize: '14px' }}>{record.split(' ')[0]}</div>
+                        </div> : 
+                        <div style={{ fontSize: '16px' }}>{record}</div>}
+                    </div>);
+                }
             },{ 
                 title: 'Время заказа', 
                 dataIndex: 'chPlaced', 
