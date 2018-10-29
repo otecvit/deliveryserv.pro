@@ -9,7 +9,7 @@ body {
 }
 
 .editable-cell-value-wrap {
-  padding: 5px 12px;
+  padding: 2px 12px;
   cursor: pointer;
 }
 
@@ -66,7 +66,81 @@ thead[class*="ant-table-thead"] th{
   background: #bd362f;
 }
 
-.sssss {
-  border-left: #00bfff 5px solid;
+
+.border-status-0 {
+  border-left: #efbb1e 2px solid;
 }
 
+.border-status-1 {
+  border-left: #b7d024 2px solid;
+}
+
+.border-status-2 {
+  border-left: #0080ff 2px solid;
+}
+
+.border-status-3 {
+  border-left: #00bfff 2px solid;
+}
+
+.border-status-4 {
+  border-left: #51a351 2px solid;
+}
+
+.border-status-5 {
+  border-left: #bd362f 2px solid;
+}
+
+.ant-table-fixed .border-status-0,
+.ant-table-fixed .border-status-1,
+.ant-table-fixed .border-status-2,
+.ant-table-fixed .border-status-3,
+.ant-table-fixed .border-status-4,
+.ant-table-fixed .border-status-5 {
+  border-left: none;
+}
+
+.d-table{
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+}
+.d-tr{
+  display: table-row;
+  
+}
+.d-td{
+  display: table-cell;
+  vertical-align: middle;
+  padding: 5px;
+}
+
+.title-modal-orders {
+  text-align: right;
+  width: 30%;
+  border-right: #e8e8e8 1px solid;
+  padding-right: 10px;
+  font-weight: bold;
+}
+
+.content-modal-orders {
+  text-align: left;
+  width: 70%;
+  padding-left: 10px;
+}
+
+.title-detail {
+  text-align: left;
+  width: 15%;
+  padding-right: 10px;
+  font-weight: bold;
+}
+
+.content-detail {
+  text-align: left;
+  padding-left: 10px;
+}
+
+.ant-table-small > .ant-table-content > .ant-table-body {
+  margin: 0px;
+}

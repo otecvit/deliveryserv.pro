@@ -164,6 +164,17 @@ class Dishes extends Component {
             });
      }
 
+    styleRow = (record) => {
+        switch (record.iStatus) {
+            case "0": return 'border-status-0'; // не подтвержден 
+            case "1": return 'border-status-1'; // не подтвержден 
+            case "2": return 'border-status-2'; // не подтвержден 
+            case "3": return 'border-status-3'; // не подтвержден 
+            case "4": return 'border-status-4'; // не подтвержден 
+            case "5": return 'border-status-5'; // не подтвержден 
+        };
+    }
+
     handler = () => {
         //e.preventDefault()
         this.setState({
@@ -335,9 +346,8 @@ class Dishes extends Component {
                             onRow={(record, index) => ({
                                 onClick: (event) => { this.onRowClick(record, index, event) } 
                               })}
-                            rowClassName={(record, index) => {
-                                return 'sssss';  
-                              }}
+                            rowClassName={(record) => {return this.styleRow(record)}
+                            }
     
                         />
                 {this.state.showOrders && !this.state.openDropMenu ? <OrdersForm handler = {this.handler} param={this.val}/> : null}

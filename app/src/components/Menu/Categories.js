@@ -27,6 +27,7 @@ class Categories extends Component {
           currentEditCat: "0",
           filtered: false,
           dataSource: {},
+          flLoading: true, // спиннер загрузки
         };
     }
 
@@ -55,7 +56,12 @@ class Categories extends Component {
                
     }
 
-    
+
+    componentDidMount() {
+        this.loadingData();
+    }
+
+
 
     emitEmpty = () => {
         this.searchStringInput.focus();
@@ -66,9 +72,28 @@ class Categories extends Component {
         this.setState({
             currentEditCat: "0",
         });
-        
       }
-    
+
+      loadingData = () => {
+
+        const url = this.props.optionapp[0].serverUrl + "/SelectCategories.php";
+        this.setState({
+            flLoading: true,
+        })
+        fetch(url)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            this.props.onAdd(responseJson.categories);
+            this.setState({
+                dataSource: responseJson.categories,
+                flLoading: false,
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+
 
     onChangeSearchString = (e) => { 
         const reg = new RegExp(e.target.value, 'gi');
@@ -125,22 +150,18 @@ class Categories extends Component {
 
     render() {
 
-        const { searchString, currentEditCat, dataSource } = this.state;
+        const { searchString, currentEditCat, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
-            { title: 'Действие', key: 'operation', fixed: 'right', width: 100, render: (record) => <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
+            { title: 'Действие', key: 'operation', width: 100, render: (record) => <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">
             <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
             </a>
           </Dropdown>},
         ];
 
-        //const { form } = this.props;
-        //const { getFieldDecorator } = form;
-        const labelColSpan = 8;
-        const wrapperColSpan = 16;
-                
+             
         const options = this.props.categories.map(item => <Option key={item.idCategories}>{item.chName}</Option>);
 
         return (<div>
@@ -166,10 +187,19 @@ class Categories extends Component {
                     />    
                     <Table
                         columns={columns}
-                        expandedRowRender={record => <p style={{ margin: 0 }}>{record.description}</p>}
+                        expandedRowRender={record => 
+                            <div className="d-table">
+                                <div className="d-tr">
+                                    <div className="d-td title-detail">Отображаемое имя</div>
+                                    <div className="d-td content-detail">{record.chNamePrint}</div>
+                                </div>
+                            </div>
+                        }
                         dataSource={!this.state.filtered ? this.props.categories : dataSource}
                         size="small"  
                         pagination={false}
+                        loading={flLoading}
+                        locale={{emptyText: 'Нет данных'}}
 
                     />,            
                 </TabPane>
@@ -200,18 +230,12 @@ class Categories extends Component {
 export default connect (
     state => ({
         categories: state.categories,
+        optionapp: state.optionapp,
     }),
     dispatch => ({
-        onDeleteCategory: (categoryData) => {
-            confirm({
-                title: 'Удалить категорию?',
-                content: 'Будет удалена категория и все товары',
-                onOk() {
-                    dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
-                    message.success('Категория удалена'); 
-                },
-              });
-        },
+        onAdd: (data) => {
+            dispatch({ type: 'LOAD_CATEGORIES_ALL', payload: data});
+          },
     })
   )(Categories);
 

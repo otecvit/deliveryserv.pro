@@ -1,6 +1,7 @@
 const initialState = [
     {
         newOrderCount: 0,
+        serverUrl: "http://mircoffee.by/deliveryserv/app/api/admin",
     },       
 ];
 

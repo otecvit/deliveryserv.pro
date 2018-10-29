@@ -41,6 +41,7 @@ const CollectionCreateForm = Form.create()(
     onChangeStatus = (e) => {
         this.props.onCreate(e); 
         this.setState({currentStatus: "status-" + e});
+        message.success("Статус заказа изменен");
     }
 
     
@@ -88,16 +89,58 @@ const CollectionCreateForm = Form.create()(
                     </FormItem>
  
           <Tabs defaultActiveKey="1">
-          <TabPane tab="Подробности" key="1">
-
+            <TabPane tab="Подробности" key="1">
+              <div className="d-table">
+                <div className="d-tr">
+                  <div className="d-td title-modal-orders">Статус</div>
+                  <div className="d-td content-modal-orders">lorem</div>
+                </div>
+                <div className="d-tr">
+                  <div className="d-td title-modal-orders">Номер заказа</div>
+                  <div className="d-td content-modal-orders">lorem</div>
+                </div>
+                <div className="d-tr">
+                  <div className="d-td title-modal-orders">Дата заказа</div>
+                  <div className="d-td content-modal-orders">lorem</div>
+                </div>
+                <div className="d-tr">
+                  <div className="d-td title-modal-orders">Время доставки</div>
+                  <div className="d-td content-modal-orders">lorem</div>
+                </div>
+                <div className="d-tr">
+                  <div className="d-td title-modal-orders">Способ оплаты</div>
+                  <div className="d-td content-modal-orders">lorem</div>
+                </div>
+                <div className="d-tr">
+                  <div className="d-td title-modal-orders">Подтверждение</div>
+                  <div className="d-td content-modal-orders">lorem</div>
+                </div>
+                <div className="d-tr">
+                  <div className="d-td title-modal-orders">Адрес доставки</div>
+                  <div className="d-td content-modal-orders">lorem</div>
+                </div>
+                <div className="d-tr">
+                  <div className="d-td title-modal-orders">Комментарий</div>
+                  <div className="d-td content-modal-orders">lorem</div>
+                </div>
+              </div>
             </TabPane>
             <TabPane tab="Клиент" key="2">
-
+              <div className="d-table">
+                <div className="d-tr">
+                  <div className="d-td title-modal-orders">Имя</div>
+                  <div className="d-td content-modal-orders">lorem</div>
+                </div>
+                <div className="d-tr">
+                  <div className="d-td title-modal-orders">Номер телефона</div>
+                  <div className="d-td content-modal-orders">lorem</div>
+                </div>
+              </div>
             </TabPane>
             <TabPane tab="Заказ" key="3">
 
             </TabPane>
-            </Tabs>
+          </Tabs>
           </Form>
         </Modal>
       );
@@ -119,15 +162,12 @@ class OrdersForm extends Component {
         if (err) {
           return;
         }
-
-        var val = {};
-
-        val = {
+        var val = {
               idOrder: this.props.param.idOrder,
               iStatus: e, 
           };
 
-          this.props.onEditStatus(val);
+        this.props.onEditStatus(val);
 
         /*
           const proxyurl = "https://cors-anywhere.herokuapp.com/";
@@ -210,9 +250,6 @@ class OrdersForm extends Component {
     }
 
     render() {
-        
-        
-        
         return (
             <div>
                     <CollectionCreateForm

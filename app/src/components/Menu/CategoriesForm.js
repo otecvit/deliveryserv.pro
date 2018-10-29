@@ -15,12 +15,12 @@ class CategoriesForm extends React.Component {
       this.state = {
         previewVisible: false,
         previewImage: '',
-        fileList: [/*{
+        fileList: this.props.param ? [{
           uid: '-1',
-          name: 'xxx.png',
+          name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
           status: 'done',
-          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        }*/],
+          url: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage,
+        }] : [],
       };
     }
 
@@ -42,55 +42,124 @@ class CategoriesForm extends React.Component {
           if (!err) {
             var val = {};
             if (this.props.param) {
-
-              val = {
-                dataload: { 
-                  key: this.props.param,
+              const url = this.props.optionapp[0].serverUrl + "/EditCategories.php"; // изменяем категорию
+              fetch(url, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
                   idCategories: this.props.param,
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                val = {
+                  dataload: { 
+                    key: this.props.param,
+                    idCategories: this.props.param,
+                    chName: values.chName,
+                    chNamePrint: values.chNamePrint,
+                    enShow: values.enShow ? "true" : "false",
+                  }
                 }
-              }
-              this.props.onEditCategory(val);  // вызываем action
-              message.success('Категория изменена');
-              this.props.form.resetFields(); // ресет полей
-              
+                this.props.onEditCategory(val);  // вызываем action
+                message.success('Категория изменена');
+                this.props.form.resetFields(); // ресет полей
+              }).catch((error) => {
+                  console.error(error);
+              });
 
             } else {
-              
-              val = {
-                dataload: { 
-                  key: generateKey(),
-                  idCategories: generateKey(),
+
+              const url = this.props.optionapp[0].serverUrl + "/InsertCategories.php"; // добавляем категорию
+              fetch(url, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                val = {
+                  dataload: { 
+                    key: responseJsonFromServer.toString(),
+                    idCategories: responseJsonFromServer.toString(),
+                    chName: values.chName,
+                    chNamePrint: values.chNamePrint,
+                    enShow: values.enShow ? "true" : "false",
+                  }
                 }
-              }
-              this.props.onAddCategory(val);  // вызываем action
-              message.success('Категория создана'); 
-              this.props.form.resetFields(); // ресет полей
+                this.props.onAddCategory(val);  // вызываем action
+                message.success('Категория создана'); 
+                this.props.form.resetFields(); // ресет полей
+              }).catch((error) => {
+                  console.error(error);
+              });
             }
           }
         });
       }
 
     DeleteCategory = () => {
-      var val = {
-          idCategories: this.props.param,
+
+      const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
+      fetch(url,
+        {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              idCategories: this.props.param
+           })
+        }).then((response) => response.json()).then((responseJsonFromServer) =>
+        {
+            var val = {
+                idCategories: this.props.param,
+            }
+            this.props.onDeleteCategory(val);  // вызываем action
+        }).catch((error) =>
+        {
+            console.error(error);
+        });
+        message.success('Категория удалена'); 
+        this.props.handler();
+    }
+
+    componentWillReceiveProps(nextProps) {
+      if(nextProps.param !== this.props.param) {
+        this.props.form.setFieldsValue({
+          'enShow': this.props.categories.find(x => x.idCategories ===  nextProps.param).enShow === "true",
+        });
+        this.setState({
+        fileList: [{
+          uid: '-1',
+          name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
+          status: 'done',
+          url: this.props.categories.find(x => x.idCategories ===  nextProps.param).chMainImage,
+        }]});
       }
-      this.props.onDeleteCategory(val);  // вызываем action
-      this.props.handler();
-      message.success('Категория удалена'); 
     }
 
     render() {
         const { getFieldDecorator } = this.props.form;
         const { previewVisible, previewImage, fileList } = this.state;
         const labelColSpan = 8;
-        //console.log(this.props.categories.find(x => x.idCategories ===  this.props.param).chName);
-        
+
         const uploadButton = (
           <div>
             <Icon type="plus" />
@@ -124,8 +193,8 @@ class CategoriesForm extends React.Component {
               label="Активность"
             >
               {getFieldDecorator('enShow', { 
-                initialValue: this.props.param ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "1" ? true : false ) : true,
-                valuePropName: 'checked',
+                initialValue: this.props.param ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "true" ) : true,
+                valuePropName: 'checked'
               })(
                 <Switch />
               )}
@@ -198,6 +267,7 @@ const WrappedNormalLoginForm = Form.create()(CategoriesForm);
 export default connect (
   state => ({
       categories: state.categories,
+      optionapp: state.optionapp,
   }),
   dispatch => ({
     onAddCategory: (categoryData) => {
