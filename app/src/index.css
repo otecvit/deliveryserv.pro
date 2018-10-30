@@ -112,7 +112,7 @@ thead[class*="ant-table-thead"] th{
 .d-td{
   display: table-cell;
   vertical-align: middle;
-  padding: 5px;
+  padding: 3px;
 }
 
 .title-modal-orders {
@@ -131,7 +131,7 @@ thead[class*="ant-table-thead"] th{
 
 .title-detail {
   text-align: left;
-  width: 15%;
+  width: 20%;
   padding-right: 10px;
   font-weight: bold;
 }

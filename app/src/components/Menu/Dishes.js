@@ -25,6 +25,7 @@ class Dishes extends Component {
           currentEditOptionSets: "0",
           filtered: false,
           dataSource: {},
+          flLoading: true, // спиннер загрузки
         };
     }
 
@@ -35,7 +36,31 @@ class Dishes extends Component {
             case "2": this.DeleteCategory(record); break; 
             default: this.setState({activeKey: "1"});    
         }        
-      }
+    }
+
+    componentDidMount() {
+        this.loadingData();
+    }
+
+    loadingData = () => {
+
+        const url = this.props.optionapp[0].serverUrl + "/SelectProducts.php";
+        this.setState({
+            flLoading: true,
+        })
+        fetch(url)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            this.props.onAdd(responseJson.dishes);
+            this.setState({
+                dataSource: responseJson.dishes,
+                flLoading: false,
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
 
     editCategory = (e) => {
         this.setState({
@@ -120,7 +145,7 @@ class Dishes extends Component {
     
     render() {
 
-        const { searchString, currentEditOptionSets, dataSource } = this.state;
+        const { searchString, currentEditOptionSets, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
@@ -169,6 +194,8 @@ class Dishes extends Component {
                             dataSource={!this.state.filtered ? this.props.dishes : dataSource}
                             size="small"  
                             pagination={false}
+                            loading={flLoading}
+                            locale={{emptyText: 'Нет данных'}}
     
                         />            
                     </TabPane>
@@ -202,17 +229,11 @@ class Dishes extends Component {
 export default connect (
     state => ({
         dishes: state.dishes,
+        optionapp: state.optionapp,
     }),
     dispatch => ({
-        onDeleteCategory: (optionSetsData) => {
-            confirm({
-                title: 'Удалить набор опций?',
-                content: 'Будет удален набор опций',
-                onOk() {
-                    dispatch({ type: 'DELETE_OPTION_SETS', payload: optionSetsData});
-                    message.success('Набор опций удален'); 
-                },
-              });
-        },
+        onAdd: (data) => {
+            dispatch({ type: 'LOAD_DISHES_ALL', payload: data});
+          },
     })
   )(Dishes);

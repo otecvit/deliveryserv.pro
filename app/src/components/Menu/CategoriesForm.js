@@ -67,7 +67,7 @@ class CategoriesForm extends React.Component {
                     enShow: values.enShow ? "true" : "false",
                   }
                 }
-                this.props.onEditCategory(val);  // вызываем action
+                this.props.onEdit(val);  // вызываем action
                 message.success('Категория изменена');
                 this.props.form.resetFields(); // ресет полей
               }).catch((error) => {
@@ -100,7 +100,7 @@ class CategoriesForm extends React.Component {
                     enShow: values.enShow ? "true" : "false",
                   }
                 }
-                this.props.onAddCategory(val);  // вызываем action
+                this.props.onAdd(val);  // вызываем action
                 message.success('Категория создана'); 
                 this.props.form.resetFields(); // ресет полей
               }).catch((error) => {
@@ -112,7 +112,6 @@ class CategoriesForm extends React.Component {
       }
 
     DeleteCategory = () => {
-
       const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
       fetch(url,
         {
@@ -131,7 +130,7 @@ class CategoriesForm extends React.Component {
             var val = {
                 idCategories: this.props.param,
             }
-            this.props.onDeleteCategory(val);  // вызываем action
+            this.props.onDelete(val);  // вызываем action
         }).catch((error) =>
         {
             console.error(error);
@@ -193,7 +192,7 @@ class CategoriesForm extends React.Component {
               label="Активность"
             >
               {getFieldDecorator('enShow', { 
-                initialValue: this.props.param ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "true" ) : true,
+                initialValue: this.props.param  ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "true" ) : true,
                 valuePropName: 'checked'
               })(
                 <Switch />
@@ -270,13 +269,14 @@ export default connect (
       optionapp: state.optionapp,
   }),
   dispatch => ({
-    onAddCategory: (categoryData) => {
+    onAdd: (categoryData) => {
       dispatch({ type: 'ADD_CATEGORY', payload: categoryData});
     },
-    onEditCategory: (categoryData) => {
+    onEdit: (categoryData) => {
       dispatch({ type: 'EDIT_CATEGORY', payload: categoryData});
     },
-    onDeleteCategory: (categoryData) => {
+    
+    onDelete: (categoryData) => {
       dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
     },
   })

@@ -208,16 +208,16 @@ class OptionSetsForm extends React.Component {
 
           if (!err) {
             var val = {};
+            
+            var options = this.state.dataSource.map( item => {
+              const blDefault = { blDefault: item.blDefault === "true" ? "1" : "0"};
+              return {...item, ...blDefault}
+
+            })
+
             if (this.props.param) {
 
               const url = this.props.optionapp[0].serverUrl + "/EditOptionSets.php"; // изменяем категорию
-
-              var options = this.state.dataSource.map( item => {
-                const blDefault = { blDefault: item.blDefault ? "1" : "0"};
-                return {...item, ...blDefault}
-
-              })
-
               fetch(url, {
                 method: 'POST',
                 headers: 
@@ -251,42 +251,57 @@ class OptionSetsForm extends React.Component {
                     options: this.state.dataSource,
                   }
                 }
-                
-                console.log(val);
-                
                 this.props.onEditOptionSets(val);  // вызываем action
                 message.success('Набор опций изменен');
                 this.props.form.resetFields(); // ресет полей
               }).catch((error) => {
                   console.error(error);
               });
-              
-              
-              
-              
-
             } else {
-              
-              val = {
-                dataload: { 
-                  key: generateKey(),
-                  idOptionSets: generateKey(),
+
+              const url = this.props.optionapp[0].serverUrl + "/InsertOptionSets.php"; // добавляем набор
+              fetch(url, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
-                  enShow: values.enShow.toString(),
-                  blNecessarily: values.blNecessarily.toString(),
-                  blMultiple: values.blMultiple.toString(),
-                  options: this.state.dataSource,
+                  enShow: values.enShow ? "1" : "0",
+                  blNecessarily: values.blNecessarily ? "1" : "0",
+                  blMultiple: values.blMultiple ? "1" : "0",
+                  options: options,
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                
+                console.log(responseJsonFromServer);
+                
+                val = {
+                  dataload: { 
+                    key: responseJsonFromServer.toString(),
+                    idOptionSets: responseJsonFromServer.toString(),
+                    chName: values.chName,
+                    chNamePrint: values.chNamePrint,
+                    enShow: values.enShow.toString(),
+                    blNecessarily: values.blNecessarily.toString(),
+                    blMultiple: values.blMultiple.toString(),
+                    options: this.state.dataSource,
+                  }
                 }
-              }
 
-              console.log(val);
-              
-              this.props.onAddOptionSets(val);  // вызываем action
-              message.success('Набор опций создан'); 
-              this.props.form.resetFields(); // ресет полей
-              this.setState({ dataSource: [] });
-              
+
+                this.props.onAdd(val);  // вызываем action
+                message.success('Набор опций создан'); 
+                this.props.form.resetFields(); // ресет полей
+                this.setState({ dataSource: [] });
+
+              }).catch((error) => {
+                  console.error(error);
+              });
             }
           }
         });
@@ -488,8 +503,8 @@ export default connect (
       optionapp: state.optionapp,
   }),
   dispatch => ({
-    onAddOptionSets: (optionSetsData) => {
-      dispatch({ type: 'ADD_OPTION_SETS', payload: optionSetsData});
+    onAdd: (data) => {
+      dispatch({ type: 'ADD_OPTION_SETS', payload: data});
     },
     onEditOptionSets: (optionSetsData) => {
       dispatch({ type: 'EDIT_OPTION_SETS', payload: optionSetsData});

@@ -1,4 +1,4 @@
-const initialState = [
+const initialState = [/*
     { 
       key: "1", 
       idDishes: "1", 
@@ -38,10 +38,12 @@ const initialState = [
       ]
     },
     
-];
+  */];
 
 export default function dishes (state = initialState, action) {
     switch (action.type) {
+      case "LOAD_DISHES_ALL":
+        return action.payload; 
       case "LOAD_DISHES_SUCCESS":
         return [
           ...state,

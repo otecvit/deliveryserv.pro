@@ -14,9 +14,7 @@ const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
   }
 
-
 class Categories extends Component {
-
     constructor(props) {
         super(props);
         this.handler = this.handler.bind(this)
@@ -45,15 +43,32 @@ class Categories extends Component {
             activeKey: "3",
             currentEditCat: e.record.idCategories,
         });
-
     }
 
     DeleteCategory = (e) => {
-        var val = {
-            idCategories: e.record.idCategories,
-        }
-        this.props.onDeleteCategory(val);  // вызываем action
-               
+        const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
+        fetch(url,
+          {
+              method: 'POST',
+              headers: 
+              {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(
+              {
+                idCategories: e.record.idCategories
+             })
+          }).then((response) => response.json()).then((responseJsonFromServer) =>
+          {
+              var val = {
+                  idCategories: e.record.idCategories,
+              }
+              this.props.onDelete(val);  // вызываем action
+          }).catch((error) =>
+          {
+              console.error(error);
+          });
     }
 
 
@@ -236,6 +251,9 @@ export default connect (
         onAdd: (data) => {
             dispatch({ type: 'LOAD_CATEGORIES_ALL', payload: data});
           },
+        onDelete: (categoryData) => {
+            dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
+        },
     })
   )(Categories);
 

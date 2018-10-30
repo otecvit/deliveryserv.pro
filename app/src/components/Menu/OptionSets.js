@@ -156,6 +156,7 @@ class OptionSets extends Component {
             </a>
           </Dropdown>},
         ];
+        
 
         //const { form } = this.props;
         //const { getFieldDecorator } = form;
@@ -188,12 +189,27 @@ class OptionSets extends Component {
                         <Table
                             columns={columns}
                             expandedRowRender={record => 
-                                <div style={{ margin: 0 }}>
-                                    <div>Активность: {record.description}</div>
-                                    <div>Отображаемое имя: </div>
-                                    Обязательный набор:
-                                    Множественный выбор:
-
+                                <div className="d-table">
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Активность</div>
+                                        <div className="d-td content-detail">{record.enShow === "true" ? "Да" : "Нет"}</div>
+                                    </div>                                    
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Отображаемое имя</div>
+                                        <div className="d-td content-detail">{record.chNamePrint}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Обязательный набор</div>
+                                        <div className="d-td content-detail">{record.blNecessarily === "true" ? "Да" : "Нет"}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Множественный выбор</div>
+                                        <div className="d-td content-detail">{record.blMultiple === "true" ? "Да" : "Нет"}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Опции</div>
+                                        <div className="d-td content-detail">{record.options.map((item, index) => <div key={index}>{item.chName}</div>)}</div>
+                                    </div>
                                 </div>
                                 }
                             dataSource={!this.state.filtered ? this.props.optionSets : dataSource}
@@ -216,7 +232,7 @@ class OptionSets extends Component {
                         labelInValue 
                         value={{ key: currentEditOptionSets }}
                         >
-                        <Option key="0">Выберите категорию для редактирования</Option>
+                        <Option key="0">Выберите набор опций для редактирования</Option>
                         {options}
                     </Select>
                     { currentEditOptionSets === "0" ? null : <OptionSetsForm handler = {this.handler} param={currentEditOptionSets} /> }
