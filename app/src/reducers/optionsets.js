@@ -1,4 +1,4 @@
-const initialState = [
+const initialState = [/*
     { key: "1", idOptionSets: "1", chName: 'Размер для Чикиты', chNamePrint: "Размер", enShow: "true", blMultiple: "true", blNecessarily: "true", options: 
       [
         {key: "1", chName: "150 см", chPriceChange: "0", iSort: "100", blDefault: "false"},
@@ -22,12 +22,14 @@ const initialState = [
         {key: "1", chName: "0,5 кг", chPriceChange: "0", iSort: "100", blDefault: "false"},
         {key: "2", chName: "0,8 кг", chPriceChange: "3", iSort: "200", blDefault: "true"},
         {key: "3", chName: "1 кг", chPriceChange: "6", iSort: "300", blDefault: "false"}
-      ], description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
+      ], description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },*/
   ];
 
 
 export default function optionSets (state = initialState, action) {
     switch (action.type) {
+      case "LOAD_OPTION_SETS_ALL":
+        return action.payload; 
       case "LOAD_OPTION_SETS_SUCCESS":
         return [
           ...state,

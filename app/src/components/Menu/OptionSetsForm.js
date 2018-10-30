@@ -151,7 +151,7 @@ class OptionSetsForm extends React.Component {
     
         this.state = {
           dataSource: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options : [],
-          blNecessarily: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blNecessarily === "true" : false,
+          blNecessarily: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blNecessarily === "true" : true,
           count: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options.length + 1 : 0,
           selectedRowKeys: this.props.param ? this.searchSelectedRow(this.props.param) : null,
         };
@@ -210,24 +210,59 @@ class OptionSetsForm extends React.Component {
             var val = {};
             if (this.props.param) {
 
-              val = {
-                dataload: { 
-                  key: this.props.param,
+              const url = this.props.optionapp[0].serverUrl + "/EditOptionSets.php"; // изменяем категорию
+
+              var options = this.state.dataSource.map( item => {
+                const blDefault = { blDefault: item.blDefault ? "1" : "0"};
+                return {...item, ...blDefault}
+
+              })
+
+              fetch(url, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
                   idOptionSets: this.props.param,
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
-                  enShow: values.enShow.toString(),
-                  blNecessarily: values.blNecessarily.toString(),
-                  blMultiple: values.blMultiple.toString(),
-                  options: this.state.dataSource,
+                  enShow: values.enShow ? "1" : "0",
+                  blNecessarily: values.blNecessarily ? "1" : "0",
+                  blMultiple: values.blMultiple ? "1" : "0",
+                  options: options,
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+
+                console.log(responseJsonFromServer);
+                
+                val = {
+                  dataload: { 
+                    key: this.props.param,
+                    idOptionSets: this.props.param,
+                    chName: values.chName,
+                    chNamePrint: values.chNamePrint,
+                    enShow: values.enShow.toString(),
+                    blNecessarily: values.blNecessarily.toString(),
+                    blMultiple: values.blMultiple.toString(),
+                    options: this.state.dataSource,
+                  }
                 }
-              }
+                
+                console.log(val);
+                
+                this.props.onEditOptionSets(val);  // вызываем action
+                message.success('Набор опций изменен');
+                this.props.form.resetFields(); // ресет полей
+              }).catch((error) => {
+                  console.error(error);
+              });
               
-              //console.log(val);
               
-              this.props.onEditOptionSets(val);  // вызываем action
-              message.success('Набор опций изменен');
-              this.props.form.resetFields(); // ресет полей
+              
               
 
             } else {
@@ -398,20 +433,22 @@ class OptionSetsForm extends React.Component {
               label="Обязательный набор"
             >
               {getFieldDecorator('blNecessarily', { 
-                initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blNecessarily  === "true" ) : false,
+                /*initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blNecessarily  === "true" ) : false,*/
+                initialValue: true,
                 valuePropName: 'checked',
               })(
-                <Switch onChange={this.onChangeMultiple}/>
+                <Switch disabled={true} onChange={this.onChangeMultiple}/>
               )}
             </FormItem>
             <FormItem 
               label="Множественный выбор"
             >
               {getFieldDecorator('blMultiple', { 
-                initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blMultiple  === "true" ) : false,
+                /*initialValue: this.props.param ? (this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blMultiple  === "true" ) : false,*/
+                initialValue: false,
                 valuePropName: 'checked',
               })(
-                <Switch />
+                <Switch disabled={true} />
               )}
             </FormItem>
             <div>
@@ -448,6 +485,7 @@ const WrappedNormalLoginForm = Form.create()(OptionSetsForm);
 export default connect (
   state => ({
       optionSets: state.optionSets,
+      optionapp: state.optionapp,
   }),
   dispatch => ({
     onAddOptionSets: (optionSetsData) => {

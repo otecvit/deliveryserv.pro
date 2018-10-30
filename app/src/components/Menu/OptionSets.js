@@ -26,6 +26,7 @@ class OptionSets extends Component {
           currentEditOptionSets: "0",
           filtered: false,
           dataSource: {},
+          flLoading: true, // спиннер загрузки
         };
     }
 
@@ -37,6 +38,30 @@ class OptionSets extends Component {
             default: this.setState({activeKey: "1"});    
         }        
       }
+
+    componentDidMount() {
+        this.loadingData();
+    }
+
+    loadingData = () => {
+
+        const url = this.props.optionapp[0].serverUrl + "/SelectOptionSets.php";
+        this.setState({
+            flLoading: true,
+        })
+        fetch(url)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            this.props.onAdd(responseJson.optionsets);
+            this.setState({
+                dataSource: responseJson.optionsets,
+                flLoading: false,
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
 
     editCategory = (e) => {
         this.setState({
@@ -121,11 +146,11 @@ class OptionSets extends Component {
     
     render() {
 
-        const { searchString, currentEditOptionSets, dataSource } = this.state;
+        const { searchString, currentEditOptionSets, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
-            { title: 'Действие', key: 'operation', fixed: 'right', width: 100, render: (record) => <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
+            { title: 'Действие', key: 'operation', width: 100, render: (record) => <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">
             <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
             </a>
@@ -174,6 +199,8 @@ class OptionSets extends Component {
                             dataSource={!this.state.filtered ? this.props.optionSets : dataSource}
                             size="small"  
                             pagination={false}
+                            loading={flLoading}
+                            locale={{emptyText: 'Нет данных'}}
     
                         />,            
                     </TabPane>
@@ -207,17 +234,11 @@ class OptionSets extends Component {
 export default connect (
     state => ({
         optionSets: state.optionSets,
+        optionapp: state.optionapp,
     }),
     dispatch => ({
-        onDeleteCategory: (optionSetsData) => {
-            confirm({
-                title: 'Удалить набор опций?',
-                content: 'Будет удален набор опций',
-                onOk() {
-                    dispatch({ type: 'DELETE_OPTION_SETS', payload: optionSetsData});
-                    message.success('Набор опций удален'); 
-                },
-              });
-        },
+        onAdd: (data) => {
+            dispatch({ type: 'LOAD_OPTION_SETS_ALL', payload: data});
+          },
     })
   )(OptionSets);
