@@ -131,6 +131,11 @@ class DishesForm extends React.Component {
           width: '25%',
           editable: true,
         }, {
+          title: 'Изменение цены',
+          dataIndex: 'chPriceChange',
+          width: '25%',
+          editable: true,
+        }, {
           title: 'Действие',
           dataIndex: 'operation',
           render: (text, record) => {
@@ -179,6 +184,7 @@ class DishesForm extends React.Component {
           key: count.toString(),
           chName: 'Введите наименование',
           iSort: '100',
+          chPriceChange: '0',
         };
         this.setState({
           dataSource: [...dataSource, newData],
@@ -207,12 +213,18 @@ class DishesForm extends React.Component {
             var val = {};
             if (this.props.param) {
 
-              val = {
-                dataload: { 
-                  key: this.props.param,
+              const url = this.props.optionapp[0].serverUrl + "/EditProducts.php"; // изменяем категорию
+              fetch(url, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
                   idDishes: this.props.param,
-                  enShow: values.enShow.toString(),
-                  chName: values.chName,
+                  enShow: values.enShow ? "1" : "0",
                   chNamePrint: values.chNamePrint,
                   chSubtitle: values.chSubtitle,
                   chPrice: values.chPrice,
@@ -222,24 +234,46 @@ class DishesForm extends React.Component {
                   chOptionSets: values.chOptionSets,
                   chTags: values.chTags,
                   ingredients: this.state.dataSource,
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                val = {
+                  dataload: { 
+                    key: this.props.param,
+                    idDishes: this.props.param,
+                    enShow: values.enShow.toString(),
+                    chName: values.chName,
+                    chNamePrint: values.chNamePrint,
+                    chSubtitle: values.chSubtitle,
+                    chPrice: values.chPrice,
+                    chOldPrice: values.chOldPrice,
+                    chDescription: values.chDescription,
+                    iCategories: this.state.iCategories,
+                    chOptionSets: values.chOptionSets,
+                    chTags: values.chTags,
+                    ingredients: this.state.dataSource,
+                  }
                 }
-              }
+                this.props.onEdit(val);  // вызываем action
+                message.success('Блюдо изменено');
+                this.props.form.resetFields(); // ресет полей
 
-              
-              console.log(val);
-              
-              this.props.onEdit(val);  // вызываем action
-              message.success('Блюдо изменено');
-              this.props.form.resetFields(); // ресет полей
-              
+              }).catch((error) => {
+                  console.error(error);
+              });
 
             } else {
-              
-              val = {
-                dataload: { 
-                  key: generateKey(),
-                  idDishes: generateKey(),
-                  enShow: values.enShow.toString(),
+
+              const url = this.props.optionapp[0].serverUrl + "/InsertProducts.php"; // изменяем категорию
+              fetch(url, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
+                  enShow: values.enShow ? "1" : "0",
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
                   chSubtitle: values.chSubtitle,
@@ -250,20 +284,39 @@ class DishesForm extends React.Component {
                   chOptionSets: values.chOptionSets,
                   chTags: values.chTags,
                   ingredients: this.state.dataSource,
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                val = {
+                  dataload: { 
+                    key: responseJsonFromServer.toString(),
+                    idDishes: responseJsonFromServer.toString(),
+                    enShow: values.enShow.toString(),
+                    chName: values.chName,
+                    chNamePrint: values.chNamePrint,
+                    chSubtitle: values.chSubtitle,
+                    chPrice: values.chPrice,
+                    chOldPrice: values.chOldPrice,
+                    chDescription: values.chDescription,
+                    iCategories: this.state.iCategories,
+                    chOptionSets: values.chOptionSets,
+                    chTags: values.chTags,
+                    ingredients: this.state.dataSource,
+                  }
                 }
-              }
 
-              console.log(val);
-              
-              this.props.onAdd(val);  // вызываем action
-              message.success('Блюдо создано'); 
-              this.props.form.resetFields(); // ресет полей
-              this.setState({ 
-                count: 0,
-                iCategories: '',
-                chOptionSets: [],
-                chTags: [],
-                dataSource: [], 
+                this.props.onAdd(val);  // вызываем action
+                message.success('Блюдо создано'); 
+                this.props.form.resetFields(); // ресет полей
+                this.setState({ 
+                  count: 0,
+                  iCategories: '',
+                  chOptionSets: [],
+                  chTags: [],
+                  dataSource: [], 
+                });
+
+              }).catch((error) => {
+                  console.error(error);
               });
               
             }
@@ -314,6 +367,15 @@ class DishesForm extends React.Component {
       if(nextProps.param !== this.props.param) {
         this.props.form.setFieldsValue({
           'enShow': this.props.dishes.find(x => x.idDishes ===  nextProps.param).enShow === "true",
+          'chName': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chName,
+          'chNamePrint': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chNamePrint,
+          'chSubtitle': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chSubtitle,
+          'chPrice': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chPrice,
+          'chOldPrice': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chOldPrice,
+          'chDescription': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chDescription,
+          'iCategories': this.props.dishes.find(x => x.idDishes ===  this.props.param).iCategories,
+          'chOptionSets': this.props.dishes.find(x => x.idDishes ===  this.props.param).chOptionSets,
+          'chTags': this.props.dishes.find(x => x.idDishes ===  this.props.param).chTags,
         });
         this.setState(
           { 
@@ -492,10 +554,10 @@ class DishesForm extends React.Component {
                 initialValue: chOptionSets,
               })(
                 <Select
-                  mode="tags"
                   onChange={this.onChangeOptionSets}
                 >
-                {childrenOptionSets}
+                  <Option key="0">Выберите набор опций</Option>
+                  {childrenOptionSets}
               </Select>
               )}
             </FormItem>
@@ -526,6 +588,7 @@ class DishesForm extends React.Component {
                 dataSource={dataSource}
                 columns={columns}
                 pagination={false}
+                locale={{emptyText: 'Нет данных'}}
                 />
             </div>
 
@@ -549,6 +612,7 @@ export default connect (
       dishes: state.dishes,
       categories: state.categories,
       optionSets: state.optionSets,
+      optionapp: state.optionapp,
   }),
   dispatch => ({
     onAdd: (data) => {

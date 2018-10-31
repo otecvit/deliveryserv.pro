@@ -60,6 +60,40 @@ class Dishes extends Component {
         .catch((error) => {
           console.error(error);
         });
+
+
+        const urlCategories = this.props.optionapp[0].serverUrl + "/SelectCategories.php";
+        this.setState({
+            flLoading: true,
+        })
+        fetch(urlCategories)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            this.props.onAddCategories(responseJson.categories);
+            this.setState({
+                flLoading: false,
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+        const urlOptionSets = this.props.optionapp[0].serverUrl + "/SelectOptionSets.php";
+        this.setState({
+            flLoading: true,
+        })
+        fetch(urlOptionSets)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            this.props.onAddOptionSets(responseJson.optionsets);
+            this.setState({
+                flLoading: false,
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
     }
 
     editCategory = (e) => {
@@ -235,5 +269,12 @@ export default connect (
         onAdd: (data) => {
             dispatch({ type: 'LOAD_DISHES_ALL', payload: data});
           },
+        onAddCategories: (data) => {
+            dispatch({ type: 'LOAD_CATEGORIES_ALL', payload: data});
+          },
+        onAddOptionSets: (data) => {
+            dispatch({ type: 'LOAD_OPTION_SETS_ALL', payload: data});
+          },          
+          
     })
   )(Dishes);
