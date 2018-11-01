@@ -183,7 +183,7 @@ class Dishes extends Component {
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
-            { title: 'Действие', key: 'operation', fixed: 'right', width: 100, render: (record) => <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
+            { title: 'Действие', key: 'operation', width: 100, render: (record) => <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">
             <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
             </a>
@@ -217,12 +217,47 @@ class Dishes extends Component {
                         <Table
                             columns={columns}
                             expandedRowRender={record => 
-                                <div style={{ margin: 0 }}>
-                                    <div>Активность: {record.description}</div>
-                                    <div>Отображаемое имя: </div>
-                                    Обязательный набор:
-                                    Множественный выбор:
-
+                                <div className="d-table">
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Активность</div>
+                                        <div className="d-td content-detail">{record.enShow === "true" ? "Да" : "Нет"}</div>
+                                    </div>                                    
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Категория</div>
+                                        <div className="d-td content-detail">{this.props.categories.find(x => x.idCategories ===  record.iCategories).chName}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Отображаемое имя</div>
+                                        <div className="d-td content-detail">{record.chNamePrint}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Подзаголовок</div>
+                                        <div className="d-td content-detail">{record.chSubtitle}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Цена</div>
+                                        <div className="d-td content-detail">{record.chPrice}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Старая цена</div>
+                                        <div className="d-td content-detail">{record.chOldPrice}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Описание</div>
+                                        <div className="d-td content-detail">{record.chDescription}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Набор</div>
+                                        <div className="d-td content-detail">{record.chOptionSets !== "0" ? this.props.optionsets.find(x => x.idOptionSets ===  record.chOptionSets).chName : ""}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Тэги</div>
+                                        <div className="d-td content-detail"></div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Ингридиенты</div>
+                                        <div className="d-td content-detail">{record.ingredients.map((item, index) => <div key={index}>{item.chName}</div>)}</div>
+                                    </div>
                                 </div>
                                 }
                             dataSource={!this.state.filtered ? this.props.dishes : dataSource}
@@ -263,6 +298,8 @@ class Dishes extends Component {
 export default connect (
     state => ({
         dishes: state.dishes,
+        categories: state.categories,
+        optionsets: state.optionSets,
         optionapp: state.optionapp,
     }),
     dispatch => ({

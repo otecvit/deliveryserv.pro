@@ -25,6 +25,7 @@ class Menus extends Component {
           currentEditOptionSets: "0",
           filtered: false,
           dataSource: {},
+          flLoading: true, // спиннер загрузки
         };
     }
 
@@ -120,7 +121,7 @@ class Menus extends Component {
     
     render() {
 
-        const { searchString, currentEditOptionSets, dataSource } = this.state;
+        const { searchString, currentEditOptionSets, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
@@ -169,6 +170,9 @@ class Menus extends Component {
                             dataSource={!this.state.filtered ? this.props.menus : dataSource}
                             size="small"  
                             pagination={false}
+                            loading={flLoading}
+                            locale={{emptyText: 'Нет данных'}}
+    
     
                         />,            
                     </TabPane>

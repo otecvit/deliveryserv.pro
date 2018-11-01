@@ -225,6 +225,7 @@ class DishesForm extends React.Component {
                 {
                   idDishes: this.props.param,
                   enShow: values.enShow ? "1" : "0",
+                  chName: values.chName,
                   chNamePrint: values.chNamePrint,
                   chSubtitle: values.chSubtitle,
                   chPrice: values.chPrice,
@@ -254,7 +255,7 @@ class DishesForm extends React.Component {
                   }
                 }
                 this.props.onEdit(val);  // вызываем action
-                message.success('Блюдо изменено');
+                message.success('Товар изменен');
                 this.props.form.resetFields(); // ресет полей
 
               }).catch((error) => {
@@ -305,7 +306,7 @@ class DishesForm extends React.Component {
                 }
 
                 this.props.onAdd(val);  // вызываем action
-                message.success('Блюдо создано'); 
+                message.success('Товар создан'); 
                 this.props.form.resetFields(); // ресет полей
                 this.setState({ 
                   count: 0,
@@ -325,12 +326,31 @@ class DishesForm extends React.Component {
       }
 
       DeleteDishes = () => {
-      var val = {
-          idDishes: this.props.param,
-      }
-      this.props.onDeleteOptionSet(val);  // вызываем action
-      this.props.handler();
-      message.success('Набор опций удален'); 
+        const url = this.props.optionapp[0].serverUrl + "/DeleteProducts.php"; // удаление
+        fetch(url,
+          {
+              method: 'POST',
+              headers: 
+              {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(
+              {
+                idDishes: this.props.param
+             })
+          }).then((response) => response.json()).then((responseJsonFromServer) =>
+          {
+              var val = {
+                idDishes: this.props.param,
+              }
+              this.props.onDelete(val);  // вызываем action
+          }).catch((error) =>
+          {
+              console.error(error);
+          });
+          message.success('Товар удалена'); 
+          this.props.handler();
     }
 
 
@@ -430,8 +450,8 @@ class DishesForm extends React.Component {
               borderBottomWidth: "1px", 
               borderBottomColor: "#cecece",
                }}>
-               <h4>Удалить блюдо</h4>
-               <Popconfirm title="Удалить блюдо?" onConfirm={() => this.DeleteDishes()} okText="Да" cancelText="Нет">
+               <h4>Удалить товар</h4>
+               <Popconfirm title="Удалить товар?" onConfirm={() => this.DeleteDishes()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>
@@ -456,10 +476,10 @@ class DishesForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chName', {
-                rules: [{ required: true, message: 'Введите наименование блюда' }],
+                rules: [{ required: true, message: 'Введите наименование товара' }],
                 initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chName : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Наименование блюда" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Наименование товара" />
               )}
             </FormItem>
             <FormItem
@@ -495,7 +515,7 @@ class DishesForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chPrice', {
-                rules: [{ required: true, message: 'Введите стоимость блюда' }],
+                rules: [{ required: true, message: 'Введите стоимость товара' }],
                 initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chPrice : ""
               })(
                 <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Цена" />
@@ -621,8 +641,8 @@ export default connect (
     onEdit: (data) => {
       dispatch({ type: 'EDIT_DISHES', payload: data});
     },
-    onDeleteOptionSet: (optionSetsData) => {
-      dispatch({ type: 'DELETE_OPTION_SETS', payload: optionSetsData});
+    onDelete: (optionSetsData) => {
+      dispatch({ type: 'DELETE_DISHES', payload: optionSetsData});
     },
   })
 )(WrappedNormalLoginForm);

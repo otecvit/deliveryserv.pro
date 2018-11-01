@@ -308,12 +308,32 @@ class OptionSetsForm extends React.Component {
       }
 
       DeleteOption = () => {
-      var val = {
-          idOptionSets: this.props.param,
-      }
-      this.props.onDeleteOptionSet(val);  // вызываем action
-      this.props.handler();
-      message.success('Набор опций удален'); 
+
+        const url = this.props.optionapp[0].serverUrl + "/DeleteOptionSets.php"; // удаление
+        fetch(url,
+          {
+              method: 'POST',
+              headers: 
+              {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(
+              {
+                idOptionSets: this.props.param
+             })
+          }).then((response) => response.json()).then((responseJsonFromServer) =>
+          {
+              var val = {
+                idOptionSets: this.props.param,
+              }
+              this.props.onDelete(val);  // вызываем action
+          }).catch((error) =>
+          {
+              console.error(error);
+          });
+          message.success('Набор опций удален'); 
+          this.props.handler();
     }
 
     onChangeMultiple = (checked) => {
@@ -478,6 +498,7 @@ class OptionSetsForm extends React.Component {
                 columns={columns}
                 pagination={false}
                 {...stateSelection}
+                locale={{emptyText: 'Нет данных'}}
                 
                 />
             </div>
@@ -509,7 +530,7 @@ export default connect (
     onEditOptionSets: (optionSetsData) => {
       dispatch({ type: 'EDIT_OPTION_SETS', payload: optionSetsData});
     },
-    onDeleteOptionSet: (optionSetsData) => {
+    onDelete: (optionSetsData) => {
       dispatch({ type: 'DELETE_OPTION_SETS', payload: optionSetsData});
     },
   })
