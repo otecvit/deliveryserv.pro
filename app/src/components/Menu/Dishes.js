@@ -40,6 +40,7 @@ class Dishes extends Component {
 
     componentDidMount() {
         this.loadingData();
+        
     }
 
     loadingData = () => {
@@ -61,6 +62,8 @@ class Dishes extends Component {
           console.error(error);
         });
 
+        
+        
 
         const urlCategories = this.props.optionapp[0].serverUrl + "/SelectCategories.php";
         this.setState({
@@ -189,7 +192,6 @@ class Dishes extends Component {
             </a>
           </Dropdown>},
         ];
-
 
         const options = this.props.dishes.map(item => <Option key={item.idDishes}>{item.chName}</Option>);
 
