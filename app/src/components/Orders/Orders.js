@@ -248,7 +248,7 @@ class Dishes extends Component {
                     <div style={{ textAlign: 'center' }}>
                         {moment(record, "DD.MM.YYYY HH:mm", true).isValid() ? 
                         <div>
-                            <div style={{ fontSize: '13px' }}>к {record.split(' ')[1]}</div>
+                            <div style={{ fontSize: '16px' }}>к {record.split(' ')[1]}</div>
                             <div style={{ fontSize: '13px' }}>{record.split(' ')[0]}</div>
                         </div> : 
                         <div style={{ fontSize: '13px' }}>{record}</div>}

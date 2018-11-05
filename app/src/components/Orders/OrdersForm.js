@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Button, Modal, Form, Input, Radio, Select, message, Tabs, Cascader, DatePicker  } from 'antd';
+import { Button, Modal, Form, Input, Radio, Select, message, Tabs, Table, DatePicker  } from 'antd';
 import { Row, Col } from 'antd';
 import moment from 'moment';
 
@@ -35,23 +35,80 @@ const CollectionCreateForm = Form.create()(
 
         this.state = {
           currentStatus: this.props.param ? "status-" + this.props.param.iStatus : "status-0",
+          chStatusName: this.getStatusName(this.props.param.iStatus),
+          dataSource: [],
         };
       }
 
     onChangeStatus = (e) => {
         this.props.onCreate(e); 
-        this.setState({currentStatus: "status-" + e});
+        this.setState({
+          currentStatus: "status-" + e,
+          chStatusName: this.getStatusName(e),
+        });
         message.success("Статус заказа изменен");
     }
+
+  getStatusName = (e) => {
+    switch (e) {
+      case "0": return "Не подтвержден"; // не подтвержден 
+      case "1": return "Подтвержден"; // подтвердил
+      case "2": return "Приготовлен";  // готов
+      case "3": return "В пути"; // в пути
+      case "4": return "Выполнен"; // выполнен
+      case "5": return "Отменен"; // отменен
+   };
+  }
+
+    componentDidMount() {
+      console.log(this.props.param);
+      
+      
+      const url = "http://mircoffee.by/deliveryserv/app/api/admin/SelectOrdersDetail.php";
+
+      fetch(url, 
+        {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              idOrder: this.props.param.idOrder
+           })
+        })
+      .then((response) => response.json())
+      .then((responseJson) => {
+          
+          
+          this.setState({
+            dataSource: responseJson.ordersdetail,
+          })
+          
+          console.log(this.state.dataSource);
+          //this.checkCountOrder(responseJson.orders_count);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+      
+      
+  }
 
     
     render() {
       const { visible, onCancel, onCreate, form } = this.props;
-      const { currentStatus } = this.state;
+      const { currentStatus, chStatusName, dataSource } = this.state;
       const { getFieldDecorator } = form;
       const labelColSpan = 8;
       const wrapperColSpan = 16;
       const dateFormat = 'DD.MM.YYYY';
+      const columns = [
+        { title: 'Товар', dataIndex: 'chNameProduct', key: 'chNameProduct' },
+        { title: 'Цена', dataIndex: 'chPriceProduct', key: 'chPriceProduct' },
+      ];
        
       return (
         <Modal
@@ -89,39 +146,41 @@ const CollectionCreateForm = Form.create()(
                     </FormItem>
  
           <Tabs defaultActiveKey="1">
+            
+
             <TabPane tab="Подробности" key="1">
               <div className="d-table">
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Статус</div>
-                  <div className="d-td content-modal-orders">lorem</div>
+                  <div className="d-td content-modal-orders">{chStatusName}</div>
                 </div>
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Номер заказа</div>
-                  <div className="d-td content-modal-orders">lorem</div>
+                  <div className="d-td content-modal-orders">{this.props.param.idOrder}</div>
                 </div>
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Дата заказа</div>
-                  <div className="d-td content-modal-orders">lorem</div>
+                  <div className="d-td content-modal-orders">{this.props.param.chPlaced}</div>
                 </div>
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Время доставки</div>
-                  <div className="d-td content-modal-orders">lorem</div>
+                  <div className="d-td content-modal-orders">{this.props.param.chDue}</div>
                 </div>
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Способ оплаты</div>
-                  <div className="d-td content-modal-orders">lorem</div>
+                  <div className="d-td content-modal-orders">{this.props.param.chPaymentMethod}</div>
                 </div>
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Подтверждение</div>
-                  <div className="d-td content-modal-orders">lorem</div>
+                  <div className="d-td content-modal-orders">{this.props.param.chMethodConfirmation}</div>
                 </div>
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Адрес доставки</div>
-                  <div className="d-td content-modal-orders">lorem</div>
+                  <div className="d-td content-modal-orders">{this.props.param.chAddress}</div>
                 </div>
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Комментарий</div>
-                  <div className="d-td content-modal-orders">lorem</div>
+                  <div className="d-td content-modal-orders">{this.props.param.chComment}</div>
                 </div>
               </div>
             </TabPane>
@@ -129,16 +188,22 @@ const CollectionCreateForm = Form.create()(
               <div className="d-table">
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Имя</div>
-                  <div className="d-td content-modal-orders">lorem</div>
+                  <div className="d-td content-modal-orders">{this.props.param.chNameClient}</div>
                 </div>
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Номер телефона</div>
-                  <div className="d-td content-modal-orders">lorem</div>
+                  <div className="d-td content-modal-orders">{this.props.param.chPhone}</div>
                 </div>
               </div>
             </TabPane>
             <TabPane tab="Заказ" key="3">
-
+              <Table
+                          columns={columns}
+                          dataSource={dataSource}
+                          size="small"  
+                          pagination={false}
+                          locale={{emptyText: 'Нет данных'}}
+                      />,            
             </TabPane>
           </Tabs>
           </Form>

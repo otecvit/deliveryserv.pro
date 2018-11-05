@@ -20,7 +20,6 @@ class test extends Component {
     }
 
     componentDidMount() {
-        //const proxyurl = "https://cors-anywhere.herokuapp.com/";
         const url = "http://mircoffee.by/deliveryserv/app/SelectCountOrders.php";
 
         fetch(url)
@@ -48,12 +47,12 @@ class test extends Component {
         return (
             <div>
                 
-               {/* this.state.playSound ? <Sound
+               { this.state.playSound ? <Sound
                 url="http://mircoffee.by/deliveryserv/app/sound/new_order.mp3"
                 playStatus={Sound.status.PLAYING} 
                 
                  /> : null
-               */}
+               }
             </div>
             );        
     }
