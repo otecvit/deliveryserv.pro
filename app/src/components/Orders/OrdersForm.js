@@ -105,10 +105,32 @@ const CollectionCreateForm = Form.create()(
       const labelColSpan = 8;
       const wrapperColSpan = 16;
       const dateFormat = 'DD.MM.YYYY';
-      const columns = [
-        { title: 'Товар', dataIndex: 'chNameProduct', key: 'chNameProduct' },
-        { title: 'Цена', dataIndex: 'chPriceProduct', key: 'chPriceProduct' },
+      /*
+      const columns = [{ 
+          title: 'Товар', 
+          dataIndex: 'chNameProduct', 
+          key: 'chNameProduct',
+          className: 'header-left',
+          render: (record) => {
+            return (
+            <div style={{ textAlign: 'left' }}>
+                <div style={{ fontSize: '13px' }}>{record}</div>
+            </div>);
+        }
+        },{ 
+          title: 'Цена', 
+          dataIndex: 'chPriceProduct', 
+          key: 'chPriceProduct',
+          className: 'header-right',
+          render: (record) => {
+            return (
+            <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '13px' }}>{record}</div>
+            </div>);
+          }
+        },
       ];
+      */
        
       return (
         <Modal
@@ -197,13 +219,46 @@ const CollectionCreateForm = Form.create()(
               </div>
             </TabPane>
             <TabPane tab="Заказ" key="3">
-              <Table
-                          columns={columns}
-                          dataSource={dataSource}
-                          size="small"  
-                          pagination={false}
-                          locale={{emptyText: 'Нет данных'}}
-                      />,            
+              <div className="d-table">
+                <Row className="header-order-details">
+                  <Col span={2}>№</Col>
+                  <Col span={18}>Товар</Col>
+                  <Col span={4} style={{textAlign: "right"}}>Цена</Col>
+                </Row>
+                {dataSource.map( (item, index) => {
+                  return (
+                    <div key={index}>
+                      <Row className="order-details-content">
+                        <Col span={2}>{index + 1}</Col>
+                        <Col span={18}>
+                          {item.chNameProduct}
+                          {item.arrOption.length ? 
+                            <ul className="no-bottom">
+                              {item.arrOption.map( d => <li key={d.key}>{d.chOption}</li>)}
+                            </ul> : null}
+                        </Col>
+                        <Col span={4} style={{textAlign: "right"}}>
+                          {Number(item.chPriceProduct).toFixed(2)}
+                          {item.arrOption.length ? 
+                            <div>
+                              {item.arrOption.map( d => <div key={d.key}>+{Number(d.chChangePrice).toFixed(2)}</div>)}
+                            </div> : null}
+                        </Col>
+                      </Row>
+                      <Row className="order-details-subtotal">
+                        <Col span={2}></Col>
+                        <Col span={18}>Итого за товар</Col>
+                        <Col span={4} style={{textAlign: "right"}}>{item.arrOption.length ? Number(item.arrOption.map( d => Number(d.chChangePrice)).reduce((a, b) => a + b, Number(item.chPriceProduct))).toFixed(2) : Number(item.chPriceProduct).toFixed(2)}</Col>
+                      </Row>
+                    </div>
+                  );
+                })}
+                <Row className="header-order-total">
+                  <Col span={2}></Col>
+                  <Col span={18}>Итого сумма заказа, BYN</Col>
+                  <Col span={4} style={{textAlign: "right"}}>{Number(this.props.param.chOrderPrice).toFixed(2)}</Col>
+                </Row>
+              </div>
             </TabPane>
           </Tabs>
           </Form>

@@ -144,3 +144,29 @@ thead[class*="ant-table-thead"] th{
 .ant-table-small > .ant-table-content > .ant-table-body {
   margin: 0px;
 }
+
+.header-order-details {
+  font-weight: bold;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.no-bottom {
+  margin-bottom: 0px;
+}
+
+.order-details-subtotal {
+  border-top: 1px dashed #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+  font-weight: 600;
+  padding: 5px 0;
+}
+
+.order-details-content {
+  padding: 2px 0;
+}
+
+.header-order-total {
+  padding: 5px 0;
+  font-weight: 800;
+  font-size: 16px;
+}

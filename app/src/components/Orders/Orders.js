@@ -276,7 +276,7 @@ class Dishes extends Component {
                     //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
                     <div style={{ textAlign: 'center', fontSize: '15px', fontWeight: 'bold' }}>
-                           {record} BYN
+                           {Number(record).toFixed(2)} BYN
                     </div>);
                 }
             },{ 
