@@ -15,6 +15,7 @@ import 'antd/dist/antd.css';
 import './index.css';
 
 import allReducers from './reducers/index';
+import Startup from './components/Startup';
 import Dashboard from './components/Dashboard';
 import SiderMenu from './components/SiderMenu';
 import Categories from './components/Menu/Categories';
@@ -22,6 +23,8 @@ import OptionSets from './components/Menu/OptionSets';
 import Dishes from './components/Menu/Dishes';
 import Menus from './components/Menu/Menus';
 import Orders from './components/Orders/Orders';
+import Customers from './components/Customers/Customers';
+
 
 import СheckNewOrder from './components/СheckNewOrder';
 
@@ -53,6 +56,7 @@ const ContentPage =
     <Route exact path="/dishes" component={Dishes}/>
     <Route exact path="/menus" component={Menus}/>
     <Route exact path="/orders" component={Orders}/>
+    <Route exact path="/customers" component={Customers}/>
 </div>
 ;
 
@@ -73,20 +77,14 @@ class MainClass extends React.Component {
     }
     
     getItems() {
-      //console.log("+");
       this.setState({loadStatus: !this.state.loadStatus})
-        
-      /*
-      fetch(this.getEndpoint('api url endpoint"))
-        .then(result => result.json())
-        .then(result => this.setState({ items: result }));
-        */
     }
 
     render() {
       
         return (
           <Layout style={{ minHeight: '100vh' }}>
+              <Startup/>
               <SiderMenu/>
               {this.state.loadStatus ? <СheckNewOrder/> : null}
             <Layout>

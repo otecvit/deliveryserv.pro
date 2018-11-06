@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Row, Col, Select, message, Popconfirm, Modal, Alert  } from 'antd';
 import moment from 'moment';
 
-import OrdersForm from './OrdersForm';
+import OrdersForm from './CustomersForm';
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -14,7 +14,7 @@ const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
   }
 
-class Orders extends Component {
+class Customers extends Component {
     
     constructor(props) {
         super(props);
@@ -330,8 +330,8 @@ class Orders extends Component {
             <Content style={{ background: '#fff'}}>
                 <div style={{ padding: 10 }}>
                     <Row type="flex" justify="space-around" align="middle">
-                        <Col span={1}><IconFont type="icon-orders" style={{ fontSize: '36px'}}/></Col>
-                        <Col span={23}><div className="title-section">Заказы</div></Col>
+                        <Col span={1}><Icon type="team" style={{ fontSize: '36px'}}/></Col>
+                        <Col span={23}><div className="title-section">Клиенты</div></Col>
                     </Row>
                 </div>
             </Content>
@@ -380,4 +380,4 @@ export default connect (
             dispatch({ type: 'EDIT_OPTIONAPP_CONTROL_ORDER', payload: data});
           },
     })
-  )(Orders);
+  )(Customers);

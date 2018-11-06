@@ -1,7 +1,9 @@
 const initialState = [
     {
         newOrderCount: 0,
+        allOrderCount: 0,
         serverUrl: "http://mircoffee.by/deliveryserv/app/api/admin",
+        scriptIconUrl: "//at.alicdn.com/t/font_888167_i3326h60oi.js",
     },       
 ];
 
@@ -30,6 +32,8 @@ export default function optionapp (state = initialState, action) {
 
         case "EDIT_OPTIONAPP_CONTROL_ORDER": 
         // проходим по основному state
+       
+        
         const updatedCountOrder = state.map(item => {
             return {...item, ...action.payload};
         });

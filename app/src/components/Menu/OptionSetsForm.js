@@ -236,9 +236,7 @@ class OptionSetsForm extends React.Component {
                   options: options,
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
-
-                console.log(responseJsonFromServer);
-                
+               
                 val = {
                   dataload: { 
                     key: this.props.param,

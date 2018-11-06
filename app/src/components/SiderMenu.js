@@ -26,7 +26,7 @@ class SiderMenu extends Component {
             <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
                 <Menu.Item key="1"><Link to="/"><Icon type="home" /><span>Рабочий стол</span></Link></Menu.Item>
                 <Menu.Item key="2"><Link to="orders"><Icon type="block" /><span>Заказы</span></Link></Menu.Item>
-                <Menu.Item key="3"><Icon type="team" /><span>Клиенты</span></Menu.Item>
+                <Menu.Item key="3"><Link to="customers"><Icon type="team" /><span>Клиенты</span></Link></Menu.Item>
                 <Menu.Item key="4"><Icon type="environment" /><span>Рестораны</span></Menu.Item>
                 <SubMenu key="sub1" title={<span><Icon type="bars" /><span>Меню</span></span>}>
                     <Menu.Item key="5"><Link to="menus">Меню</Link></Menu.Item>

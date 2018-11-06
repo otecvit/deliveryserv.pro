@@ -28,7 +28,8 @@ thead[class*="ant-table-thead"] th{
 .status-2 .ant-modal-title,
 .status-3 .ant-modal-title,
 .status-4 .ant-modal-title,
-.status-5 .ant-modal-title {
+.status-5 .ant-modal-title,
+.status-6 .ant-modal-title {
   color: #fff;
   font-size: 20px;
 }
@@ -38,7 +39,8 @@ thead[class*="ant-table-thead"] th{
 .status-2 .ant-modal-close,
 .status-3 .ant-modal-close,
 .status-4 .ant-modal-close,
-.status-5 .ant-modal-close {
+.status-5 .ant-modal-close,
+.status-6 .ant-modal-close {
   color: #fff;
 }
 
@@ -47,48 +49,77 @@ thead[class*="ant-table-thead"] th{
 }
 
 .status-1 .ant-modal-header {
-  background: #b7d024;
+  background: #efbb1e;
 }
 
 .status-2 .ant-modal-header {
-  background: #0080ff;
+  background: #b7d024;
 }
 
 .status-3 .ant-modal-header {
-  background: #00bfff;
+  background: #0080ff;
 }
 
 .status-4 .ant-modal-header {
-  background: #51a351;
+  background: #00bfff;
 }
 
 .status-5 .ant-modal-header {
+  background: #51a351;
+}
+
+.status-6 .ant-modal-header {
   background: #bd362f;
 }
 
 
 .border-status-0 {
-  border-left: #efbb1e 2px solid;
+  border-left: #efbb1e 8px solid;
+  background: #e6f7ff;
 }
 
 .border-status-1 {
-  border-left: #b7d024 2px solid;
+  border-left: #efbb1e 2px solid;
+  
 }
 
 .border-status-2 {
-  border-left: #0080ff 2px solid;
+  border-left: #b7d024 2px solid;
 }
 
 .border-status-3 {
-  border-left: #00bfff 2px solid;
+  border-left: #0080ff 2px solid;
 }
 
 .border-status-4 {
-  border-left: #51a351 2px solid;
+  border-left: #00bfff 2px solid;
 }
 
 .border-status-5 {
+  border-left: #51a351 2px solid;
+}
+
+.border-status-6 {
   border-left: #bd362f 2px solid;
+}
+
+.border-status-1,
+.border-status-2,
+.border-status-3,
+.border-status-4,
+.border-status-5,
+.border-status-6 {
+  background: none;
+}
+
+.border-status-0,
+.border-status-1,
+.border-status-2,
+.border-status-3,
+.border-status-4,
+.border-status-5,
+.border-status-6 {
+  cursor: pointer;
 }
 
 .ant-table-fixed .border-status-0,
@@ -96,9 +127,12 @@ thead[class*="ant-table-thead"] th{
 .ant-table-fixed .border-status-2,
 .ant-table-fixed .border-status-3,
 .ant-table-fixed .border-status-4,
-.ant-table-fixed .border-status-5 {
+.ant-table-fixed .border-status-5,
+.ant-table-fixed .border-status-6 {
   border-left: none;
 }
+
+
 
 .d-table{
   display: table;
@@ -169,4 +203,21 @@ thead[class*="ant-table-thead"] th{
   padding: 5px 0;
   font-weight: 800;
   font-size: 16px;
+}
+
+.alert-order .ant-alert-close-icon {
+  font-size: 14px;
+  position: initial;
+  border-bottom: 1px dashed #000000a6;
+  color: #000000a6;
+  margin-left: 5px;
+}
+
+.alert-order .ant-alert-close-icon:hover {
+  border-bottom: none;
+}
+
+.title-section {
+  font-size: 18px;
+  font-weight: 500;
 }

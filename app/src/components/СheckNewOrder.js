@@ -20,7 +20,7 @@ class test extends Component {
     }
 
     componentDidMount() {
-        const url = "http://mircoffee.by/deliveryserv/app/SelectCountOrders.php";
+        const url = this.props.optionapp[0].serverUrl + "/SelectCountOrders.php";
 
         fetch(url)
         .then((response) => response.json())
@@ -35,9 +35,12 @@ class test extends Component {
     }
 
     checkCountOrder = (newCount) => {
-        console.log(this.props.optionapp[0].newOrderCount);
-        if (this.props.optionapp[0].newOrderCount !== newCount) {
-            this.props.onControlOrder({newOrderCount: newCount});
+        if (this.props.optionapp[0].allOrderCount !== Number(newCount)) {
+            const allOrder = Number(newCount) - this.props.optionapp[0].allOrderCount + this.props.optionapp[0].newOrderCount;
+            this.props.onControlOrder({
+                allOrderCount: Number(newCount),
+                newOrderCount: allOrder
+            });
             this.setState ({playSound: true});
         }  
     }

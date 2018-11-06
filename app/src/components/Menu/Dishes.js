@@ -62,9 +62,6 @@ class Dishes extends Component {
           console.error(error);
         });
 
-        
-        
-
         const urlCategories = this.props.optionapp[0].serverUrl + "/SelectCategories.php";
         this.setState({
             flLoading: true,
