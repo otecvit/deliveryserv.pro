@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Layout, Menu, Icon } from 'antd';
 const { Sider } = Layout;
@@ -16,6 +17,10 @@ class SiderMenu extends Component {
     }
 
     render() {
+        const IconFont = Icon.createFromIconfontCN({
+            scriptUrl: this.props.optionapp[0].scriptIconUrl,
+          });
+
         return (
             <Sider
                 collapsible
@@ -25,10 +30,10 @@ class SiderMenu extends Component {
             <div className="logo" />
             <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
                 <Menu.Item key="1"><Link to="/"><Icon type="home" /><span>Рабочий стол</span></Link></Menu.Item>
-                <Menu.Item key="2"><Link to="orders"><Icon type="block" /><span>Заказы</span></Link></Menu.Item>
+                <Menu.Item key="2"><Link to="orders"><IconFont type="icon-orders"/><span>Заказы</span></Link></Menu.Item>
                 <Menu.Item key="3"><Link to="customers"><Icon type="team" /><span>Клиенты</span></Link></Menu.Item>
                 <Menu.Item key="4"><Icon type="environment" /><span>Рестораны</span></Menu.Item>
-                <SubMenu key="sub1" title={<span><Icon type="bars" /><span>Меню</span></span>}>
+                <SubMenu key="sub1" title={<span><IconFont type="icon-cutlery"/><span>Меню</span></span>}>
                     <Menu.Item key="5"><Link to="menus">Меню</Link></Menu.Item>
                     <Menu.Item key="6"><Link to="categories">Категории</Link></Menu.Item>
                     <Menu.Item key="7"><Link to="dishes">Товары</Link></Menu.Item>
@@ -52,6 +57,11 @@ class SiderMenu extends Component {
         );        
     }
 }
+export default connect (
+    state => ({
+        optionapp: state.optionapp,
+    }),
+  )(SiderMenu);
 
-export default SiderMenu;
+
 

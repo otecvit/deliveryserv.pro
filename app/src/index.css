@@ -4,6 +4,14 @@ body {
   font-family: sans-serif;
 }
 
+.ant-layout-header {
+  line-height: 30px;
+}
+
+.ant-divider-horizontal {
+  margin: 15px 0;
+}
+
 .editable-cell {
   position: relative;
 }
@@ -118,7 +126,8 @@ thead[class*="ant-table-thead"] th{
 .border-status-3,
 .border-status-4,
 .border-status-5,
-.border-status-6 {
+.border-status-6,
+.cursor-pointer {
   cursor: pointer;
 }
 

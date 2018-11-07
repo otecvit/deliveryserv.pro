@@ -18,6 +18,7 @@ import allReducers from './reducers/index';
 import Startup from './components/Startup';
 import Dashboard from './components/Dashboard';
 import SiderMenu from './components/SiderMenu';
+import HeaderStatus from './components/HeaderStatus';
 import Categories from './components/Menu/Categories';
 import OptionSets from './components/Menu/OptionSets';
 import Dishes from './components/Menu/Dishes';
@@ -88,7 +89,12 @@ class MainClass extends React.Component {
               <SiderMenu/>
               {this.state.loadStatus ? <СheckNewOrder/> : null}
             <Layout>
-              <Header style={{ background: '#fff', padding: 0 }} />
+              <Header style={{ background: '#fff', padding: 0 }}>
+                <div style={{ padding: 16 }}>
+                  <HeaderStatus />
+                </div>
+                
+              </Header>
               <Content>
                 <div style={{ padding: 16, minHeight: 360 }}>
                  {ContentPage}

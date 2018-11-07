@@ -2,8 +2,9 @@ const initialState = [
     {
         newOrderCount: 0,
         allOrderCount: 0,
+        statusCloud: 0,
         serverUrl: "http://mircoffee.by/deliveryserv/app/api/admin",
-        scriptIconUrl: "//at.alicdn.com/t/font_888167_i3326h60oi.js",
+        scriptIconUrl: "//at.alicdn.com/t/font_888167_w085099ql3h.js",
     },       
 ];
 
@@ -31,14 +32,17 @@ export default function optionapp (state = initialState, action) {
         return updatedRootItems;
 
         case "EDIT_OPTIONAPP_CONTROL_ORDER": 
-        // проходим по основному state
-       
+          const updatedCountOrder = state.map(item => {
+              return {...item, ...action.payload};
+          });
+          return updatedCountOrder;
+
+        case "CHANGE_OPTIONAPP_CLOUD_STATUS": 
+          const updatedCloudStatus = state.map(item => {
+              return {...item, ...action.payload};
+          });
+          return updatedCloudStatus;
         
-        const updatedCountOrder = state.map(item => {
-            return {...item, ...action.payload};
-        });
-    
-        return updatedCountOrder;
 
         case "DELETE_OPTIONAPP": 
           return state.filter(optionset => optionset.idDishes !== action.payload.idDishes );

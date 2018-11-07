@@ -26,11 +26,12 @@ class test extends Component {
         .then((response) => response.json())
         .then((responseJson) => {
             this.checkCountOrder(responseJson.orders_count);
+            this.props.changeStatus({ statusCloud: 1});
         })
         .catch((error) => {
-          console.error(error);
+            this.props.changeStatus({ statusCloud: 0});
+            console.error(error);
         });
-       
         
     }
 
@@ -68,6 +69,9 @@ export default connect (
     dispatch => ({
         onControlOrder: (data) => {
             dispatch({ type: 'EDIT_OPTIONAPP_CONTROL_ORDER', payload: data});
+          },
+        changeStatus: (data) => {
+            dispatch({ type: 'CHANGE_OPTIONAPP_CLOUD_STATUS', payload: data});
           },
     })
   )(test);

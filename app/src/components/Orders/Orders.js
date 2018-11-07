@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Row, Col, Select, message, Popconfirm, Modal, Alert  } from 'antd';
+import { Layout, Tabs, Avatar, Icon, Table, Menu, Dropdown, Row, Col, Select, message, Popconfirm, Modal, Alert  } from 'antd';
 import moment from 'moment';
 
 import OrdersForm from './OrdersForm';
@@ -213,7 +213,7 @@ class Orders extends Component {
 
                     return (
                         <div style={{ textAlign: 'center' }}>
-                            <IconFont type="icon-delivery" style={{ fontSize: '36px', color: color }}/>
+                            <Avatar style={{ backgroundColor: color, verticalAlign: 'middle'}} size="large"><IconFont type="icon-Delivery_" style={{ fontSize: '25px', color: "#fff" }}/></Avatar>
                         </div>
                     )
                 }
@@ -329,10 +329,7 @@ class Orders extends Component {
         return (<div>
             <Content style={{ background: '#fff'}}>
                 <div style={{ padding: 10 }}>
-                    <Row type="flex" justify="space-around" align="middle">
-                        <Col span={1}><IconFont type="icon-orders" style={{ fontSize: '36px'}}/></Col>
-                        <Col span={23}><div className="title-section">Заказы</div></Col>
-                    </Row>
+                    <div className="title-section"><IconFont type="icon-orders" style={{ fontSize: '20px', marginRight: "10px"}}/>Заказы</div>
                 </div>
             </Content>
             

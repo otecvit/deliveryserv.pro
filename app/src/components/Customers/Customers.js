@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Row, Col, Select, message, Popconfirm, Modal, Alert  } from 'antd';
+import { Layout, Tabs, Avatar , Icon, Table, Menu, Dropdown, Row, Col, Select, message, Popconfirm, Modal, Alert  } from 'antd';
 import moment from 'moment';
 
 import OrdersForm from './CustomersForm';
@@ -22,7 +22,6 @@ class Customers extends Component {
 
         this.state = {
             dataSource: [],
-            newOrderCount: this.props.optionapp[0].newOrderCount,
             flLoading: true,
             showOrders: false,
             openDropMenu: false,
@@ -40,7 +39,7 @@ class Customers extends Component {
     }
       
     getItems = () => {
-        this.CalculatePlaced();
+        //this.CalculatePlaced();
         /*
         fetch(this.getEndpoint('api url endpoint"))
           .then(result => result.json())
@@ -51,8 +50,6 @@ class Customers extends Component {
     createDropdownMenu = (record) => {
         const menu = (
             <Menu onClick={e => {
-      
-                
                 this.handleMenuClick(e, record);
             }}>
               <Menu.Item key="0">Редактировать</Menu.Item>
@@ -79,7 +76,7 @@ class Customers extends Component {
 
     loadingData = () => {
         //const proxyurl = "https://cors-anywhere.herokuapp.com/";
-        const url = "http://mircoffee.by/deliveryserv/app/SelectOrders.php";
+        const url = this.props.optionapp[0].serverUrl + "/SelectCustomers.php";
 
         this.setState({
             flLoading: true,
@@ -88,38 +85,17 @@ class Customers extends Component {
         fetch(url)
         .then((response) => response.json())
         .then((responseJson) => {
-            this.props.onAdd(responseJson.orders);
+            this.props.onAdd(responseJson.customers);
             this.setState({
-                dataSource: responseJson.orders,
+                dataSource: responseJson.customers,
                 flLoading: false,
             });
             this.props.onControlOrder({
                 newOrderCount: 0,
             });
-            this.CalculatePlaced();
         })
         .catch((error) => {
           console.error(error);
-        });
-    }
-
-    CalculatePlaced = () => {
-        const { dataSource } = this.state;
-        this.setState({
-            dataSource: dataSource.map( item => {
-                var b = new Date(
-                    item.dDateOrder[0], 
-                    item.dDateOrder[1]-1, 
-                    item.dDateOrder[2],  
-                    item.dDateOrder[3],  
-                    item.dDateOrder[4],  
-                    item.dDateOrder[5],  
-                    0); // 
-                const newData = {
-                    chCalcPlaced: String(this.get_whole_values(b)),
-                }
-                return {...item, ...newData};
-            }),
         });
     }
 
@@ -177,7 +153,7 @@ class Customers extends Component {
         //e.preventDefault()
         this.setState({
             showOrders: false,
-            dataSource: this.props.orders,
+            
         });
       }
 
@@ -192,42 +168,37 @@ class Customers extends Component {
             }) 
           }
       }
+    
+    getColorAvatar = (e) => {
+        
+    }
 
     render() {
         const { dataSource, newOrderCount, flLoading } = this.state;
         const columns = [{ 
-                title: 'Тип', 
-                dataIndex: 'iStatus',
-                key: 'type', 
+                title: '', 
+                dataIndex: 'idClient',
+                key: 'avatar', 
                 render: (record) => {
-                    var color = '#efbb1e';
-                    switch (record) {
-                        case "0": color = '#efbb1e'; break; // не подтвержден и не просмотрен
-                        case "1": color = '#efbb1e'; break; // не подтвержден 
-                        case "2": color = '#b7d024'; break; // подтвердил
-                        case "3": color = '#0080ff'; break; // готов
-                        case "4": color = '#00bfff'; break; // в пути
-                        case "5": color = '#51a351'; break; // выполнен
-                        case "6": color = '#bd362f'; break; // отменен
-                    };
+                    const chFIO = dataSource.find(x => x.idClient ===  record).chFIO;
+                    const chColorAvatar = dataSource.find(x => x.idClient ===  record).chColorAvatar;
 
                     return (
                         <div style={{ textAlign: 'center' }}>
-                            <IconFont type="icon-delivery" style={{ fontSize: '36px', color: color }}/>
-                        </div>
+                            <Avatar shape="square" style={{ color: '#fff', fontWeight: "500", verticalAlign: 'middle', backgroundColor: `#${chColorAvatar}`  }}>
+                                {chFIO.length ? ` ${chFIO.charAt(0).toUpperCase()}` : <Icon type="user" theme="outlined" />}
+                            </Avatar>
+                        </div> 
                     )
                 }
             },{ 
-                title: '№ Заказа / Клиент', 
-                dataIndex: 'chNameOrder', 
+                title: 'Клиент', 
+                dataIndex: 'chFIO', 
                 render: (record) => {
-                    const chNameClient = dataSource.find(x => x.chNameOrder ===  record).chNameClient
+                    //const chNameClient = dataSource.find(x => x.chNameOrder ===  record).chNameClient
                     
                     return (
-                    <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '17px', fontWeight: 'bold' }}>{record}</div>
-                        <div>{chNameClient}</div>
-                    </div>);
+                    <div style={{ textAlign: 'center' }}>{record}</div>);
                 }
             },{ 
                 title: 'Номер телефона', 
@@ -239,38 +210,28 @@ class Customers extends Component {
                     </div>);
                 }
             },{ 
-                title: 'Ко времени', 
-                dataIndex: 'chDue', 
+                title: 'Регистрация', 
+                dataIndex: 'dDateRegistration', 
                 render: (record) => {
                     //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
                     <div style={{ textAlign: 'center' }}>
-                        {moment(record, "DD.MM.YYYY HH:mm", true).isValid() ? 
-                        <div>
-                            <div style={{ fontSize: '16px' }}>к {record.split(' ')[1]}</div>
-                            <div style={{ fontSize: '13px' }}>{record.split(' ')[0]}</div>
-                        </div> : 
-                        <div style={{ fontSize: '13px' }}>{record}</div>}
+                        {record}
                     </div>);
                 }
             },{ 
-                title: 'Время заказа', 
-                dataIndex: 'chCalcPlaced', 
+                title: 'Количество заказов', 
+                dataIndex: 'countOrder', 
                 render: (record) => {
                     //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
-                    <div style={{ textAlign: 'center' }}>
-                        {moment(record, "DD.MM.YYYY HH:mm:ss", true).isValid() ? 
-                        <div>
-                            <div style={{ fontSize: '13px' }}>{record.split(' ')[1]}</div>
-                            <div style={{ fontSize: '13px' }}>{record.split(' ')[0]}</div>
-                        </div> : 
-                        <div style={{ fontSize: '13px' }}>{record}</div>}
+                    <div style={{ textAlign: 'center', fontSize: '15px', fontWeight: 'bold' }}>
+                           {Number(record).toFixed(0)}
                     </div>);
                 }
             },{ 
-                title: 'Сумма заказа', 
-                dataIndex: 'chOrderPrice', 
+                title: 'Сумма заказов', 
+                dataIndex: 'sumOrder', 
                 render: (record) => {
                     //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
@@ -279,30 +240,15 @@ class Customers extends Component {
                     </div>);
                 }
             },{ 
-                title: 'Статус', 
-                dataIndex: 'iStatus', 
-                key: 'iStatus',
+                title: 'Последний заказа', 
+                dataIndex: 'dLastOrder', 
                 render: (record) => {
-                    var chStatus = 'Не подтвержден';
-                    switch (record) {
-                        case "0": chStatus = 'Не подтвержден'; break; // не подтвержден 
-                        case "1": chStatus = 'Не подтвержден'; break; // не подтвержден 
-                        case "2": chStatus = 'Подтвержден'; break; // Подтвержден
-                        case "3": chStatus = 'Приготовлен'; break; // готов
-                        case "4": chStatus = 'В пути'; break; // в пути
-                        case "5": chStatus = 'Выполнен'; break; // выполнен
-                        case "6": chStatus = 'Отменен'; break; // отменен
-                    };
-
+                    //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
-                        <div style={{ textAlign: 'center', fontSize: '13px' }}>
-                            {chStatus}
-                        </div>
-                    )
+                    <div style={{ textAlign: 'center' }}>
+                            {record}
+                    </div>);
                 }
-            },{ 
-                title: 'Ресторан', 
-                dataIndex: 'chLocation', 
             },{ 
                 title: 'Действие', 
                 key: 'operation', 
@@ -329,10 +275,7 @@ class Customers extends Component {
         return (<div>
             <Content style={{ background: '#fff'}}>
                 <div style={{ padding: 10 }}>
-                    <Row type="flex" justify="space-around" align="middle">
-                        <Col span={1}><Icon type="team" style={{ fontSize: '36px'}}/></Col>
-                        <Col span={23}><div className="title-section">Клиенты</div></Col>
-                    </Row>
+                    <div className="title-section"><Icon type="team" style={{ fontSize: '20px', marginRight: "10px"}}/>Клиенты</div>
                 </div>
             </Content>
             
@@ -356,8 +299,7 @@ class Customers extends Component {
                             onRow={(record, index) => ({
                                 onClick: (event) => { this.onRowClick(record, index, event) } 
                               })}
-                            rowClassName={(record) => {return this.styleRow(record)}
-                            }
+                            rowClassName="cursor-pointer"
     
                         />
                 {this.state.showOrders && !this.state.openDropMenu ? <OrdersForm handler = {this.handler} param={this.val}/> : null}
@@ -374,7 +316,7 @@ export default connect (
     }),
     dispatch => ({
         onAdd: (data) => {
-            dispatch({ type: 'LOAD_ORDERS_ALL', payload: data});
+            dispatch({ type: 'LOAD_CUSTOMERS_ALL', payload: data});
           },
         onControlOrder: (data) => {
             dispatch({ type: 'EDIT_OPTIONAPP_CONTROL_ORDER', payload: data});

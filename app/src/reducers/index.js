@@ -7,6 +7,7 @@ import Disches from './dishes';
 import Menus from './menus';
 import Orders from './orders';
 import OptionApp from './optionapp';
+import Customers from './customers';
 
 const allReducers = combineReducers ({
     routing: routerReducer,
@@ -16,6 +17,7 @@ const allReducers = combineReducers ({
     menus: Menus,
     orders: Orders,
     optionapp: OptionApp,
+    customers: Customers,
 
 });
 
