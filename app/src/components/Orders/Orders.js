@@ -312,7 +312,7 @@ class Orders extends Component {
                 <div style={{ textAlign: 'center' }}>
                     <Dropdown overlay={this.createDropdownMenu({record})} onVisibleChange={this.onOpenDropMenu} trigger={['click']}>
                         <a className="ant-dropdown-link" href="#">
-                            <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
+                            <IconFont type="icon-menu1" style={{ fontSize: "18px", color: "#000000a6" }}/>
                         </a>
                     </Dropdown>
                 </div>

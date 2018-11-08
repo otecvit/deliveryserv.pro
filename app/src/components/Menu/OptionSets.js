@@ -150,19 +150,28 @@ class OptionSets extends Component {
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
-            { title: 'Действие', key: 'operation', width: 100, render: (record) => <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
-            <a className="ant-dropdown-link" href="#">
-            <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
-            </a>
-          </Dropdown>},
+            { 
+                title: 'Действие', 
+                key: 'operation', 
+                width: 100, 
+                render: (record) => 
+                <div style={{ textAlign: 'center' }}>
+                    <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
+                        <a className="ant-dropdown-link" href="#">
+                            <IconFont type="icon-menu1" style={{ fontSize: "18px", color: "#000000a6" }}/>
+                        </a>
+                    </Dropdown>
+                </div>
+          },
         ];
         
 
         //const { form } = this.props;
         //const { getFieldDecorator } = form;
-        const labelColSpan = 8;
-        const wrapperColSpan = 16;
-                
+        const IconFont = Icon.createFromIconfontCN({
+            scriptUrl: this.props.optionapp[0].scriptIconUrl,
+          });
+
         const options = this.props.optionSets.map(item => <Option key={item.idOptionSets}>{item.chName}</Option>);
 
         return (<div>

@@ -24,7 +24,7 @@ import OptionSets from './components/Menu/OptionSets';
 import Dishes from './components/Menu/Dishes';
 import Menus from './components/Menu/Menus';
 import Orders from './components/Orders/Orders';
-import Customers from './components/Customers/Customers';
+import Clients from './components/Clients/Clients';
 
 
 import СheckNewOrder from './components/СheckNewOrder';
@@ -57,7 +57,7 @@ const ContentPage =
     <Route exact path="/dishes" component={Dishes}/>
     <Route exact path="/menus" component={Menus}/>
     <Route exact path="/orders" component={Orders}/>
-    <Route exact path="/customers" component={Customers}/>
+    <Route exact path="/customers" component={Clients}/>
 </div>
 ;
 

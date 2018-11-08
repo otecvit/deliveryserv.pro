@@ -1,4 +1,4 @@
-const initialState = [
+const initialState = [/*
     { 
         key: "1", 
         idMenus: "1", 
@@ -39,16 +39,13 @@ const initialState = [
         chStartInterval: "15:00:00",
         chEndInterval: "23:59:59",
       },
-        
+        */
 ];
 
 export default function menus (state = initialState, action) {
     switch (action.type) {
-      case "LOAD_MENUS_SUCCESS":
-        return [
-          ...state,
-          action.payload
-        ];  
+      case "LOAD_MENUS_ALL":
+        return action.payload; 
       case "ADD_MENUS":
         return [
           ...state,
@@ -66,7 +63,7 @@ export default function menus (state = initialState, action) {
         return updatedRootItems;
 
         case "DELETE_MENUS": 
-          return state.filter(optionset => optionset.idDishes !== action.payload.idDishes );
+          return state.filter(item => item.idMenus !== action.payload.idMenus );
       default:
         return state;
     }

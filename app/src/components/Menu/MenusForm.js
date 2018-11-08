@@ -180,74 +180,143 @@ class MenusForm extends React.Component {
             var val = {};
             if (this.props.param) {
 
-              val = {
-                dataload: { 
-                  key: this.props.param,
+              const url = this.props.optionapp[0].serverUrl + "/EditMenus.php"; // изменяем категорию
+              fetch(url, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
                   idMenus: this.props.param,
-                  enShow: values.enShow.toString(),
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
+                  enShow: values.enShow ? "1" : "0",
                   chDescription: values.chDescription,
                   arrCategories: this.state.arrCategories,
-                  blDays: this.state.blDays ? "true" : "false",
+                  blDays: this.state.blDays ? "1" : "0",
                   arrDays: this.state.blDays ? [] : this.state.arrDays,
-                  blTimes: this.state.blTimes ? "true" : "false",
+                  blTimes: this.state.blTimes ? "1" : "0",
                   chStartInterval: this.state.blTimes ? "0:00:00" : values.chStartInterval._i,
                   chEndInterval: this.state.blTimes ? "23:59:59" : values.chEndInterval._i,
+                  
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                val = {
+                  dataload: { 
+                    key: this.props.param,
+                    idMenus: this.props.param,
+                    enShow: values.enShow.toString(),
+                    chName: values.chName,
+                    chNamePrint: values.chNamePrint,
+                    chDescription: values.chDescription,
+                    arrCategories: this.state.arrCategories,
+                    blDays: this.state.blDays ? "true" : "false",
+                    arrDays: this.state.blDays ? [] : this.state.arrDays,
+                    blTimes: this.state.blTimes ? "true" : "false",
+                    chStartInterval: this.state.blTimes ? "0:00:00" : values.chStartInterval._i,
+                    chEndInterval: this.state.blTimes ? "23:59:59" : values.chEndInterval._i,
+                  }
                 }
-              }
-
-              
-              console.log(val);
-              
-              this.props.onEdit(val);  // вызываем action
-              message.success('Меню изменено');
-              this.props.form.resetFields(); // ресет полей
-              
-
-            } else {
-              
-              val = {
-                dataload: { 
-                  key: generateKey(),
-                  idMenus: generateKey(),
-                  enShow: values.enShow.toString(),
-                  chName: values.chName,
-                  chNamePrint: values.chNamePrint,
-                  chDescription: values.chDescription,
-                  arrCategories: this.state.arrCategories,
-                  blDays: this.state.blDays ? "true" : "false",
-                  arrDays: this.state.blDays ? [] : this.state.arrDays,
-                  blTimes: this.state.blTimes ? "true" : "false",
-                  chStartInterval: this.state.blTimes ? "0:00:00" : values.chStartInterval._i,
-                  chEndInterval: this.state.blTimes ? "23:59:59" : values.chEndInterval._i,
-                }
-              }
-
-              console.log(val);
-              
-              this.props.onAdd(val);  // вызываем action
-              message.success('Меню создано'); 
-              this.props.form.resetFields(); // ресет полей
-              this.setState({ 
-                arrCategories: [],
-                arrDays: [],
-                blDays: true,
-                blTimes: true,
+                this.props.onEdit(val);  // вызываем action
+                message.success('Меню изменено');
+                this.props.form.resetFields(); // ресет полей               
+              }).catch((error) => {
+                  console.error(error);
               });
-              
+            } else {
+
+              const url = this.props.optionapp[0].serverUrl + "/InsertMenus.php"; // добавляем набор
+              fetch(url, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
+                  chName: values.chName,
+                  chNamePrint: values.chNamePrint,
+                  enShow: values.enShow ? "1" : "0",
+                  chDescription: values.chDescription,
+                  arrCategories: this.state.arrCategories,
+                  blDays: this.state.blDays ? "1" : "0",
+                  arrDays: this.state.blDays ? [] : this.state.arrDays,
+                  blTimes: this.state.blTimes ? "1" : "0",
+                  chStartInterval: this.state.blTimes ? "0:00:00" : values.chStartInterval._i,
+                  chEndInterval: this.state.blTimes ? "23:59:59" : values.chEndInterval._i,
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                
+                console.log(responseJsonFromServer);
+                
+                val = {
+                  dataload: { 
+                    key: responseJsonFromServer.toString(),
+                    idMenus: responseJsonFromServer.toString(),
+                    enShow: values.enShow.toString(),
+                    chName: values.chName,
+                    chNamePrint: values.chNamePrint,
+                    chDescription: values.chDescription,
+                    arrCategories: this.state.arrCategories,
+                    blDays: this.state.blDays ? "true" : "false",
+                    arrDays: this.state.blDays ? [] : this.state.arrDays,
+                    blTimes: this.state.blTimes ? "true" : "false",
+                    chStartInterval: this.state.blTimes ? "0:00:00" : values.chStartInterval._i,
+                    chEndInterval: this.state.blTimes ? "23:59:59" : values.chEndInterval._i,
+                  }
+                }
+
+                this.props.onAdd(val);  // вызываем action
+                message.success('Меню создано'); 
+                this.props.form.resetFields(); // ресет полей
+                this.setState({ 
+                  arrCategories: [],
+                  arrDays: [],
+                  blDays: true,
+                  blTimes: true,
+                });
+
+              }).catch((error) => {
+                  console.error(error);
+              });
+
+
             }
           }
         });
       }
 
       DeleteDishes = () => {
-      var val = {
-          idDishes: this.props.param,
-      }
-      this.props.onDeleteOptionSet(val);  // вызываем action
-      this.props.handler();
-      message.success('Набор опций удален'); 
+
+        const url = this.props.optionapp[0].serverUrl + "/DeleteMenus.php"; // удаление
+        fetch(url,
+          {
+              method: 'POST',
+              headers: 
+              {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(
+              {
+                idMenus: this.props.param,
+             })
+          }).then((response) => response.json()).then((responseJsonFromServer) =>
+          {
+              var val = {
+                idMenus: this.props.param,
+              }
+              this.props.onDelete(val);  // вызываем action
+          }).catch((error) =>
+          {
+              console.error(error);
+          });
+          this.props.handler();
+          message.success('Меню удалено'); 
     }
 
 
@@ -338,8 +407,8 @@ class MenusForm extends React.Component {
               borderBottomWidth: "1px", 
               borderBottomColor: "#cecece",
                }}>
-               <h4>Удалить блюдо</h4>
-               <Popconfirm title="Удалить блюдо?" onConfirm={() => this.DeleteDishes()} okText="Да" cancelText="Нет">
+               <h4>Удалить меню</h4>
+               <Popconfirm title="Удалить меню?" onConfirm={() => this.DeleteDishes()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>
@@ -364,10 +433,10 @@ class MenusForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chName', {
-                rules: [{ required: true, message: 'Введите наименование блюда' }],
+                rules: [{ required: true, message: 'Введите наименование меню' }],
                 initialValue: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).chName : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Наименование блюда" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Наименование меню" />
               )}
             </FormItem>
             <FormItem
@@ -505,6 +574,7 @@ const WrappedNormalLoginForm = Form.create()(MenusForm);
 export default connect (
   state => ({
       menus: state.menus,
+      optionapp: state.optionapp,
       categories: state.categories,
   }),
   dispatch => ({
@@ -514,8 +584,8 @@ export default connect (
     onEdit: (data) => {
       dispatch({ type: 'EDIT_MENUS', payload: data});
     },
-    onDeleteOptionSet: (optionSetsData) => {
-      dispatch({ type: 'DELETE_OPTION_SETS', payload: optionSetsData});
+    onDelete: (optionSetsData) => {
+      dispatch({ type: 'DELETE_MENUS', payload: optionSetsData});
     },
   })
 )(WrappedNormalLoginForm);

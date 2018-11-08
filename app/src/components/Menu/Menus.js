@@ -24,9 +24,51 @@ class Menus extends Component {
           activeKey: "1",
           currentEditOptionSets: "0",
           filtered: false,
-          dataSource: {},
+          dataSource: [],
           flLoading: true, // спиннер загрузки
         };
+    }
+
+    componentDidMount() {
+        this.loadingData();
+        
+    }
+
+    loadingData = () => {
+
+        const url = this.props.optionapp[0].serverUrl + "/SelectMenus.php";
+        this.setState({
+            flLoading: true,
+        })
+        fetch(url)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            this.props.onAdd(responseJson.menus);
+            this.setState({
+                dataSource: responseJson.menus,
+                flLoading: false,
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+        const urlCategories = this.props.optionapp[0].serverUrl + "/SelectCategories.php";
+        this.setState({
+            flLoading: true,
+        })
+        fetch(urlCategories)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            this.props.onAddCategories(responseJson.categories);
+            this.setState({
+                flLoading: false,
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
     }
 
     handleMenuClick = (e, record) => {
@@ -118,27 +160,57 @@ class Menus extends Component {
             currentEditOptionSets: e.key
         });
     }
+
+    dayOfWeekAsString = (dayIndex) => {
+        return ["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"][dayIndex - 1];
+      }
     
     render() {
 
         const { searchString, currentEditOptionSets, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
-        const columns = [
-            { title: 'Имя', dataIndex: 'chName', key: 'name' },
-            { title: 'Действие', key: 'operation', fixed: 'right', width: 100, render: (record) => <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
-            <a className="ant-dropdown-link" href="#">
-            <Icon type="ellipsis" style={{ transform: "rotate(90deg)" }} />
-            </a>
-          </Dropdown>},
+        
+        const columns = [{ 
+                title: 'Имя', 
+                dataIndex: 'idMenus', 
+                key: 'name', 
+                render: (record) => {
+                    //console.log(dataSource);
+                    var chName = "";
+                    var chNamePrint = "";
+
+                    if (dataSource.length) {
+                        chName = this.props.menus.find(x => x.idMenus ===  record).chName;
+                        chNamePrint = this.props.menus.find(x => x.idMenus ===  record).chNamePrint;
+                    }
+                    
+                    return (<div>{chNamePrint.length ? chNamePrint : chName}</div>);
+                }
+            },{ 
+                title: 'Действие', 
+                key: 'operation', 
+                width: 100, 
+                render: (record) => 
+                <div style={{ textAlign: 'center' }}>
+                    <Dropdown overlay={this.createDropdownMenu({record})} trigger={['click']}>
+                        <a className="ant-dropdown-link" href="#">
+                            <IconFont type="icon-menu1" style={{ fontSize: "18px", color: "#000000a6" }}/>
+                        </a>
+                    </Dropdown>
+                </div>
+          },
         ];
 
 
         const options = this.props.menus.map(item => <Option key={item.idMenus}>{item.chName}</Option>);
+        const IconFont = Icon.createFromIconfontCN({
+            scriptUrl: this.props.optionapp[0].scriptIconUrl,
+          });
 
         return (<div>
             <Content style={{ background: '#fff'}}>
                 <div style={{ padding: 10 }}>
-                    Меню
+                <div className="title-section"><IconFont type="icon-menu" style={{ fontSize: '16px', marginRight: "10px"}}/>Меню</div>
                 </div>
             </Content>
             <Content style={{ background: '#fff', margin: '16px 0' }}>
@@ -159,12 +231,31 @@ class Menus extends Component {
                         <Table
                             columns={columns}
                             expandedRowRender={record => 
-                                <div style={{ margin: 0 }}>
-                                    <div>Активность: {record.description}</div>
-                                    <div>Отображаемое имя: </div>
-                                    Обязательный набор:
-                                    Множественный выбор:
-
+                                <div className="d-table">
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Активность</div>
+                                        <div className="d-td content-detail">{record.enShow === "true" ? "Да" : "Нет"}</div>
+                                    </div>                                    
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Имя</div>
+                                        <div className="d-td content-detail">{record.chName}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Описание</div>
+                                        <div className="d-td content-detail">{record.chDescription}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Категории</div>
+                                        <div className="d-td content-detail">{ record.arrCategories.map((item, index) => <div key={index}>{this.props.categories.find(x => x.idCategories ===  item).chName}</div>)}</div>
+                                    </div>                                    
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Дни недели</div>
+                                        <div className="d-td content-detail">{record.blDays === "true" ? "Ежедневно" : record.arrDays.map((item, index) => <div key={index}>{this.dayOfWeekAsString(item)}</div>)}</div>
+                                    </div>
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Время действич</div>
+                                        <div className="d-td content-detail">{record.blTimes === "true" ? "Постоянно" : `С ${record.chStartInterval} по ${record.chEndInterval}`} </div>
+                                    </div>
                                 </div>
                                 }
                             dataSource={!this.state.filtered ? this.props.menus : dataSource}
@@ -206,17 +297,15 @@ class Menus extends Component {
 export default connect (
     state => ({
         menus: state.menus,
+        optionapp: state.optionapp,
+        categories: state.categories
     }),
     dispatch => ({
-        onDeleteCategory: (optionSetsData) => {
-            confirm({
-                title: 'Удалить набор опций?',
-                content: 'Будет удален набор опций',
-                onOk() {
-                    dispatch({ type: 'DELETE_OPTION_SETS', payload: optionSetsData});
-                    message.success('Набор опций удален'); 
-                },
-              });
-        },
+        onAdd: (data) => {
+            dispatch({ type: 'LOAD_MENUS_ALL', payload: data});
+          },
+        onAddCategories: (data) => {
+            dispatch({ type: 'LOAD_CATEGORIES_ALL', payload: data});
+          },
     })
   )(Menus);
