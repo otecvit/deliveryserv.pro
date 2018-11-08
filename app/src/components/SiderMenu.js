@@ -38,7 +38,7 @@ class SiderMenu extends Component {
                     <Menu.Item key="6"><Link to="categories">Категории</Link></Menu.Item>
                     <Menu.Item key="7"><Link to="dishes">Товары</Link></Menu.Item>
                     <Menu.Item key="8"><Link to="option-sets">Наборы</Link></Menu.Item>
-                    <Menu.Item key="10">Сортировка</Menu.Item>
+                    <Menu.Item key="10"><Link to="sorting">Сортировка</Link></Menu.Item>
                 </SubMenu>
                 <Menu.Item key="11"><Icon type="idcard" /><span>Сотрудники</span></Menu.Item>
                 <Menu.Item key="12"><Icon type="gift" /><span>Акции</span></Menu.Item>

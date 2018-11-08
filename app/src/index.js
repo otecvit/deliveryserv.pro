@@ -26,6 +26,8 @@ import Menus from './components/Menu/Menus';
 import Orders from './components/Orders/Orders';
 import Clients from './components/Clients/Clients';
 import Locations from './components/Locations/Locations';
+import Sorting from './components/Menu/Sorting';
+
 
 
 import СheckNewOrder from './components/СheckNewOrder';
@@ -60,6 +62,7 @@ const ContentPage =
     <Route exact path="/orders" component={Orders}/>
     <Route exact path="/customers" component={Clients}/>
     <Route exact path="/locations" component={Locations}/>
+    <Route exact path="/sorting" component={Sorting}/>
 </div>
 ;
 
