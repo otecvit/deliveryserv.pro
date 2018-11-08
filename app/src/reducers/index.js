@@ -8,6 +8,7 @@ import Menus from './menus';
 import Orders from './orders';
 import OptionApp from './optionapp';
 import Customers from './customers';
+import Locations from './locations';
 
 const allReducers = combineReducers ({
     routing: routerReducer,
@@ -18,6 +19,7 @@ const allReducers = combineReducers ({
     orders: Orders,
     optionapp: OptionApp,
     customers: Customers,
+    locations: Locations,
 
 });
 

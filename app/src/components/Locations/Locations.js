@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
 
-import CategoriesForm from './CategoriesForm';
+import LocationsForm from './LocationsForm';
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -14,7 +14,7 @@ const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
   }
 
-class Categories extends Component {
+class Locations extends Component {
     constructor(props) {
         super(props);
         this.handler = this.handler.bind(this)
@@ -192,7 +192,7 @@ class Categories extends Component {
         return (<div>
         <Content style={{ background: '#fff'}}>
             <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-menu" style={{ fontSize: '16px', marginRight: "10px"}}/>Категории</div>
+            <div className="title-section"><Icon type="environment" style={{ fontSize: '20px', marginRight: "10px"}}/>Рестораны</div>
             </div>
         </Content>
         <Content style={{ background: '#fff', margin: '16px 0' }}>
@@ -229,7 +229,7 @@ class Categories extends Component {
                     />,            
                 </TabPane>
                 <TabPane tab="Создать" key="2">
-                    <CategoriesForm/>
+                    <LocationsForm/>
                 </TabPane>
                 <TabPane tab="Редактировать" key="3">
                     <Select
@@ -243,7 +243,7 @@ class Categories extends Component {
                     <Option key="0">Выберите категорию для редактирования</Option>
                     {options}
                 </Select>
-                { currentEditCat === "0" ? null : <CategoriesForm handler = {this.handler} param={currentEditCat}/> }
+                { currentEditCat === "0" ? null : <LocationsForm handler = {this.handler} param={currentEditCat}/> }
                 </TabPane>
             </Tabs>
             </div>
@@ -265,5 +265,5 @@ export default connect (
             dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
         },
     })
-  )(Categories);
+  )(Locations);
 

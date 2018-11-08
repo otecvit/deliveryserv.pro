@@ -177,7 +177,7 @@ class OptionSets extends Component {
         return (<div>
             <Content style={{ background: '#fff'}}>
                 <div style={{ padding: 10 }}>
-                    Наборы
+                    <div className="title-section"><IconFont type="icon-menu" style={{ fontSize: '16px', marginRight: "10px"}}/>Категории</div>
                 </div>
             </Content>
             <Content style={{ background: '#fff', margin: '16px 0' }}>
