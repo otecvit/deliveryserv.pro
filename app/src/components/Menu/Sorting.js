@@ -70,7 +70,8 @@ class Sorting extends Component {
   // Normally you would want to split things out into separate components.
   // But in this example everything is just done in one place for simplicity
   render() {
-    return (
+    return (<div>Прива</div>
+      /*
       <DragDropContext onDragEnd={this.onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided, snapshot) => (
@@ -99,7 +100,7 @@ class Sorting extends Component {
             </div>
           )}
         </Droppable>
-      </DragDropContext>
+      </DragDropContext>*/
     );
   }
 }
