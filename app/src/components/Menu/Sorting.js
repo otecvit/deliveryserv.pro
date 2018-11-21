@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+
+const { Content } = Layout;
+const TabPane = Tabs.TabPane;
 
 // fake data generator
 const getItems = count =>
@@ -67,40 +71,63 @@ class Sorting extends Component {
     });
   }
 
+  
+
   // Normally you would want to split things out into separate components.
   // But in this example everything is just done in one place for simplicity
   render() {
-    return (<div>Прива</div>
-      /*
-      <DragDropContext onDragEnd={this.onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <div
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
-            >
-              {this.state.items.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style
-                      )}
-                    >
-                      {item.content}
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>*/
+
+    const IconFont = Icon.createFromIconfontCN({
+      scriptUrl: this.props.optionapp[0].scriptIconUrl,
+    });
+
+    return (
+    <div>
+      <Content style={{ background: '#fff'}}>
+                <div style={{ padding: 10 }}>
+                <div className="title-section"><IconFont type="icon-sort" style={{ fontSize: '16px', marginRight: "10px"}}/>Сортировка</div>
+                </div>
+      </Content>
+      <Content style={{ background: '#fff', margin: '16px 0' }}>
+                <div style={{ padding: 10 }}>
+                <Tabs>
+                    <TabPane tab="Категории" key="1">
+                    <DragDropContext onDragEnd={this.onDragEnd}>
+                      <Droppable droppableId="droppable">
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            style={getListStyle(snapshot.isDraggingOver)}
+                          >
+                            {this.state.items.map((item, index) => (
+                              <Draggable key={item.id} draggableId={item.id} index={index}>
+                                {(provided, snapshot) => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    style={getItemStyle(
+                                      snapshot.isDragging,
+                                      provided.draggableProps.style
+                                    )}
+                                  >
+                                    {item.content}
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                    </TabPane>
+                    <TabPane tab="Блюда" key="2">
+                    </TabPane>
+                </Tabs>
+                </div>
+            </Content>
+        </div>
     );
   }
 }
