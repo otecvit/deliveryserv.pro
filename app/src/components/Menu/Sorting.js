@@ -3,8 +3,11 @@ import { connect } from 'react-redux';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Button, Spin } from 'antd';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
+import TovarSorting from './TovarSorting';
+
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
+const Option = Select.Option;
 
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -43,6 +46,7 @@ class Sorting extends Component {
     this.state = {
       items: [],
       flLoading: true,
+      currentEditCat: "0",
     };
     this.onDragEnd = this.onDragEnd.bind(this);
   }
@@ -93,17 +97,6 @@ class Sorting extends Component {
 }
   saveSortCategories = (e) => {
     
-    console.log( JSON.stringify(
-      {
-        categories: this.state.items.map( (item, index) => {
-          return {
-            idCategories: item.id,
-            iSort: index.toString(),
-          }
-        })
-      }));
-      
-    
     const url = this.props.optionapp[0].serverUrl + "/EditCategoriesSort.php"; // изменяем категорию
         fetch(url, {
           method: 'POST',
@@ -122,7 +115,7 @@ class Sorting extends Component {
             })
           })
         }).then((response) => response.json()).then((responseJsonFromServer) => {
-          console.log(responseJsonFromServer);
+          //console.log(responseJsonFromServer);
           
           /*
           val = {
@@ -144,16 +137,23 @@ class Sorting extends Component {
         
       }
       
+      onChangeCategory = (e) => {
+        //console.log(e);
+        this.setState ({ 
+            currentEditCat: e.key
+        });
+    }
   
 
   // Normally you would want to split things out into separate components.
   // But in this example everything is just done in one place for simplicity
   render() {
 
-    const { flLoading } = this.state;
+    const { flLoading, currentEditCat } = this.state;
     const IconFont = Icon.createFromIconfontCN({
       scriptUrl: this.props.optionapp[0].scriptIconUrl,
     });
+    const options = this.props.categories.map(item => <Option key={item.idCategories}>{item.chName}</Option>);
 
     return (
     <div>
@@ -201,7 +201,19 @@ class Sorting extends Component {
                       </Button>
                     </Spin>
                     </TabPane>
-                    <TabPane tab="Блюда" key="2">
+                    <TabPane tab="Товары" key="2">
+                      <Select
+                      showSearch
+                      filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                      onChange={this.onChangeCategory}
+                      style={{ width: "100%" }}
+                      labelInValue 
+                      value={{ key: currentEditCat }}
+                      >
+                      <Option key="0">Выберите категорию</Option>
+                      {options}
+                      </Select>
+                      { currentEditCat === "0" ? null : <TovarSorting handler = {this.handler} param={currentEditCat}/> }
                     </TabPane>
                 </Tabs>
                 </div>
