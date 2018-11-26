@@ -118,7 +118,6 @@ class TovarSorting extends Component {
                 })
               })
             }).then((response) => response.json()).then((responseJsonFromServer) => {
-              //console.log(responseJsonFromServer);
               message.success('Сортировка сохранена');
             }).catch((error) => {
                 console.error(error);
@@ -150,7 +149,7 @@ class TovarSorting extends Component {
         
         
 
-        return (<div>
+        return (<div style={{ marginTop: "10px" }}>
             <Spin spinning={flLoading}>
                       <DragDropContext onDragEnd={this.onDragEnd}>
                         <Droppable droppableId="droppable">
@@ -182,7 +181,7 @@ class TovarSorting extends Component {
                         </Droppable>
                       </DragDropContext>
                       { items.length ?
-                      <Button type="primary" onClick={this.saveSort} style={{marginBottom: "10px", marginLeft: '10px'}}>
+                      <Button type="primary" onClick={this.saveSort} style={{marginBottom: "10px"}}>
                         <Icon type="plus"/>Сохранить
                       </Button> : <Alert message="В категории нет товаров" type="warning" showIcon />
                       }
