@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Button, Spin } from 'antd';
+import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Alert, Button, Spin } from 'antd';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 // a little function to help us with reordering the result
@@ -29,7 +29,7 @@ const reorder = (list, startIndex, endIndex) => {
   
   const getListStyle = isDraggingOver => ({
     background: isDraggingOver ? 'white' : 'white',
-    padding: grid,
+    padding: '0',
     width: '100%',
   
   });
@@ -42,12 +42,9 @@ class TovarSorting extends Component {
           items: [],
           flLoading: true,
           currentEditCat: "0",
+          dataSource: [],
         };
         this.onDragEnd = this.onDragEnd.bind(this);
-      }
-    
-      componentDidMount() {
-        this.loadingData();
       }
     
       onDragEnd(result) {
@@ -67,32 +64,14 @@ class TovarSorting extends Component {
           items,
         });
       }
+
+      componentDidMount() {
+        this.loadingData(this.props.param);
+      }
     
-      loadingData = () => {
-    
-        const url = this.props.optionapp[0].serverUrl + "/SelectCategories.php";
-        this.setState({
-            flLoading: true,
-        })
-        fetch(url)
-        .then((response) => response.json())
-        .then((responseJson) => {
-            this.props.onAdd(responseJson.categories);
-            this.setState({
-                items: responseJson.categories.map((item) => {
-                  return {id: item.idCategories, content: item.chName, iSort: item.iSort} 
-                 }),
-                flLoading: false,
-            });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    
-    }
-      saveSortCategories = (e) => {
-        
-        const url = this.props.optionapp[0].serverUrl + "/EditCategoriesSort.php"; // изменяем категорию
+      loadingData = (idCategories) => {
+
+        const url = this.props.optionapp[0].serverUrl + "/SelectProductSort.php"; // изменяем категорию
             fetch(url, {
               method: 'POST',
               headers: 
@@ -102,30 +81,45 @@ class TovarSorting extends Component {
               },
               body: JSON.stringify(
               {
-                categories: this.state.items.map( (item, index) => {
+                idCategories: idCategories,
+              })
+            })
+            .then((response) => response.json())
+            .then((responseJson) => {
+              this.setState({
+                items: responseJson.products.map((item) => {
+                  return {id: item.idDishes, content: item.chName, iSort: item.iSort} 
+                }),
+                flLoading: false,
+            });
+            }).catch((error) => {
+                console.error(error);
+            }); 
+
+    }
+
+      saveSort = (e) => {
+        
+        const url = this.props.optionapp[0].serverUrl + "/EditProductSort.php"; // изменяем категорию
+            fetch(url, {
+              method: 'POST',
+              headers: 
+              {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(
+              {
+                products: this.state.items.map( (item, index) => {
                   return {
-                    idCategories: item.id,
+                    idProduct: item.id,
                     iSort: index.toString(),
                   }
                 })
               })
             }).then((response) => response.json()).then((responseJsonFromServer) => {
               //console.log(responseJsonFromServer);
-              
-              /*
-              val = {
-                dataload: { 
-                  key: this.props.param,
-                  idCategories: this.props.param,
-                  chName: values.chName,
-                  chNamePrint: values.chNamePrint,
-                  enShow: values.enShow ? "true" : "false",
-                }
-              }
-              this.props.onEdit(val);  // вызываем action
-              message.success('Категория изменена');
-              this.props.form.resetFields(); // ресет полей
-              */
+              message.success('Сортировка сохранена');
             }).catch((error) => {
                 console.error(error);
             });  
@@ -138,13 +132,23 @@ class TovarSorting extends Component {
                 currentEditCat: e.key
             });
         }
+
+        componentWillReceiveProps(nextProps) {
+          
+          if(nextProps.param !== this.props.param) {
+            this.loadingData(nextProps.param);
+          }
+        }
       
 
     render() {
-        const { flLoading } = this.state;
+        const { items, flLoading } = this.state;
         const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
         });
+
+        
+        
 
         return (<div>
             <Spin spinning={flLoading}>
@@ -177,9 +181,11 @@ class TovarSorting extends Component {
                           )}
                         </Droppable>
                       </DragDropContext>
-                      <Button type="primary" onClick={this.saveSortCategories} style={{marginBottom: "10px", marginLeft: '10px'}}>
+                      { items.length ?
+                      <Button type="primary" onClick={this.saveSort} style={{marginBottom: "10px", marginLeft: '10px'}}>
                         <Icon type="plus"/>Сохранить
-                      </Button>
+                      </Button> : <Alert message="В категории нет товаров" type="warning" showIcon />
+                      }
                     </Spin>
         </div>);
     }
