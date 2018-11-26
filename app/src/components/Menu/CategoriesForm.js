@@ -15,11 +15,13 @@ class CategoriesForm extends React.Component {
       this.state = {
         previewVisible: false,
         previewImage: '',
+        tmpFileName: generateKey(),
         fileList: this.props.param ? [{
           uid: '-1',
           name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
           status: 'done',
           url: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage,
+          
         }] : [],
       };
     }
@@ -145,23 +147,57 @@ class CategoriesForm extends React.Component {
 
     componentWillReceiveProps(nextProps) {
       if(nextProps.param !== this.props.param) {
+        
+        this.DeleteTmpFile(); // удаляем временный файл
+        
         this.props.form.setFieldsValue({
           'enShow': this.props.categories.find(x => x.idCategories ===  nextProps.param).enShow === "true",
         });
         this.setState({
-        fileList: [{
-          uid: '-1',
-          name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
-          status: 'done',
-          url: this.props.categories.find(x => x.idCategories ===  nextProps.param).chMainImage,
+          tmpFileName: generateKey(),
+          fileList: [{
+            uid: '-1',
+            name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
+            status: 'done',
+            url: this.props.categories.find(x => x.idCategories ===  nextProps.param).chMainImage,
         }]});
       }
     }
 
+    componentWillUnmount () {
+      this.DeleteTmpFile();
+    }
+
+    DeleteTmpFile = () => {
+      const url = this.props.optionapp[0].serverUrl + "/DeleteTmpFile.php"; // удаление
+      fetch(url,
+        {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              tmpFileName: this.state.tmpFileName
+           })
+        }).then((response) => response.json()).then((responseJsonFromServer) =>
+        {
+          //console.log(responseJsonFromServer);
+        }).catch((error) =>
+        {
+          //console.error(error);
+        });
+    }
+
+
+
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { previewVisible, previewImage, fileList } = this.state;
+        const { previewVisible, previewImage, fileList, tmpFileName } = this.state;
         const labelColSpan = 8;
+        const tmpFilePath = "http://mircoffee.by/deliveryserv/app/api/admin/UploadFile.php?fName=" + tmpFileName;
 
         const uploadButton = (
           <div>
@@ -238,51 +274,12 @@ class CategoriesForm extends React.Component {
                 })(
                   <div>
                   <Upload
-                    /*action="http://mircoffee.by/deliveryserv/app/api/admin/UploadFile.php"*/
+                    action={tmpFilePath}
                     listType="picture-card"
                     enctype="multipart/form-data"
                     fileList={fileList}
                     onPreview={this.handlePreview}
                     onChange={this.handleChange}
-                    customRequest={(info) => {
-                      console.log(info.file);
-                      const uploadUrl = "http://mircoffee.by/deliveryserv/app/api/admin/UploadFile.php";     
-                      
-                      fetch( uploadUrl, { // Your POST endpoint
-                      method: 'POST',
-                      headers: {
-                        "Content-Type": "You will perhaps need to define a content-type here"
-                      },
-                      body: info.file // This is your file object
-                      }).then(
-                        response => response.json() // if the response is a JSON object
-                      ).then(
-                        success => console.log(success) // Handle the success response object
-                      ).catch(
-                        error => console.log(error) // Handle the error response object
-                      );
-                              
-                        /*         
-                      let xhr = new XMLHttpRequest();
-                      //if (!uploadUrl) { return; }
-                      if (info.onProgress && xhr.upload) {
-                        xhr.upload.onprogress = function progress(e) {
-                          if (e.total > 0) {
-                            e.percent = e.loaded / e.total * 100;
-                          }
-                          info.onProgress(e);
-                        }
-                      }
-                      xhr.open('PUT', uploadUrl, true);
-                      xhr.overrideMimeType(info.file.type)
-                      xhr.send(info.file);
-                      xhr.addEventListener('loadend', (e) => {
-                        info.onSuccess(e, xhr);
-                        console.log("+");
-                        
-                      })
-                      */
-                    }}
                   >
                     {fileList.length >= 1 ? null : uploadButton}
                   </Upload>
