@@ -16,26 +16,30 @@ class CategoriesForm extends React.Component {
         previewVisible: false,
         previewImage: '',
         tmpFileName: generateKey(),
-        fileList: this.props.param ? [{
+        fileList: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.length ? [{
           uid: '-1',
           name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
           status: 'done',
           url: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage,
           
-        }] : [],
+        }] : [] : [],
       };
     }
 
     handleCancel = () => this.setState({ previewVisible: false })
 
     handlePreview = (file) => {
+      
+      
       this.setState({
         previewImage: file.url || file.thumbUrl,
         previewVisible: true,
       });
     }
 
-    handleChange = ({ fileList }) => this.setState({ fileList })
+    handleChange = ({ fileList }) => {
+      this.setState({ fileList })
+    }
 
 
     handleSubmit = (e) => {
@@ -45,6 +49,7 @@ class CategoriesForm extends React.Component {
             var val = {};
             if (this.props.param) {
               const url = this.props.optionapp[0].serverUrl + "/EditCategories.php"; // изменяем категорию
+
               fetch(url, {
                 method: 'POST',
                 headers: 
@@ -58,6 +63,7 @@ class CategoriesForm extends React.Component {
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
+                  tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
@@ -67,11 +73,9 @@ class CategoriesForm extends React.Component {
                     chName: values.chName,
                     chNamePrint: values.chNamePrint,
                     enShow: values.enShow ? "true" : "false",
+                    chMainImage:responseJsonFromServer, 
                   }
                 }
-
-                console.log(values.chMainImage);
-                
 
                 this.props.onEdit(val);  // вызываем action
                 message.success('Категория изменена');
@@ -155,12 +159,12 @@ class CategoriesForm extends React.Component {
         });
         this.setState({
           tmpFileName: generateKey(),
-          fileList: [{
+          fileList: this.props.categories.find(x => x.idCategories ===  nextProps.param).chMainImage.length ? [{
             uid: '-1',
             name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
             status: 'done',
             url: this.props.categories.find(x => x.idCategories ===  nextProps.param).chMainImage,
-        }]});
+        }] : [] });
       }
     }
 
@@ -180,7 +184,7 @@ class CategoriesForm extends React.Component {
             },
             body: JSON.stringify(
             {
-              tmpFileName: this.state.tmpFileName
+              tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
            })
         }).then((response) => response.json()).then((responseJsonFromServer) =>
         {
