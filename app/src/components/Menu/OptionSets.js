@@ -173,10 +173,7 @@ class OptionSets extends Component {
                 </div>
           },
         ];
-        
 
-        //const { form } = this.props;
-        //const { getFieldDecorator } = form;
         const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
           });

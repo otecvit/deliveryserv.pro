@@ -150,7 +150,8 @@ class OptionSetsForm extends React.Component {
         }];
     
         this.state = {
-          dataSource: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options : [],
+          dataSource: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options : 
+            typeof this.props.copyrecord !== "undefined" ? this.props.copyrecord.options : [],
           blNecessarily: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blNecessarily === "true" : true,
           count: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options.length + 1 : 0,
           selectedRowKeys: this.props.param ? this.searchSelectedRow(this.props.param) : null,
@@ -444,7 +445,7 @@ class OptionSetsForm extends React.Component {
             >
               {getFieldDecorator('chName', {
                 rules: [{ required: true, message: 'Введите имя набора опций' }],
-                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chName : ""
+                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chName : this.props.copyrecord.chName
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя набора опций" />
               )}
@@ -457,7 +458,7 @@ class OptionSetsForm extends React.Component {
             >
               {getFieldDecorator('chNamePrint', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chNamePrint : ""
+                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chNamePrint : this.props.copyrecord.chNamePrint
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
               )}
