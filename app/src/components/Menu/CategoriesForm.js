@@ -29,8 +29,6 @@ class CategoriesForm extends React.Component {
     handleCancel = () => this.setState({ previewVisible: false })
 
     handlePreview = (file) => {
-      
-      
       this.setState({
         previewImage: file.url || file.thumbUrl,
         previewVisible: true,
@@ -99,20 +97,35 @@ class CategoriesForm extends React.Component {
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
+                  tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
                   dataload: { 
-                    key: responseJsonFromServer.toString(),
-                    idCategories: responseJsonFromServer.toString(),
+                    key: responseJsonFromServer.id.toString(),
+                    idCategories: responseJsonFromServer.id.toString(),
                     chName: values.chName,
                     chNamePrint: values.chNamePrint,
                     enShow: values.enShow ? "true" : "false",
+                    chMainImage: responseJsonFromServer.tmpFileName, 
                   }
                 }
+
                 this.props.onAdd(val);  // вызываем action
                 message.success('Категория создана'); 
                 this.props.form.resetFields(); // ресет полей
+                this.setState({
+                  tmpFileName: generateKey(),
+                  fileList: [],
+                })
+
+                this.props.form.setFieldsValue({
+                  'enShow': true,
+                  'chName': "",
+                  'chNamePrint': "",
+                });
+
+
               }).catch((error) => {
                   console.error(error);
               });
@@ -123,6 +136,9 @@ class CategoriesForm extends React.Component {
 
     DeleteCategory = () => {
       const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
+      //console.log(this.state.fileList[0].serverUrl);
+      
+      
       fetch(url,
         {
             method: 'POST',
@@ -133,7 +149,8 @@ class CategoriesForm extends React.Component {
             },
             body: JSON.stringify(
             {
-              idCategories: this.props.param
+              idCategories: this.props.param,
+              tmpFileName: this.state.fileList.length ? this.state.fileList[0].name : "",
            })
         }).then((response) => response.json()).then((responseJsonFromServer) =>
         {
@@ -147,15 +164,18 @@ class CategoriesForm extends React.Component {
         });
         message.success('Категория удалена'); 
         this.props.handler();
+        
     }
 
     componentWillReceiveProps(nextProps) {
+      
       if(nextProps.param !== this.props.param) {
-        
         this.DeleteTmpFile(); // удаляем временный файл
         
         this.props.form.setFieldsValue({
           'enShow': this.props.categories.find(x => x.idCategories ===  nextProps.param).enShow === "true",
+          'chName': this.props.categories.find(x => x.idCategories ===  nextProps.param).chName,
+          'chNamePrint': this.props.categories.find(x => x.idCategories ===  nextProps.param).chNamePrint,
         });
         this.setState({
           tmpFileName: generateKey(),
@@ -168,6 +188,7 @@ class CategoriesForm extends React.Component {
       }
     }
 
+    
     componentWillUnmount () {
       this.DeleteTmpFile();
     }
@@ -201,7 +222,7 @@ class CategoriesForm extends React.Component {
         const { getFieldDecorator } = this.props.form;
         const { previewVisible, previewImage, fileList, tmpFileName } = this.state;
         const labelColSpan = 8;
-        const tmpFilePath = "http://mircoffee.by/deliveryserv/app/api/admin/UploadFile.php?fName=" + tmpFileName;
+        const tmpFilePath = this.props.optionapp[0].serverUrl +  "/UploadFile.php?fName=" + tmpFileName;
 
         const uploadButton = (
           <div>
@@ -250,7 +271,7 @@ class CategoriesForm extends React.Component {
             >
               {getFieldDecorator('chName', {
                 rules: [{ required: true, message: 'Введите имя категории' }],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chName : ""
+                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chName : this.props.copyrecord.chName
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя категории" />
               )}
@@ -263,7 +284,7 @@ class CategoriesForm extends React.Component {
             >
               {getFieldDecorator('chNamePrint', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chNamePrint : ""
+                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chNamePrint :  this.props.copyrecord.chNamePrint
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
               )}
@@ -288,7 +309,7 @@ class CategoriesForm extends React.Component {
                     {fileList.length >= 1 ? null : uploadButton}
                   </Upload>
                   <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                    <img alt="" style={{ width: '100%' }} src={previewImage} />
                   </Modal>
                   </div>
                 )}

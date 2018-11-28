@@ -24,6 +24,7 @@ class OptionSets extends Component {
           searchString: '',
           activeKey: "1",
           currentEditOptionSets: "0",
+          currentRecord: {},
           filtered: false,
           dataSource: {},
           flLoading: true, // спиннер загрузки
@@ -33,11 +34,19 @@ class OptionSets extends Component {
     handleMenuClick = (e, record) => {
         switch (e.key) {
             case "0": this.editCategory(record); break; //Редактировать
-            case "1": this.setState({activeKey: "2"}); break; //Копировать
+            case "1": this.copyOptionSet(record); break; //Копировать
             case "2": this.DeleteCategory(record); break; 
             default: this.setState({activeKey: "1"});    
         }        
       }
+
+    copyOptionSet = (e) => {
+        // открываем вкладку копирования
+        this.setState({
+            activeKey: "2",
+            currentRecord: e.record,
+        });
+    }
 
     componentDidMount() {
         this.loadingData();
@@ -230,7 +239,7 @@ class OptionSets extends Component {
                         />,            
                     </TabPane>
                     <TabPane tab="Создать" key="2">
-                        <OptionSetsForm/>
+                        <OptionSetsForm copyrecord={this.state.currentRecord}/>
                     </TabPane>
                     <TabPane tab="Редактировать" key="3">
                         <Select
@@ -245,9 +254,6 @@ class OptionSets extends Component {
                         {options}
                     </Select>
                     { currentEditOptionSets === "0" ? null : <OptionSetsForm handler = {this.handler} param={currentEditOptionSets} /> }
-                    </TabPane>
-                    <TabPane tab="Сортировка" key="4">
-
                     </TabPane>
                 </Tabs>
                 </div>

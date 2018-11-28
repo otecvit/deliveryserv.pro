@@ -295,10 +295,7 @@ class Dishes extends Component {
                     </Select>
                     { currentEditOptionSets === "0" ? null : <DishesForm handler = {this.handler} param={currentEditOptionSets} /> }
                     </TabPane>
-                    <TabPane tab="Сортировка" key="4">
-
-                    </TabPane>
-                </Tabs>
+                 </Tabs>
                 </div>
             </Content>
             </div>);        

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Popconfirm, Table, message, Switch, Select } from 'antd';
+import { Form, Icon, Input, Button, Popconfirm, Table, message, Switch, Select, Upload, Modal } from 'antd';
 import { connect } from 'react-redux';
 
 const FormItem = Form.Item;
@@ -20,6 +20,8 @@ const EditableRow = ({ form, index, ...props }) => (
 const EditableFormRow = Form.create()(EditableRow);
 
 class EditableCell extends Component {
+
+  
   state = {
     editing: false,
   }
@@ -31,9 +33,11 @@ class EditableCell extends Component {
   }
 
   componentWillUnmount() {
+
     if (this.props.editable) {
       document.removeEventListener('click', this.handleClickOutside, true);
     }
+
   }
 
   toggleEdit = () => {
@@ -163,8 +167,33 @@ class DishesForm extends React.Component {
             {key: "2", chName: "Веган"},
             {key: "3", chName: "Рекомендуем"},
           ],
+          previewVisible: false,
+          previewImage: '',
+          tmpFileName: generateKey(),
+          fileList: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chMainImage.length ? [{
+            uid: '-1',
+            name: this.props.dishes.find(x => x.idDishes ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
+            status: 'done',
+            url: this.props.dishes.find(x => x.idDishes ===  this.props.param).chMainImage,
+            
+          }] : [] : [],
         };
       }
+
+      handleCancel = () => this.setState({ previewVisible: false })
+
+      handlePreview = (file) => {
+        this.setState({
+          previewImage: file.url || file.thumbUrl,
+          previewVisible: true,
+        });
+      }
+
+      handleChange = ({ fileList }) => {
+        this.setState({ fileList })
+      }
+
+
 
       searchSelectedRow = (param) => { // возвращает значение key для множественного выбора
         if (this.props.optionSets.find(x => x.idOptionSets ===  param).blNecessarily === "true")
@@ -203,7 +232,9 @@ class DishesForm extends React.Component {
         this.setState({ dataSource: newData });
       }
     
-
+    componentWillUnmount() {
+        this.DeleteTmpFile(); // удаляем временную картинку
+      }
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -235,6 +266,7 @@ class DishesForm extends React.Component {
                   chOptionSets: values.chOptionSets,
                   chTags: values.chTags,
                   ingredients: this.state.dataSource,
+                  tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
@@ -252,6 +284,7 @@ class DishesForm extends React.Component {
                     chOptionSets: values.chOptionSets,
                     chTags: values.chTags,
                     ingredients: this.state.dataSource,
+                    chMainImage:responseJsonFromServer, 
                   }
                 }
                 this.props.onEdit(val);  // вызываем action
@@ -285,12 +318,13 @@ class DishesForm extends React.Component {
                   chOptionSets: values.chOptionSets,
                   chTags: values.chTags,
                   ingredients: this.state.dataSource,
+                  tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
                   dataload: { 
-                    key: responseJsonFromServer.toString(),
-                    idDishes: responseJsonFromServer.toString(),
+                    key: responseJsonFromServer.id.toString(),
+                    idDishes: responseJsonFromServer.id.toString(),
                     enShow: values.enShow.toString(),
                     chName: values.chName,
                     chNamePrint: values.chNamePrint,
@@ -302,6 +336,7 @@ class DishesForm extends React.Component {
                     chOptionSets: values.chOptionSets,
                     chTags: values.chTags,
                     ingredients: this.state.dataSource,
+                    chMainImage: responseJsonFromServer.tmpFileName, 
                   }
                 }
 
@@ -314,6 +349,8 @@ class DishesForm extends React.Component {
                   chOptionSets: [],
                   chTags: [],
                   dataSource: [], 
+                  tmpFileName: generateKey(),
+                  fileList: [],
                 });
 
               }).catch((error) => {
@@ -337,7 +374,8 @@ class DishesForm extends React.Component {
               },
               body: JSON.stringify(
               {
-                idDishes: this.props.param
+                idDishes: this.props.param,
+                tmpFileName: this.state.fileList.length ? this.state.fileList[0].name : "",
              })
           }).then((response) => response.json()).then((responseJsonFromServer) =>
           {
@@ -385,6 +423,9 @@ class DishesForm extends React.Component {
 
     componentWillReceiveProps(nextProps) {
       if(nextProps.param !== this.props.param) {
+
+        this.DeleteTmpFile(); // удаляем временный файл
+
         this.props.form.setFieldsValue({
           'enShow': this.props.dishes.find(x => x.idDishes ===  nextProps.param).enShow === "true",
           'chName': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chName,
@@ -400,14 +441,46 @@ class DishesForm extends React.Component {
         this.setState(
           { 
             dataSource: this.props.dishes.find(x => x.idDishes ===  nextProps.param).ingredients,
+            tmpFileName: generateKey(),
+            fileList: this.props.dishes.find(x => x.idDishes ===  nextProps.param).chMainImage.length ? [{
+              uid: '-1',
+              name: this.props.dishes.find(x => x.idDishes ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
+              status: 'done',
+              url: this.props.dishes.find(x => x.idDishes ===  nextProps.param).chMainImage,
+            }] : [],
           })
       }
+    }
+
+    DeleteTmpFile = () => {
+      const url = this.props.optionapp[0].serverUrl + "/DeleteTmpFile.php"; // удаление
+
+      fetch(url,
+        {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
+           })
+        }).then((response) => response.json()).then((responseJsonFromServer) =>
+        {
+          //console.log(responseJsonFromServer);
+        }).catch((error) =>
+        {
+          //console.error(error);
+        });
     }
 
     render() {
         const { getFieldDecorator } = this.props.form;
         const labelColSpan = 8;
-        const { dataSource, iCategories, chOptionSets, chTags } = this.state;
+        const { dataSource, iCategories, chOptionSets, chTags, previewVisible, previewImage, fileList, tmpFileName } = this.state;
+        const tmpFilePath = this.props.optionapp[0].serverUrl + "/UploadFile.php?fName=" + tmpFileName;
         const components = {
             body: {
               row: EditableFormRow,
@@ -419,7 +492,12 @@ class DishesForm extends React.Component {
         const children = this.state.arrTags.map(d => <Option key={d.key}>{d.chName}</Option>);
         const childrenOptionSets = this.props.optionSets.map(d => <Option key={d.idOptionSets}>{d.chName}</Option>)
 
-
+        const uploadButton = (
+          <div>
+            <Icon type="plus" />
+            <div className="ant-upload-text">Загрузить</div>
+          </div>
+        );
         
         const columns = this.columns.map((col) => {
         if (!col.editable) {
@@ -596,6 +674,32 @@ class DishesForm extends React.Component {
                 {children}
               </Select>
               )}
+            </FormItem>
+            <FormItem
+              label="Изображение"
+            >
+              <div className="dropbox">
+                {getFieldDecorator('chMainImage', {
+                  /*valuePropName: 'fileList',
+                  getValueFromEvent: this.normFile,*/
+                })(
+                  <div>
+                  <Upload
+                    action={tmpFilePath}
+                    listType="picture-card"
+                    enctype="multipart/form-data"
+                    fileList={fileList}
+                    onPreview={this.handlePreview}
+                    onChange={this.handleChange}
+                  >
+                    {fileList.length >= 1 ? null : uploadButton}
+                  </Upload>
+                  <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+                    <img alt="" style={{ width: '100%' }} src={previewImage} />
+                  </Modal>
+                  </div>
+                )}
+              </div>
             </FormItem>
             <div>
                 <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>

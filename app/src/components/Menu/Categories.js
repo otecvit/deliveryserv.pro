@@ -23,6 +23,7 @@ class Categories extends Component {
           searchString: '',
           activeKey: "1",
           currentEditCat: "0",
+          currentRecord: {},
           filtered: false,
           dataSource: {},
           flLoading: true, // спиннер загрузки
@@ -32,16 +33,24 @@ class Categories extends Component {
     handleMenuClick = (e, record) => {
         switch (e.key) {
             case "0": this.editCategory(record); break; //Редактировать
-            case "1": this.setState({activeKey: "2"}); break; //Копировать
+            case "1": this.copyCategory(record); break; //Копировать
             case "2": this.DeleteCategory(record); break; 
             default: this.setState({activeKey: "1"});    
         }        
       }
 
-    editCategory = (e) => {
+      editCategory = (e) => {
         this.setState({
             activeKey: "3",
             currentEditCat: e.record.idCategories,
+        });
+    }
+
+    copyCategory = (e) => {
+        // открываем вкладку копирования
+        this.setState({
+            activeKey: "2",
+            currentRecord: e.record,
         });
     }
 
@@ -57,7 +66,8 @@ class Categories extends Component {
               },
               body: JSON.stringify(
               {
-                idCategories: e.record.idCategories
+                idCategories: e.record.idCategories,
+                tmpFileName: e.record.chMainImage.length ? e.record.chMainImage.replace(/^.*(\\|\/|\:)/, '') : "",
              })
           }).then((response) => response.json()).then((responseJsonFromServer) =>
           {
@@ -143,8 +153,6 @@ class Categories extends Component {
     }
 
     createDropdownMenu = (record) => {
-
-        //console.log(record);
         const menu = (
             <Menu onClick={e => this.handleMenuClick(e, record)}>
               <Menu.Item key="0">Редактировать</Menu.Item>
@@ -157,7 +165,6 @@ class Categories extends Component {
     }
 
     onChangeCategory = (e) => {
-        //console.log(e);
         this.setState ({ 
             currentEditCat: e.key
         });
@@ -229,7 +236,7 @@ class Categories extends Component {
                     />,            
                 </TabPane>
                 <TabPane tab="Создать" key="2">
-                    <CategoriesForm/>
+                    <CategoriesForm copyrecord={this.state.currentRecord}/>
                 </TabPane>
                 <TabPane tab="Редактировать" key="3">
                     <Select
