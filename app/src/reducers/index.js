@@ -9,6 +9,7 @@ import Orders from './orders';
 import OptionApp from './optionapp';
 import Customers from './customers';
 import Locations from './locations';
+import Stock from './stock';
 
 const allReducers = combineReducers ({
     routing: routerReducer,
@@ -20,7 +21,7 @@ const allReducers = combineReducers ({
     optionapp: OptionApp,
     customers: Customers,
     locations: Locations,
-
+    stock: Stock,
 });
 
 export default allReducers;

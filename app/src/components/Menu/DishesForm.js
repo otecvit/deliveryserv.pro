@@ -358,6 +358,18 @@ class DishesForm extends React.Component {
                   fileList: [],
                 });
 
+                this.props.form.setFieldsValue({
+                  'enShow': true,
+                  'chName': "",
+                  'chNamePrint': "",
+                  'chSubtitle': "",
+                  'chPrice': "",
+                  'chOldPrice': "",
+                  'chDescription': "",
+                  'iCategories': ""
+                });
+                
+
               }).catch((error) => {
                   console.error(error);
               });
