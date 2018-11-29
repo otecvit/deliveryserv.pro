@@ -23,7 +23,7 @@ class Categories extends Component {
           searchString: '',
           activeKey: "1",
           currentEditCat: "0",
-          currentRecord: {},
+          currentRecord: [],
           filtered: false,
           dataSource: {},
           flLoading: true, // спиннер загрузки

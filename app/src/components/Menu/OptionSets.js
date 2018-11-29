@@ -24,7 +24,7 @@ class OptionSets extends Component {
           searchString: '',
           activeKey: "1",
           currentEditOptionSets: "0",
-          currentRecord: {},
+          currentRecord: [],
           filtered: false,
           dataSource: {},
           flLoading: true, // спиннер загрузки

@@ -23,6 +23,7 @@ class Dishes extends Component {
           searchString: '',
           activeKey: "1",
           currentEditOptionSets: "0",
+          currentRecord: [],
           filtered: false,
           dataSource: {},
           flLoading: true, // спиннер загрузки
@@ -32,10 +33,18 @@ class Dishes extends Component {
     handleMenuClick = (e, record) => {
         switch (e.key) {
             case "0": this.editCategory(record); break; //Редактировать
-            case "1": this.setState({activeKey: "2"}); break; //Копировать
+            case "1": this.copyDishes(record); break; //Копировать
             case "2": this.DeleteCategory(record); break; 
             default: this.setState({activeKey: "1"});    
         }        
+    }
+
+    copyDishes = (e) => {
+        // открываем вкладку копирования
+        this.setState({
+            activeKey: "2",
+            currentRecord: e.record,
+        });
     }
 
     componentDidMount() {
@@ -279,7 +288,7 @@ class Dishes extends Component {
                         />            
                     </TabPane>
                     <TabPane tab="Создать" key="2">
-                        <DishesForm/>
+                        <DishesForm copyrecord={this.state.currentRecord}/>
                     </TabPane>
                     <TabPane tab="Редактировать" key="3">
                         <Select

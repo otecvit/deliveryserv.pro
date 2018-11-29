@@ -157,11 +157,16 @@ class DishesForm extends React.Component {
         
     
         this.state = {
-          dataSource: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).ingredients : [],
-          count: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).ingredients.length + 1 : 0,
-          iCategories: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).iCategories : '',
-          chOptionSets: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chOptionSets : [],
-          chTags: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chTags : [],
+          dataSource: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).ingredients : 
+            this.props.copyrecord.length !== 0 ? this.props.copyrecord.ingredients : [],
+          count: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).ingredients.length + 1 : 
+            this.props.copyrecord.length !== 0 ? this.props.copyrecord.ingredients.length + 1 : 0,
+          iCategories: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).iCategories : 
+            this.props.copyrecord.length !== 0 ? this.props.copyrecord.iCategories : '',
+          chOptionSets: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chOptionSets : 
+            this.props.copyrecord.length !== 0 ? this.props.copyrecord.chOptionSets : [],
+          chTags: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chTags : 
+            this.props.copyrecord.length !== 0 ? this.props.copyrecord.chTags : [],
           arrTags: [
             {key: "1", chName: "Острая"},
             {key: "2", chName: "Веган"},
@@ -422,8 +427,21 @@ class DishesForm extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-      if(nextProps.param !== this.props.param) {
 
+      if ((nextProps.copyrecord !== this.props.copyrecord)&&(nextProps.copyrecord.length !== 0)) {
+        this.setState(
+          { 
+            dataSource: nextProps.copyrecord.ingredients,
+            count: nextProps.copyrecord.ingredients.length + 1,
+            iCategories: nextProps.copyrecord.iCategories,
+            chOptionSets: nextProps.copyrecord.chOptionSets,
+            chTags: nextProps.copyrecord.chTags
+          })
+      }
+
+
+      if(nextProps.param !== this.props.param) {
+                
         this.DeleteTmpFile(); // удаляем временный файл
 
         this.props.form.setFieldsValue({
@@ -441,6 +459,7 @@ class DishesForm extends React.Component {
         this.setState(
           { 
             dataSource: this.props.dishes.find(x => x.idDishes ===  nextProps.param).ingredients,
+            count: this.props.dishes.find(x => x.idDishes ===  nextProps.param).ingredients.length + 1,
             tmpFileName: generateKey(),
             fileList: this.props.dishes.find(x => x.idDishes ===  nextProps.param).chMainImage.length ? [{
               uid: '-1',
@@ -555,7 +574,8 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chName', {
                 rules: [{ required: true, message: 'Введите наименование товара' }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chName : ""
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chName : 
+                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chName + " - Копия" : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Наименование товара" />
               )}
@@ -568,7 +588,8 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chNamePrint', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chNamePrint : ""
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chNamePrint : 
+                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chNamePrint : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
               )}
@@ -581,7 +602,8 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chSubtitle', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chSubtitle : ""
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chSubtitle : 
+                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chSubtitle : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Подзаголовок" />
               )}
@@ -594,7 +616,8 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chPrice', {
                 rules: [{ required: true, message: 'Введите стоимость товара' }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chPrice : ""
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chPrice : 
+                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chPrice : ""
               })(
                 <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Цена" />
               )}
@@ -607,7 +630,8 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chOldPrice', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chOldPrice : ""
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chOldPrice : 
+                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chOldPrice : ""
               })(
                 <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Старая цена" />
               )}
@@ -620,7 +644,8 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chDescription', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chDescription : ""
+                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chDescription : 
+                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chDescription : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Описание" />
               )}

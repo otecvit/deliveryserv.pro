@@ -151,10 +151,12 @@ class OptionSetsForm extends React.Component {
     
         this.state = {
           dataSource: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options : 
-            typeof this.props.copyrecord !== "undefined" ? this.props.copyrecord.options : [],
+            this.props.copyrecord.length !== 0 ? this.props.copyrecord.options : [],
           blNecessarily: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).blNecessarily === "true" : true,
-          count: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options.length + 1 : 0,
-          selectedRowKeys: this.props.param ? this.searchSelectedRow(this.props.param) : null,
+          count: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).options.length + 1 : 
+            this.props.copyrecord.length !== 0 ? this.props.copyrecord.options.length + 1 : 0,
+          selectedRowKeys: this.props.param ? this.searchSelectedRow(this.props.param) : 
+            this.props.copyrecord.length !== 0 ? this.searchSelectedRow(this.props.copyrecord.idOptionSets) : null,
         };
       }
 
@@ -298,6 +300,13 @@ class OptionSetsForm extends React.Component {
                 this.props.form.resetFields(); // ресет полей
                 this.setState({ dataSource: [] });
 
+                this.props.form.setFieldsValue({
+                  'enShow': true,
+                  'chName': "",
+                  'chNamePrint': "",
+                });
+
+
               }).catch((error) => {
                   console.error(error);
               });
@@ -354,6 +363,16 @@ class OptionSetsForm extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+
+      if ((nextProps.copyrecord !== this.props.copyrecord)&&(nextProps.copyrecord.length !== 0)) {
+        this.setState(
+          { 
+            dataSource: nextProps.copyrecord.options,
+            count: this.props.copyrecord.options.length + 1,
+            selectedRowKeys: this.searchSelectedRow(nextProps.copyrecord.idOptionSets),
+          })
+      }
+
       if(nextProps.param !== this.props.param) {
         this.props.form.setFieldsValue({
           'enShow': this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param).enShow === "true",
@@ -379,6 +398,7 @@ class OptionSetsForm extends React.Component {
               cell: EditableCell,
             },
           };
+
         const columns = this.columns.map((col) => {
         if (!col.editable) {
             return col;
@@ -445,7 +465,8 @@ class OptionSetsForm extends React.Component {
             >
               {getFieldDecorator('chName', {
                 rules: [{ required: true, message: 'Введите имя набора опций' }],
-                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chName : this.props.copyrecord.chName
+                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chName : 
+                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chName + " - Копия" : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя набора опций" />
               )}
@@ -458,7 +479,8 @@ class OptionSetsForm extends React.Component {
             >
               {getFieldDecorator('chNamePrint', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chNamePrint : this.props.copyrecord.chNamePrint
+                initialValue: this.props.param ? this.props.optionSets.find(x => x.idOptionSets ===  this.props.param).chNamePrint : 
+                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chNamePrint : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
               )}

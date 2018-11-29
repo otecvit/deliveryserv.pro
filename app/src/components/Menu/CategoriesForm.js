@@ -271,7 +271,8 @@ class CategoriesForm extends React.Component {
             >
               {getFieldDecorator('chName', {
                 rules: [{ required: true, message: 'Введите имя категории' }],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chName : this.props.copyrecord.chName
+                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chName : 
+                  this.props.copyrecord.length !== 0 ? this.props.copyrecord.chName + " - Копия" : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя категории" />
               )}
@@ -284,7 +285,8 @@ class CategoriesForm extends React.Component {
             >
               {getFieldDecorator('chNamePrint', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chNamePrint :  this.props.copyrecord.chNamePrint
+                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chNamePrint :  
+                  this.props.copyrecord.length !== 0 ? this.props.copyrecord.chNamePrint : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
               )}
