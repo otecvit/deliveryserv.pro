@@ -18,7 +18,7 @@ export default function stock (state = initialState, action) {
       case "EDIT_STOCK": 
         // проходим по основному state
         const updatedRootItems = state.map(item => {
-          if(item.idCategories === action.payload.dataload.idCategories){
+          if(item.idStock === action.payload.dataload.idStock){
             return {...item, ...action.payload.dataload};
           }
           return item;
@@ -27,7 +27,7 @@ export default function stock (state = initialState, action) {
         return updatedRootItems;
 
         case "DELETE_STOCK": 
-          return state.filter(category => category.idCategories !== action.payload.idCategories );
+          return state.filter(category => category.idStock !== action.payload.idStock );
       default:
         return state;
     }

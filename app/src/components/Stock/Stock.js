@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd'
 
 import StockForm from './StockForm';
+import StockSorting from './StockSorting';
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -35,7 +36,7 @@ class Stock extends Component {
         switch (e.key) {
             case "0": this.edit(record); break; //Редактировать
             case "1": this.copy(record); break; //Копировать
-            case "2": this.DeleteCategory(record); break; 
+            case "2": this.DeleteStock(record); break; 
             default: this.setState({activeKey: "1"});    
         }        
       }
@@ -43,7 +44,7 @@ class Stock extends Component {
       edit = (e) => {
         this.setState({
             activeKey: "3",
-            currentEditCat: e.record.idCategories,
+            currentEditCat: e.record.idStock,
         });
     }
 
@@ -55,8 +56,8 @@ class Stock extends Component {
         });
     }
 
-    DeleteCategory = (e) => {
-        const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
+    DeleteStock = (e) => {
+        const url = this.props.optionapp[0].serverUrl + "/DeleteStock.php"; // удаление
         fetch(url,
           {
               method: 'POST',
@@ -67,13 +68,13 @@ class Stock extends Component {
               },
               body: JSON.stringify(
               {
-                idCategories: e.record.idCategories,
+                idStock: e.record.idStock,
                 tmpFileName: e.record.chMainImage.length ? e.record.chMainImage.replace(/^.*(\\|\/|\:)/, '') : "",
              })
           }).then((response) => response.json()).then((responseJsonFromServer) =>
           {
               var val = {
-                  idCategories: e.record.idCategories,
+                idStock: e.record.idStock,
               }
               this.props.onDelete(val);  // вызываем action
           }).catch((error) =>
@@ -253,6 +254,9 @@ class Stock extends Component {
                 </Select>
                 { currentEditCat === "0" ? null : <StockForm handler = {this.handler} param={currentEditCat}/> }
                 </TabPane>
+                <TabPane tab="Сортировка" key="4">
+                    <StockSorting />
+                </TabPane>
             </Tabs>
             </div>
         </Content>
@@ -270,6 +274,8 @@ export default connect (
         onAdd: (data) => {
             dispatch({ type: 'LOAD_STOCK_ALL', payload: data});
           },
+        onDelete: (categoryData) => {
+            dispatch({ type: 'DELETE_STOCK', payload: categoryData});
+        },
     })
   )(Stock);
-

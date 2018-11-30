@@ -21,7 +21,6 @@ class StockForm extends React.Component {
           name: this.props.stock.find(x => x.idStock ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
           status: 'done',
           url: this.props.stock.find(x => x.idStock ===  this.props.param).chMainImage,
-          
         }] : [] : [],
       };
     }
@@ -46,7 +45,10 @@ class StockForm extends React.Component {
           if (!err) {
             var val = {};
             if (this.props.param) {
-              const url = this.props.optionapp[0].serverUrl + "/EditCategories.php"; // изменяем категорию
+              const url = this.props.optionapp[0].serverUrl + "/EditStock.php"; // изменяем категорию
+
+              console.log(this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "");
+              
 
               fetch(url, {
                 method: 'POST',
@@ -57,9 +59,11 @@ class StockForm extends React.Component {
                 },
                 body: JSON.stringify(
                 {
-                  idCategories: this.props.param,
+                  idStock: this.props.param,
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
+                  sDescription: values.sDescription,
+	                chNotes: values.chNotes,
                   enShow: values.enShow ? "1" : "0",
                   tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
                 })
@@ -67,16 +71,18 @@ class StockForm extends React.Component {
                 val = {
                   dataload: { 
                     key: this.props.param,
-                    idCategories: this.props.param,
+                    idStock: this.props.param,
                     chName: values.chName,
                     chNamePrint: values.chNamePrint,
+                    sDescription: values.sDescription,
+                    chNotes: values.chNotes,
                     enShow: values.enShow ? "true" : "false",
                     chMainImage:responseJsonFromServer, 
                   }
                 }
 
                 this.props.onEdit(val);  // вызываем action
-                message.success('Категория изменена');
+                message.success('Акция изменена');
                 this.props.form.resetFields(); // ресет полей
               }).catch((error) => {
                   console.error(error);
@@ -84,7 +90,7 @@ class StockForm extends React.Component {
 
             } else {
 
-              const url = this.props.optionapp[0].serverUrl + "/InsertCategories.php"; // добавляем категорию
+              const url = this.props.optionapp[0].serverUrl + "/InsertStock.php"; // добавляем категорию
               fetch(url, {
                 method: 'POST',
                 headers: 
@@ -96,6 +102,8 @@ class StockForm extends React.Component {
                 {
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
+                  sDescription: values.sDescription,
+                  chNotes: values.chNotes,
                   enShow: values.enShow ? "1" : "0",
                   tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
                 })
@@ -103,16 +111,18 @@ class StockForm extends React.Component {
                 val = {
                   dataload: { 
                     key: responseJsonFromServer.id.toString(),
-                    idCategories: responseJsonFromServer.id.toString(),
+                    idStock: responseJsonFromServer.id.toString(),
                     chName: values.chName,
                     chNamePrint: values.chNamePrint,
+                    sDescription: values.sDescription,
+                    chNotes: values.chNotes,
                     enShow: values.enShow ? "true" : "false",
                     chMainImage: responseJsonFromServer.tmpFileName, 
                   }
                 }
 
                 this.props.onAdd(val);  // вызываем action
-                message.success('Категория создана'); 
+                message.success('Акция создана'); 
                 this.props.form.resetFields(); // ресет полей
                 this.setState({
                   tmpFileName: generateKey(),
@@ -123,6 +133,8 @@ class StockForm extends React.Component {
                   'enShow': true,
                   'chName': "",
                   'chNamePrint': "",
+                  'sDescription': "",
+                  'chNotes': "",
                 });
 
 
@@ -134,8 +146,8 @@ class StockForm extends React.Component {
         });
       }
 
-    DeleteCategory = () => {
-      const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
+    DeleteStock = () => {
+      const url = this.props.optionapp[0].serverUrl + "/DeleteStock.php"; // удаление
       //console.log(this.state.fileList[0].serverUrl);
       
       
@@ -149,20 +161,20 @@ class StockForm extends React.Component {
             },
             body: JSON.stringify(
             {
-              idCategories: this.props.param,
+              idStock: this.props.param,
               tmpFileName: this.state.fileList.length ? this.state.fileList[0].name : "",
            })
         }).then((response) => response.json()).then((responseJsonFromServer) =>
         {
             var val = {
-                idCategories: this.props.param,
+              idStock: this.props.param,
             }
             this.props.onDelete(val);  // вызываем action
         }).catch((error) =>
         {
             console.error(error);
         });
-        message.success('Категория удалена'); 
+        message.success('Акция удалена'); 
         this.props.handler();
         
     }
@@ -176,6 +188,8 @@ class StockForm extends React.Component {
           'enShow': this.props.stock.find(x => x.idStock ===  nextProps.param).enShow === "true",
           'chName': this.props.stock.find(x => x.idStock ===  nextProps.param).chName,
           'chNamePrint': this.props.stock.find(x => x.idStock ===  nextProps.param).chNamePrint,
+          'sDescription': this.props.stock.find(x => x.idStock ===  nextProps.param).sDescription,
+          'chNotes': this.props.stock.find(x => x.idStock ===  nextProps.param).chNotes,
         });
         this.setState({
           tmpFileName: generateKey(),
@@ -224,6 +238,7 @@ class StockForm extends React.Component {
         const labelColSpan = 8;
         const tmpFilePath = this.props.optionapp[0].serverUrl +  "/UploadFile.php?fName=" + tmpFileName;
 
+
         const uploadButton = (
           <div>
             <Icon type="plus" />
@@ -245,7 +260,7 @@ class StockForm extends React.Component {
               borderBottomColor: "#cecece",
                }}>
                <h4>Удалить категорию</h4>
-               <Popconfirm title="Удалить категорию?" onConfirm={() => this.DeleteCategory()} okText="Да" cancelText="Нет">
+               <Popconfirm title="Удалить категорию?" onConfirm={() => this.DeleteStock()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>
