@@ -277,7 +277,7 @@ const CollectionCreateForm = Form.create()(
                 })}
                 <Row className="header-order-total">
                   <Col span={2}></Col>
-                  <Col span={18}>Итого сумма заказа, BYN</Col>
+                  <Col span={18}>Итого сумма заказа, {this.props.owner.chCurrency}</Col>
                   <Col span={4} style={{textAlign: "right"}}>{Number(this.props.param.chOrderPrice).toFixed(2)}</Col>
                 </Row>
               </div>
@@ -346,6 +346,7 @@ class OrdersForm extends Component {
                     <CollectionCreateForm
                       orders = {this.props.orders}
                       optionapp = {this.props.optionapp}
+                      owner = {this.props.owner}
                       wrappedComponentRef={this.saveFormRef}
                       visible={this.state.visible}
                       onCancel={this.props.handler} //вызываем функцию родительского компонента
@@ -361,6 +362,7 @@ export default connect (
   state => ({
     orders: state.orders,
     optionapp: state.optionapp,
+    owner: state.owner,
   }),
   dispatch => ({
     onEditStatus: (data) => {

@@ -275,7 +275,7 @@ class Orders extends Component {
                     //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
                     <div style={{ textAlign: 'center', fontSize: '15px', fontWeight: 'bold' }}>
-                           {Number(record).toFixed(2)} BYN
+                           {Number(record).toFixed(2)} {this.props.owner.chCurrency} 
                     </div>);
                 }
             },{ 
@@ -368,6 +368,7 @@ export default connect (
     state => ({
         orders: state.orders,
         optionapp: state.optionapp,
+        owner: state.owner,
     }),
     dispatch => ({
         onAdd: (data) => {

@@ -28,6 +28,8 @@ import Clients from './components/Clients/Clients';
 import Locations from './components/Locations/Locations';
 import Sorting from './components/Menu/Sorting';
 import Stock from './components/Stock/Stock';
+import GeneralSettings from './components/Settings/General';
+import Times from './components/Settings/Times';
 
 
 
@@ -65,6 +67,8 @@ const ContentPage =
     <Route exact path="/locations" component={Locations}/>
     <Route exact path="/sorting" component={Sorting}/>
     <Route exact path="/stock" component={Stock}/>
+    <Route exact path="/general-settings" component={GeneralSettings}/>
+    <Route exact path="/times" component={Times}/>
 </div>
 ;
 
