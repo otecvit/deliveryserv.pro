@@ -7,9 +7,6 @@ import moment from 'moment';
 const { Content } = Layout;
 const FormItem = Form.Item;
 const Option = Select.Option;
-const generateKey = (pre) => {
-  return `${ new Date().getTime() }`;
-}
 
 const timezones = [
     { name: 'Europe/Warsaw',      value: "(GMT+01:00) Варшава"},
@@ -54,8 +51,6 @@ class General extends Component {
 
     constructor(props) {
         super(props);
-
-       
     }
 
     handleSubmit = (e) => {

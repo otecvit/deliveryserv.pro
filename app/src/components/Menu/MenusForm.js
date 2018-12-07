@@ -291,7 +291,6 @@ class MenusForm extends React.Component {
       }
 
       DeleteDishes = () => {
-
         const url = this.props.optionapp[0].serverUrl + "/DeleteMenus.php"; // удаление
         fetch(url,
           {
