@@ -14,7 +14,7 @@ class Times extends Component {
             blLater: this.props.owner.blLater === "true"
         }
     }
-
+    
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {

@@ -77,6 +77,7 @@ class MainClass extends React.Component {
     super(props);
     this.state = {
       loadStatus: false,
+      loadingApp: false,
     };
 }
 
@@ -92,31 +93,37 @@ class MainClass extends React.Component {
       this.setState({loadStatus: !this.state.loadStatus})
     }
 
+    handler = () => {
+      this.setState({loadingApp: !this.state.loadingApp})
+    }
+
     render() {
-      
-        return (
-          <Layout style={{ minHeight: '100vh' }}>
-              <Startup/>
-              <SiderMenu/>
-              {this.state.loadStatus ? <СheckNewOrder/> : null}
-            <Layout>
-              <Header style={{ background: '#fff', padding: 0 }}>
-                <div style={{ padding: 16 }}>
-                  <HeaderStatus />
-                </div>
-                
-              </Header>
-              <Content>
-                <div style={{ padding: 16, minHeight: 360 }}>
-                 {ContentPage}
-                </div>
-              </Content>
-              <Footer style={{ textAlign: 'center' }}>
-                Deliveryserv ©2018 Created by overcode
-              </Footer>
-            </Layout>
+        const { loadingApp } = this.state;
+
+        const MainContent = 
+        <Layout style={{ minHeight: '100vh' }}>
+            
+            <SiderMenu/>
+            {this.state.loadStatus ? <СheckNewOrder/> : null}
+          <Layout>
+            <Header style={{ background: '#fff', padding: 0 }}>
+              <div style={{ padding: 16 }}>
+                <HeaderStatus />
+              </div>
+              
+            </Header>
+            <Content>
+              <div style={{ padding: 16, minHeight: 360 }}>
+              {ContentPage}
+              </div>
+            </Content>
+            <Footer style={{ textAlign: 'center' }}>
+              Deliveryserv ©2018 Created by overcode
+            </Footer>
           </Layout>
-        );
+        </Layout>;
+      
+        return <div>{loadingApp ? MainContent : <Startup handler = { this.handler }/>}</div>;
       }
 }
 

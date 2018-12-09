@@ -2,12 +2,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-const chUID = "222333"
-//const chUID = "66665555"
+//const chUID = "222333"
+const chUID = "66665555"
 
 class Startup extends Component {
     componentDidMount() {
-        //console.log(chUID);
+        console.log(chUID);
         
         const urlOwner = this.props.optionapp[0].serverUrl + "/SelectOwner.php";
         fetch(urlOwner, {
@@ -22,7 +22,7 @@ class Startup extends Component {
                 chUID: chUID,
             })
           }).then((response) => response.json()).then((responseServer) => {
-              //console.log(responseServer);
+            console.log(responseServer);
               
             const val = {
                 idCustomer: responseServer.owner[0].idCustomer,
@@ -38,6 +38,7 @@ class Startup extends Component {
                 blLater: responseServer.owner[0].blLater,
             }
             this.props.onAdd(val);  // вызываем action
+            this.props.handler();
             
         }).catch((error) => {
               console.error(error);
