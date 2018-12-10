@@ -2,8 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-//const chUID = "222333"
-const chUID = "66665555"
+const chUID = "222333"
+//const chUID = "66665555"
 
 class Startup extends Component {
     componentDidMount() {
@@ -36,6 +36,11 @@ class Startup extends Component {
                 chTimeZone: responseServer.owner[0].chTimeZone,
                 chCurrency: responseServer.owner[0].chCurrency,
                 blLater: responseServer.owner[0].blLater,
+                iDaysAhead: responseServer.owner[0].iDaysAhead,
+                iFirstOrder: responseServer.owner[0].iFirstOrder,
+                iLastOrder: responseServer.owner[0].iLastOrder,
+                blPickup: responseServer.owner[0].blPickup,
+                blDelivery: responseServer.owner[0].blDelivery,
             }
             this.props.onAdd(val);  // вызываем action
             this.props.handler();

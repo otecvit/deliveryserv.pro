@@ -44,6 +44,7 @@ class SiderMenu extends Component {
                 <Menu.Item key="12"><Link to="stock"><Icon type="gift" /><span>Акции</span></Link></Menu.Item>
                 <SubMenu key="sub2" title={<span><Icon type="setting"/><span>Настройки</span></span>}>
                     <Menu.Item key="13"><Link to="general-settings">Общие</Link></Menu.Item>
+                    <Menu.Item key="14"><Link to="type-order">Типы заказов</Link></Menu.Item>
                     <Menu.Item key="15"><Link to="times">Время</Link></Menu.Item>
                     <Menu.Item key="16">Оплата</Menu.Item>
                     <Menu.Item key="17">Оформление</Menu.Item>

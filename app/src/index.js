@@ -30,6 +30,8 @@ import Sorting from './components/Menu/Sorting';
 import Stock from './components/Stock/Stock';
 import GeneralSettings from './components/Settings/General';
 import Times from './components/Settings/Times';
+import TypeOrder from './components/Settings/TypeOrder';
+import Login from './authentication/Login';
 
 
 
@@ -69,6 +71,7 @@ const ContentPage =
     <Route exact path="/stock" component={Stock}/>
     <Route exact path="/general-settings" component={GeneralSettings}/>
     <Route exact path="/times" component={Times}/>
+    <Route exact path="/type-order" component={TypeOrder}/>
 </div>
 ;
 
@@ -77,7 +80,7 @@ class MainClass extends React.Component {
     super(props);
     this.state = {
       loadStatus: false,
-      loadingApp: false,
+      loadingStatus: 0,
     };
 }
 
@@ -94,11 +97,11 @@ class MainClass extends React.Component {
     }
 
     handler = () => {
-      this.setState({loadingApp: !this.state.loadingApp})
+      this.setState({loadingStatus: 1})
     }
 
     render() {
-        const { loadingApp } = this.state;
+        const { loadingStatus } = this.state;
 
         const MainContent = 
         <Layout style={{ minHeight: '100vh' }}>
@@ -122,8 +125,18 @@ class MainClass extends React.Component {
             </Footer>
           </Layout>
         </Layout>;
+
+        const LoginContent = <Login/>;
+        const LoadinContent = <Startup handler = { this.handler }/>
+
+        let PrintContent = <div></div>;
+        switch (loadingStatus) {
+          case 0: PrintContent = LoginContent; break;
+          case 1: PrintContent = LoadinContent; break;
+          case 2: PrintContent = MainContent; break;
+        }
       
-        return <div>{loadingApp ? MainContent : <Startup handler = { this.handler }/>}</div>;
+        return <div>{PrintContent}</div>;
       }
 }
 

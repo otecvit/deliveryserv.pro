@@ -20,7 +20,7 @@ class Times extends Component {
         this.props.form.validateFields((err, values) => {
           if (!err) {
             var val = {};
-                const url = this.props.optionapp[0].serverUrl + "/EditOwner.php"; // изменяем категорию
+                const url = this.props.optionapp[0].serverUrl + "/EditOwnerTimes.php"; // изменяем категорию
               fetch(url, {
                 method: 'POST',
                 headers: 
@@ -31,21 +31,18 @@ class Times extends Component {
                 body: JSON.stringify(
                 {
                   chUID: this.props.owner.chUID,
-                  chName: values.chName,
-                  chTagline: values.chTagline,
-                  chEmailStore: values.chEmailStore,
-                  chTimeZone: values.chTimeZone,
-                  chCurrency: values.chCurrency,
+                  blLater: this.state.blLater ? "1" : "0",
+                  iDaysAhead: values.iDaysAhead,
+                  iFirstOrder: values.iFirstOrder,
+                  iLastOrder: values.iLastOrder,
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
                   idCustomer: this.props.owner.idCustomer,
-                  chUID: this.props.owner.chUID,
-                  chName: values.chName,
-                  chTagline: values.chTagline,
-                  chEmailStore: values.chEmailStore,
-                  chTimeZone: values.chTimeZone,
-                  chCurrency: values.chCurrency,
+                  blLater: values.blLater.toString(),
+                  iDaysAhead: values.iDaysAhead,
+                  iFirstOrder: values.iFirstOrder,
+                  iLastOrder: values.iLastOrder,
                 }
 
                 this.props.onEdit(val);  // вызываем action
@@ -97,9 +94,9 @@ class Times extends Component {
                         style={{ marginBottom: 10 }}
                         hasFeedback
                         >
-                        {getFieldDecorator('chName', {
+                        {getFieldDecorator('iDaysAhead', {
                             rules: [],
-                            initialValue: this.props.owner.chName
+                            initialValue: this.props.owner.iDaysAhead
                         })(
                             <Input prefix={<Icon type="calendar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="7" />
                         )}
@@ -110,9 +107,9 @@ class Times extends Component {
                         style={{ marginBottom: 10 }}
                         hasFeedback
                         >
-                        {getFieldDecorator('chSlogan', {
+                        {getFieldDecorator('iFirstOrder', {
                             rules: [],
-                            initialValue: this.props.owner.chTagline
+                            initialValue: this.props.owner.iFirstOrder
                         })(
                             <Input prefix={<Icon type="clock-circle" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="30" />
                         )}
@@ -123,9 +120,9 @@ class Times extends Component {
                             style={{ marginBottom: 10 }}
                             hasFeedback
                             >
-                            {getFieldDecorator('chEmailStore', {
+                            {getFieldDecorator('iLastOrder', {
                                 rules: [],
-                                initialValue: this.props.owner.chEmailStore
+                                initialValue: this.props.owner.iLastOrder
                             })(
                                 <Input prefix={<Icon type="clock-circle" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="30" />
                             )}
