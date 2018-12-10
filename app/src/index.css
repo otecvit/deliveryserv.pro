@@ -230,3 +230,29 @@ thead[class*="ant-table-thead"] th{
   font-size: 18px;
   font-weight: 500;
 }
+
+.form-login .ant-modal-content .ant-modal-close {
+  display: none;
+}
+
+.form-login .ant-modal-content .ant-modal-header {
+  background: #1890ff;
+}
+
+.form-login .ant-modal-content .ant-modal-header .ant-modal-title {
+  font-size: 21px;
+  color: #fff;
+  text-align: center;
+}
+
+.content-center .ant-form-item-control-wrapper {
+  text-align: center;
+}
+
+.content-form .ant-form-item-label {
+  line-height: 0px;
+}
+
+.content-form {
+  margin-bottom: 10px;
+}
