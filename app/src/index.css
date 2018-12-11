@@ -239,6 +239,10 @@ thead[class*="ant-table-thead"] th{
   background: #1890ff;
 }
 
+.form-login .ant-modal-content .ant-modal-body {
+  padding: 24px 24px 0 24px;
+}
+
 .form-login .ant-modal-content .ant-modal-header .ant-modal-title {
   font-size: 21px;
   color: #fff;
@@ -249,10 +253,25 @@ thead[class*="ant-table-thead"] th{
   text-align: center;
 }
 
+.text-login {
+  text-align: center;
+  margin-bottom: 1px;
+}
+
+.text-login-copyright {
+  text-align: center;
+  position: relative;
+  top: 44px;
+}
+
 .content-form .ant-form-item-label {
   line-height: 0px;
 }
 
 .content-form {
   margin-bottom: 10px;
+}
+
+.button-login {
+  width: 100%;
 }

@@ -1,9 +1,10 @@
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Route, Redirect } from 'react-router';
 
-const chUID = "222333"
+//const chUID = "222333"
 //const chUID = "66665555"
+const chUID = "";
 
 class Startup extends Component {
     componentDidMount() {
@@ -47,6 +48,7 @@ class Startup extends Component {
             
         }).catch((error) => {
               console.error(error);
+              this.props.handler();
         });
 
 

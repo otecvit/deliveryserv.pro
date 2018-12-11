@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
+import { connect } from 'react-redux';
 import {createStore, applyMiddleware, compose  } from 'redux';
 import thunk from 'redux-thunk';
 import registerServiceWorker from './registerServiceWorker';
@@ -8,7 +9,7 @@ import registerServiceWorker from './registerServiceWorker';
 import { Layout } from 'antd';
 
 import createHistory from 'history/createBrowserHistory';
-import { Route } from 'react-router';
+import { Route, Redirect } from 'react-router';
 import { ConnectedRouter} from 'react-router-redux';
 
 import 'antd/dist/antd.css';
@@ -32,6 +33,7 @@ import GeneralSettings from './components/Settings/General';
 import Times from './components/Settings/Times';
 import TypeOrder from './components/Settings/TypeOrder';
 import Login from './authentication/Login';
+import Registration from './authentication/Registration';
 
 
 
@@ -72,24 +74,31 @@ const ContentPage =
     <Route exact path="/general-settings" component={GeneralSettings}/>
     <Route exact path="/times" component={Times}/>
     <Route exact path="/type-order" component={TypeOrder}/>
-</div>
-;
+</div>;
+
+const RegisterPages = 
+<div>
+    <Route exact path="/login" component={Login}/>
+    <Route exact path="/register" component={Registration}/>
+</div>;
+
 
 class MainClass extends React.Component {
   constructor(props) {
     super(props);
+    this.handler = this.handler.bind(this)
     this.state = {
       loadStatus: false,
-      loadingStatus: 0,
+      loadingStatus: false,
     };
 }
 
     componentDidMount() {
-      this.timer = setInterval(()=> this.getItems(), 1000);
+      //this.timer = setInterval(()=> this.getItems(), 1000);
     }
   
     componentWillUnmount() {
-      this.timer = null; // here...
+      //this.timer = null; // here...
     }
     
     getItems() {
@@ -97,15 +106,13 @@ class MainClass extends React.Component {
     }
 
     handler = () => {
-      this.setState({loadingStatus: 1})
+      this.setState({loadingStatus: true})
     }
 
     render() {
         const { loadingStatus } = this.state;
 
-        const MainContent = 
-        <Layout style={{ minHeight: '100vh' }}>
-            
+        const MainContent = <Layout style={{ minHeight: '100vh' }}>
             <SiderMenu/>
             {this.state.loadStatus ? <СheckNewOrder/> : null}
           <Layout>
@@ -125,20 +132,19 @@ class MainClass extends React.Component {
             </Footer>
           </Layout>
         </Layout>;
-
-        const LoginContent = <Login/>;
+        
         const LoadinContent = <Startup handler = { this.handler }/>
 
-        let PrintContent = <div></div>;
-        switch (loadingStatus) {
-          case 0: PrintContent = LoginContent; break;
-          case 1: PrintContent = LoadinContent; break;
-          case 2: PrintContent = MainContent; break;
-        }
-      
-        return <div>{PrintContent}</div>;
+        return <div>{loadingStatus ? MainContent : LoadinContent}</div>;
       }
 }
+
+MainClass = connect(
+  state => ({
+    owner: state.owner,
+  }),
+  dispatch => ({}))(MainClass)
+
 
 
 ReactDOM.render(
