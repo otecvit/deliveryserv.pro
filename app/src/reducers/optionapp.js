@@ -2,6 +2,7 @@ const initialState = [
     {
         newOrderCount: 0,
         allOrderCount: 0,
+        isLoggedIn: 0,
         statusCloud: 0,
         serverUrl: "http://mircoffee.by/deliveryserv/app/api/admin",
         scriptIconUrl: "//at.alicdn.com/t/font_888167_vw9ga6g7hu.js",

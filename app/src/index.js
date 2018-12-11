@@ -35,33 +35,39 @@ import TypeOrder from './components/Settings/TypeOrder';
 import Login from './authentication/Login';
 import Registration from './authentication/Registration';
 
-
-
 import СheckNewOrder from './components/СheckNewOrder';
+
+import ApplicationContainer from './containers/ApplicationContainer';
+
 
 const history = createHistory();
 const { Header, Content, Footer } = Layout;
 
 const store = createStore(allReducers, compose(applyMiddleware(thunk), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
 
-/*
-function handler() {
-  ReactDOM.render(
-    <Provider store = {store}>
+const Application = connect(state => ({
+  location: state.routing.location
+}))(ApplicationContainer);
+
+ReactDOM.render(
+  <Provider store={store}>
       <ConnectedRouter history={history}>
-        {ContentPage}
+          <Application/>
       </ConnectedRouter>
-    </Provider>,
-    document.getElementById('root')
-  );
-  
-};
-*/
+  </Provider>,
+  document.getElementById('root'),
+);
+
+
 //const Login = <LoginPage  handler = {handler}/>;
+
+/*
 
 const ContentPage =
 <div>
-    <Route exact path="/" component={Dashboard}/>
+    <Route exact path="/login" component={Login}/>
+    <Route exact path="/register" component={Registration}/>
+
     <Route exact path="/categories" component={Categories}/>
     <Route exact path="/option-sets" component={OptionSets}/>
     <Route exact path="/dishes" component={Dishes}/>
@@ -74,12 +80,8 @@ const ContentPage =
     <Route exact path="/general-settings" component={GeneralSettings}/>
     <Route exact path="/times" component={Times}/>
     <Route exact path="/type-order" component={TypeOrder}/>
-</div>;
 
-const RegisterPages = 
-<div>
-    <Route exact path="/login" component={Login}/>
-    <Route exact path="/register" component={Registration}/>
+    <Route exact path="/" component={Dashboard}/>
 </div>;
 
 
@@ -107,11 +109,14 @@ class MainClass extends React.Component {
 
     handler = () => {
       this.setState({loadingStatus: true})
+     
+      
+    
     }
 
     render() {
         const { loadingStatus } = this.state;
-
+ 
         const MainContent = <Layout style={{ minHeight: '100vh' }}>
             <SiderMenu/>
             {this.state.loadStatus ? <СheckNewOrder/> : null}
@@ -132,9 +137,22 @@ class MainClass extends React.Component {
             </Footer>
           </Layout>
         </Layout>;
-        
+ 
+        const MainContent = <Layout style={{ minHeight: '100vh' }}>
+          {ContentPage}
+        </Layout>;
+
+
+    
         const LoadinContent = <Startup handler = { this.handler }/>
 
+      
+        if (!this.props.optionapp[0].isLoggedIn) {
+          console.log("5");
+          
+          return <Redirect to="/login"/>
+        }
+        
         return <div>{loadingStatus ? MainContent : LoadinContent}</div>;
       }
 }
@@ -142,6 +160,7 @@ class MainClass extends React.Component {
 MainClass = connect(
   state => ({
     owner: state.owner,
+    optionapp: state.optionapp,
   }),
   dispatch => ({}))(MainClass)
 
@@ -156,6 +175,8 @@ ReactDOM.render(
   
     document.getElementById('root')
   );
- 
+ */
+
+
 registerServiceWorker();
 

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Modal, Button, Radio, Form, Icon, Input, Divider } from 'antd'
 import { Link } from 'react-router-dom'
-import { Route, Redirect } from 'react-router';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
