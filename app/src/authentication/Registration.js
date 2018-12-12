@@ -45,47 +45,38 @@ class Registration extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
           if (!err) {
-            console.log("+");
+            const urlOwner = this.props.optionapp[0].serverUrl + "/InsertOwner.php";
+            fetch(urlOwner, {
+              method: 'POST',
+              headers: 
+              {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(
+              {
+                  chEmailOwner: values.chEmailOwner,
+                  chHashPassword: values.password,
+              })
 
-            const urlOwner = this.props.optionapp[0].serverUrl + "/SelectOwner.php";
-        fetch(urlOwner, {
-            method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-            {
-                chUID: chUID,
-            })
-          }).then((response) => response.json()).then((responseServer) => {
-            console.log(responseServer);
-              
-            const val = {
-                idCustomer: responseServer.owner[0].idCustomer,
-                chUID: chUID,
-                chName: responseServer.owner[0].chName,
-                chTagline: responseServer.owner[0].chTagline,
-                chEmailStore: responseServer.owner[0].chEmailStore,
-                blVerification: responseServer.owner[0].blVerification,
-                dDateRegistration: responseServer.owner[0].dDateRegistration,
-                iTarif: responseServer.owner[0].iTarif,
-                chTimeZone: responseServer.owner[0].chTimeZone,
-                chCurrency: responseServer.owner[0].chCurrency,
-                blLater: responseServer.owner[0].blLater,
-                iDaysAhead: responseServer.owner[0].iDaysAhead,
-                iFirstOrder: responseServer.owner[0].iFirstOrder,
-                iLastOrder: responseServer.owner[0].iLastOrder,
-                blPickup: responseServer.owner[0].blPickup,
-                blDelivery: responseServer.owner[0].blDelivery,
+            }).then((response) => response.json()).then((responseServer) => {
+              console.log(responseServer);
+
+            if (responseServer.status === "1") {
+              const val = {
+                chUID: responseServer.chUID,
+              }
+              this.props.onAdd(val);  // вызываем action
             }
-            this.props.onAdd(val);  // вызываем action
-            this.props.handler();
+            else {
+              message.error('Пользователь с данным e-mail уже зарегистрирован');
+            }
+            
+
             
         }).catch((error) => {
               console.error(error);
-        });
+        }); 
             /*
             var val = {};
               const url = this.props.optionapp[0].serverUrl + "/EditProducts.php"; // изменяем категорию
@@ -122,6 +113,10 @@ class Registration extends Component {
     render() {
 
     const { getFieldDecorator } = this.props.form;
+
+    if (typeof this.props.owner.chUID !== 'undefined') {
+      return <Redirect to="/"/>
+    }
 
     return (
         <Modal
