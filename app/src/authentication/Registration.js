@@ -115,7 +115,7 @@ class Registration extends Component {
     const { getFieldDecorator } = this.props.form;
 
     if (typeof this.props.owner.chUID !== 'undefined') {
-      return <Redirect to="/"/>
+      return <Redirect to="/setup"/>
     }
 
     return (
