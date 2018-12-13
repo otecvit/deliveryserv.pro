@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Button, Radio, Form, Icon, Input, Divider, message, Steps, Select } from 'antd'
+import { Modal, Button, Radio, Form, Icon, Input, Divider, message, Steps, Select, Switch } from 'antd'
 import { Link } from 'react-router-dom'
 import { Route, Redirect } from 'react-router'
 import { connect } from 'react-redux'
@@ -53,83 +53,36 @@ const money = [
 
 
 class Setup extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
             currentStep: 0,
+            chName: "",
+            chTagline: "",
+            chEmailStore: "",
+            chTimeZone: "Europe/Moscow",
+            chCurrency: "₽",
+            chNameLocation: "",
+            chAddressLocation: "",
+            chPhoneLocation: "",
          };
     }
 
-    
-
-    handleSubmit = (e) => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-          if (!err) {
-            const urlOwner = this.props.optionapp[0].serverUrl + "/InsertOwner.php";
-            fetch(urlOwner, {
-              method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(
-              {
-                  chEmailOwner: values.chEmailOwner,
-                  chHashPassword: values.password,
-              })
-
-            }).then((response) => response.json()).then((responseServer) => {
-              console.log(responseServer);
-
-            if (responseServer.status === "1") {
-              const val = {
-                chUID: responseServer.chUID,
-              }
-              this.props.onAdd(val);  // вызываем action
-            }
-            else {
-              message.error('Пользователь с данным e-mail уже зарегистрирован');
-            }
-            
-
-            
-        }).catch((error) => {
-              console.error(error);
-        }); 
-            /*
-            var val = {};
-              const url = this.props.optionapp[0].serverUrl + "/EditProducts.php"; // изменяем категорию
-              fetch(url, {
-                method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                {
-                  idDishes: this.props.param,
-                })
-              }).then((response) => response.json()).then((responseJsonFromServer) => {
-                val = {
-                  dataload: { 
-                    key: this.props.param,
-                  }
-                }
-                this.props.onEdit(val);  // вызываем action
-                message.success('Товар изменен');
-                this.props.form.resetFields(); // ресет полей
-
-              }).catch((error) => {
-                  console.error(error);
-              });
-   */
-          }
-        });
-      }
+    handleStep_1 = (e) => {
+      e.preventDefault();
+      this.props.form.validateFields((err, values) => {
+        if (!err) {
+            this.setState({
+              currentStep: 1,
+              chName: values.chName,
+              chTagline: values.chTagline,
+              chEmailStore: values.chEmailStore,
+              chTimeZone: values.chTimeZone,
+              chCurrency: values.chCurrency,
+            });
+         }
+      });
+    }
 
       next = () => {
         const currentStep = this.state.currentStep + 1;
@@ -141,7 +94,7 @@ class Setup extends Component {
 
     render() {
 
-      const { currentStep } = this.state;
+      const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation } = this.state;
       const { getFieldDecorator } = this.props.form;
 
       const options = timezones.map(item => <Option value={item.name} key={item.name}>{item.value}</Option>);
@@ -165,70 +118,66 @@ class Setup extends Component {
           <Step key="1"/>
           <Step key="2"/>
           <Step key="3"/>
-          <Step key="4"/>
           </Steps>
           { currentStep === 0 && 
-
-            <Form onSubmit={this.handleSubmitStep_1}>
-            <FormItem
-              label="Название"  
-              className="content-form"
-              hasFeedback
-            >
-              {getFieldDecorator('chName', {
-                rules: [{
-                      required: true, message: 'Заполните это поле',
-                  }
-                ],
-              })(
-                <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
-              )}
-            </FormItem>
-            <FormItem
-              label="Слоган (необязательно)"  
-              hasFeedback
-            >
-              {getFieldDecorator('chTagline')(
-                <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
-              )}
-            </FormItem>
-            <FormItem
-            label="E-mail магазина (необязательно)"  
-            hasFeedback
-          >
-            {getFieldDecorator('chEmailStore', {
-              rules: [{
-                type: 'email', message: 'Некорректный формат E-mail',
-                } 
-              ],
-            })(
-              <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
-            )}
-           </FormItem>
-           <FormItem 
-                        label="Часовой пояс"
-                        hasFeedback
-                        >
-                        {getFieldDecorator('chTimeZone', {
-                            rules: [{ required: true, message: 'Выберите часовой пояс' }],
-                            initialValue: 	"Europe/Moscow",
-                        })(
-                            <Select
-                                showSearch
-                                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                onChange={this.onChangeClient}
-                                >
-                                {options}
-                            </Select>
-                    )}
-                    </FormItem>
+            <Form onSubmit={this.handleStep_1}>
+              <FormItem
+                label="Название"  
+                className="content-form"
+                hasFeedback
+              >
+                {getFieldDecorator('chName', {
+                  rules: [{required: true, message: 'Заполните это поле'}],
+                  initialValue: chName.length ? chName : ""
+                })(
+                  <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+                )}
+              </FormItem>
+              <FormItem
+                label="Слоган (необязательно)"  
+                hasFeedback
+              >
+                {getFieldDecorator('chTagline', {
+                  initialValue: chTagline.length ? chTagline : ""
+                })(
+                  <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+                )}
+              </FormItem>
+              <FormItem
+                label="E-mail магазина (необязательно)"  
+                hasFeedback
+              >
+                {getFieldDecorator('chEmailStore', {
+                  rules: [{type: 'email', message: 'Некорректный формат E-mail'}],
+                  initialValue: chEmailStore.length ? chEmailStore : ""
+                })(
+                  <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
+                )}
+              </FormItem>
+              <FormItem 
+                label="Часовой пояс"
+                hasFeedback
+              >
+                {getFieldDecorator('chTimeZone', {
+                  rules: [{required: true, message: 'Выберите часовой пояс' }],
+                  initialValue: chTimeZone,
+                })(
+                  <Select
+                      showSearch
+                      filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                      onChange={this.onChangeClient}
+                      >
+                      {options}
+                  </Select>
+                )}
+              </FormItem>
                     <FormItem 
                         label="Валюта магазина"
                         hasFeedback
                         >
                         {getFieldDecorator('chCurrency', {
                             rules: [{ required: true, message: 'Выберите валюту' }],
-                            initialValue: "₽",
+                            initialValue: chCurrency,
                         })(
                             <Select
                                 showSearch
@@ -244,12 +193,71 @@ class Setup extends Component {
                         <Icon type="plus"/>Далее
                     </Button>
                     </FormItem>
-            </Form>
-          
+            </Form>}
+          { currentStep === 1 && 
+            <Form onSubmit={this.handleStep_2}>
+            <FormItem
+              label="Название"  
+              className="content-form"
+              hasFeedback
+            >
+              {getFieldDecorator('chNameLocation', {
+                rules: [{required: true, message: 'Заполните это поле'}],
+                initialValue: chNameLocation.length ? chNameLocation : ""
+              })(
+                <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+              )}
+            </FormItem>
+            <FormItem
+              label="Адрес"  
+              className="content-form"
+              hasFeedback
+            >
+              {getFieldDecorator('chAddressLocation', {
+                rules: [{required: true, message: 'Заполните это поле'}],
+                initialValue: chAddressLocation.length ? chAddressLocation : ""
+              })(
+                <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+              )}
+            </FormItem>
+            <FormItem
+              label="Номер телефона (необязательно)"  
+              hasFeedback
+            >
+              {getFieldDecorator('chPhoneLocation', {
+                initialValue: chPhoneLocation.length ? chPhoneLocation : ""
+              })(
+                <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
+              )}
+            </FormItem>
+            <FormItem
+              label="Режим работы"  
+              hasFeedback
+            >
+              {getFieldDecorator('chPhoneLocation', {
+                initialValue: chPhoneLocation.length ? chPhoneLocation : ""
+              })(
+                <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
+              )}
+            </FormItem>
+            <FormItem
+              label="Возможен самовывоз"
+            >
+              {getFieldDecorator('enPickup', { 
+                initialValue: true,
+                valuePropName: 'checked'
+              })(
+                <Switch/>
+              )}
+            </FormItem>
+            <FormItem>
+              <Button type="primary" htmlType="submit">
+                  <Icon type="plus"/>Далее
+              </Button>
+            </FormItem>
+          </Form> 
           }
-          { currentStep === 1 && "2" }
           { currentStep === 2 && "3" }
-          { currentStep === 3 && "4" }
           <p className="text-login-copyright">Deliveryserv © 2019 - <Link to="">Условия использования</Link></p>
         </Modal>
         );
