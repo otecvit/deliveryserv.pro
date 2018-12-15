@@ -268,10 +268,22 @@ thead[class*="ant-table-thead"] th{
   line-height: 0px;
 }
 
-.content-form {
-  margin-bottom: 10px;
+.content-form, .content-form-not-required {
+  margin-bottom: 25px;
+}
+
+.content-form-not-required .ant-form-item-label {
+  line-height: 18px;
 }
 
 .button-login {
   width: 100%;
 }
+
+.title-setup {
+  font-size: 21px;
+  font-weight: 400;
+  padding: 25px 0px 10px 0px;
+}
+
+

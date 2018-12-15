@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Button, Radio, Form, Icon, Input, Divider, message, Steps, Select, Switch } from 'antd'
+import { Modal, Button, Radio, Form, Icon, Input, Divider, message, Steps, Select, Switch, Row, Col } from 'antd'
 import { Link } from 'react-router-dom'
 import { Route, Redirect } from 'react-router'
 import { connect } from 'react-redux'
@@ -84,6 +84,20 @@ class Setup extends Component {
       });
     }
 
+    handleStep_2 = (e) => {
+      e.preventDefault();
+      this.props.form.validateFields((err, values) => {
+        if (!err) {
+            this.setState({
+              currentStep: 2,
+              chNameLocation: values.chNameLocation,
+              chAddressLocation: values.chAddressLocation,
+              chPhoneLocation: values.chPhoneLocation
+            });
+         }
+      });
+    }
+
       next = () => {
         const currentStep = this.state.currentStep + 1;
         this.setState({
@@ -91,8 +105,21 @@ class Setup extends Component {
         })
       }
 
+    prevStep = () => {
+      const form = this.props.form;
+      
+      const currentStep = this.state.currentStep - 1;
+      this.setState({
+        currentStep: currentStep,
+        chNameLocation: form.getFieldValue('chNameLocation'),
+        chAddressLocation: form.getFieldValue('chAddressLocation'),
+        chPhoneLocation: form.getFieldValue('chPhoneLocation')
+      })
+    }
+
 
     render() {
+
 
       const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation } = this.state;
       const { getFieldDecorator } = this.props.form;
@@ -100,14 +127,18 @@ class Setup extends Component {
       const options = timezones.map(item => <Option value={item.name} key={item.name}>{item.value}</Option>);
       const optionsMoney = money.map(item => <Option value={item.value} key={item.value}>{item.name} - {item.value}</Option>)
 
+      const IconFont = Icon.createFromIconfontCN({
+        scriptUrl: this.props.optionapp[0].scriptIconUrl,
+      });
+
     if (typeof this.props.owner.chUID !== 'undefined') {
       return <Redirect to="/"/>
     }
 
     return (
         <Modal
-          title="Регистрация"
-          centered
+          title="Настройка"
+          style={{ top: 20 }}
           visible={true}
           maskStyle={{backgroundColor: '#f2f2f2'}}
           footer=""
@@ -121,8 +152,12 @@ class Setup extends Component {
           </Steps>
           { currentStep === 0 && 
             <Form onSubmit={this.handleStep_1}>
+              <div className="title-setup">
+                Базовые настройки
+              </div>
+              <Divider dashed />
               <FormItem
-                label="Название"  
+                label="Название организации"  
                 className="content-form"
                 hasFeedback
               >
@@ -130,33 +165,39 @@ class Setup extends Component {
                   rules: [{required: true, message: 'Заполните это поле'}],
                   initialValue: chName.length ? chName : ""
                 })(
-                  <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+                  <Input prefix={<IconFont type="icon-shop1170559easyiconnet" style={{ color: 'rgba(0,0,0,.25)' }} />} />
                 )}
               </FormItem>
+              <Divider dashed />
               <FormItem
                 label="Слоган (необязательно)"  
                 hasFeedback
+                className="content-form-not-required"
               >
                 {getFieldDecorator('chTagline', {
                   initialValue: chTagline.length ? chTagline : ""
                 })(
-                  <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+                  <Input prefix={<IconFont type="icon-eyes" style={{ color: 'rgba(0,0,0,.25)' }} />} />
                 )}
               </FormItem>
+              <Divider dashed />
               <FormItem
                 label="E-mail магазина (необязательно)"  
                 hasFeedback
+                className="content-form-not-required" 
               >
                 {getFieldDecorator('chEmailStore', {
                   rules: [{type: 'email', message: 'Некорректный формат E-mail'}],
                   initialValue: chEmailStore.length ? chEmailStore : ""
                 })(
-                  <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
+                  <Input prefix={<IconFont type="icon-emailicon" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
                 )}
               </FormItem>
+              <Divider dashed />
               <FormItem 
                 label="Часовой пояс"
                 hasFeedback
+                className="content-form"
               >
                 {getFieldDecorator('chTimeZone', {
                   rules: [{required: true, message: 'Выберите часовой пояс' }],
@@ -171,9 +212,11 @@ class Setup extends Component {
                   </Select>
                 )}
               </FormItem>
+              <Divider dashed />
                     <FormItem 
                         label="Валюта магазина"
                         hasFeedback
+                        className="content-form"
                         >
                         {getFieldDecorator('chCurrency', {
                             rules: [{ required: true, message: 'Выберите валюту' }],
@@ -188,14 +231,30 @@ class Setup extends Component {
                             </Select>
                     )}
                     </FormItem>
+                    <Divider dashed />
                     <FormItem>
-                    <Button type="primary" htmlType="submit">
-                        <Icon type="plus"/>Далее
+                    <Button type="primary" htmlType="submit" className="button-login">
+                        Продолжить
                     </Button>
                     </FormItem>
             </Form>}
           { currentStep === 1 && 
             <Form onSubmit={this.handleStep_2}>
+            <Row>
+              <Col span={18}>
+                <div className="title-setup">
+                  Добавьте Ваш первый магазин
+                </div>
+              </Col>
+              <Col span={6}>
+                <div className="title-setup" style={{textAlign: "right"}}>
+                  <Button type="default" onClick={() => this.prevStep()}>
+                      Назад
+                  </Button>
+                </div>
+              </Col>
+            </Row>
+            <Divider dashed />
             <FormItem
               label="Название"  
               className="content-form"
@@ -205,9 +264,10 @@ class Setup extends Component {
                 rules: [{required: true, message: 'Заполните это поле'}],
                 initialValue: chNameLocation.length ? chNameLocation : ""
               })(
-                <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+                <Input prefix={<IconFont type="icon-map-marker" style={{ color: 'rgba(0,0,0,.25)' }} />} />
               )}
             </FormItem>
+            <Divider dashed />
             <FormItem
               label="Адрес"  
               className="content-form"
@@ -217,22 +277,26 @@ class Setup extends Component {
                 rules: [{required: true, message: 'Заполните это поле'}],
                 initialValue: chAddressLocation.length ? chAddressLocation : ""
               })(
-                <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+                <Input prefix={<IconFont type="icon-map-marker" style={{ color: 'rgba(0,0,0,.25)' }} />} />
               )}
             </FormItem>
+            <Divider dashed />
             <FormItem
               label="Номер телефона (необязательно)"  
               hasFeedback
+              className="content-form-not-required"
             >
               {getFieldDecorator('chPhoneLocation', {
                 initialValue: chPhoneLocation.length ? chPhoneLocation : ""
               })(
-                <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
+                <Input prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
               )}
             </FormItem>
+            <Divider dashed />
             <FormItem
               label="Режим работы"  
               hasFeedback
+              className="content-form-not-required"
             >
               {getFieldDecorator('chPhoneLocation', {
                 initialValue: chPhoneLocation.length ? chPhoneLocation : ""
@@ -240,8 +304,10 @@ class Setup extends Component {
                 <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
               )}
             </FormItem>
+            <Divider dashed />
             <FormItem
               label="Возможен самовывоз"
+              className="content-form-not-required"
             >
               {getFieldDecorator('enPickup', { 
                 initialValue: true,
@@ -250,14 +316,44 @@ class Setup extends Component {
                 <Switch/>
               )}
             </FormItem>
+            <Divider dashed />
             <FormItem>
-              <Button type="primary" htmlType="submit">
-                  <Icon type="plus"/>Далее
+              <Button type="primary" htmlType="submit" className="button-login">
+                  Продолжить
               </Button>
             </FormItem>
           </Form> 
           }
-          { currentStep === 2 && "3" }
+          { currentStep === 2 && 
+            <Form onSubmit={this.handleStep_2}>
+            <Row>
+              <Col span={18}>
+                <div className="title-setup">
+                  Выберите тарифный план
+                </div>
+              </Col>
+              <Col span={6}>
+                <div className="title-setup" style={{textAlign: "right"}}>
+                  <Button type="default" onClick={() => this.prevStep()}>
+                      Назад
+                  </Button>
+                </div>
+              </Col>
+            </Row>
+            <Divider dashed />
+            <Row gutter={24}>
+              <Col span={12}>Тариф 1</Col>
+              <Col span={12}>Тариф 2</Col>
+            </Row>
+            <Divider dashed />
+            <FormItem>
+              <Button type="primary" htmlType="submit" className="button-login">
+                <IconFont type="icon-rocket" style={{ color: 'rgba(255, 255, 255, 1)' }} />Готово
+              </Button>
+            </FormItem>
+          </Form> 
+          
+          }
           <p className="text-login-copyright">Deliveryserv © 2019 - <Link to="">Условия использования</Link></p>
         </Modal>
         );
