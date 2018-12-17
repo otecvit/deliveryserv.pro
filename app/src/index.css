@@ -287,3 +287,60 @@ thead[class*="ant-table-thead"] th{
 }
 
 
+.subscription-plans-widget {
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-bottom: 30px;
+}
+
+.subscription-plans-widget .subscription-plan {
+  background-color: #fff;
+  text-align: center;
+  transition: all .26s;
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid #d0d0d0;
+}
+
+.subscription-plans-widget .subscription-plan:hover .plan-name, .subscription-plan .active {
+  background-color: #1890ff;
+  color: #fff;
+}
+
+.subscription-plans-widget .subscription-plan .plan-name {
+  padding: 10px;
+  font-weight: 600;
+  border-bottom: 1px solid #d0d0d0;
+  transition: all .3s;
+}
+
+.subscription-plans-widget .subscription-plan .plan-details .plan-detail {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border-bottom: 1px solid #d0d0d0;
+  padding: 5px 0;
+}
+
+.subscription-plans-widget .subscription-plan:hover, .subscription-plans-widget .subscription-plan.active {
+  box-shadow: 0 3px 12px rgba(0,0,0,.23), 0 3px 12px rgba(0,0,0,.16);
+}
+
+.plan-detail p {
+  margin: 0px 10px 0px 10px;
+}

@@ -56,7 +56,8 @@ class Setup extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentStep: 0,
+            currentStep: 2,
+            currentTarif: 1,
             chName: "",
             chTagline: "",
             chEmailStore: "",
@@ -117,11 +118,17 @@ class Setup extends Component {
       })
     }
 
+    changeTarif = (e) => {
+      this.setState({
+        currentTarif: e,
+      })      
+    }
+
 
     render() {
 
 
-      const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation } = this.state;
+      const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation, currentTarif } = this.state;
       const { getFieldDecorator } = this.props.form;
 
       const options = timezones.map(item => <Option value={item.name} key={item.name}>{item.value}</Option>);
@@ -342,8 +349,116 @@ class Setup extends Component {
             </Row>
             <Divider dashed />
             <Row gutter={24}>
-              <Col span={12}>Тариф 1</Col>
-              <Col span={12}>Тариф 2</Col>
+              <Col span={12}>
+                <div className="subscription-plans-widget" onClick={() => this.changeTarif(1)}>
+                  <div className={"subscription-plan " + (currentTarif === 1 && "active")} >
+                    <div className={"plan-name " + (currentTarif === 1 && "active")}>
+                      Basic
+                    </div>
+                    <div className="plan-details">
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-money"/></p>
+                        <p><span>$290 USD - annual</span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-orders"/></p>
+                        <p><span><span>Up to 6,000 orders</span></span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-order"/></p>
+                        <p><span><span>$0.12 per extra order</span></span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-timer-sand"/></p>
+                        <p><span><span>30 day trial</span></span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+              <Col span={12}>
+                <div className="subscription-plans-widget" onClick={() => this.changeTarif(2)}>
+                  <div className={"subscription-plan " + (currentTarif === 2 && "active")} >
+                    <div className={"plan-name " + (currentTarif === 2 && "active")}>
+                      Basic
+                    </div>
+                    <div className="plan-details">
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-money"/></p>
+                        <p><span>$290 USD - annual</span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-orders"/></p>
+                        <p><span><span>Up to 6,000 orders</span></span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-order"/></p>
+                        <p><span><span>$0.12 per extra order</span></span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-timer-sand"/></p>
+                        <p><span><span>30 day trial</span></span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>              
+              </Col>
+            </Row>
+            <Row gutter={24}>
+              <Col span={12}>
+                <div className="subscription-plans-widget"  onClick={() => this.changeTarif(3)}>
+                  <div className={"subscription-plan " + (currentTarif === 3 && "active")} >
+                    <div className={"plan-name " + (currentTarif === 3 && "active")}>
+                      Basic
+                    </div>
+                    <div className="plan-details">
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-money"/></p>
+                        <p><span>$290 USD - annual</span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-orders"/></p>
+                        <p><span><span>Up to 6,000 orders</span></span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-order"/></p>
+                        <p><span><span>$0.12 per extra order</span></span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-timer-sand"/></p>
+                        <p><span><span>30 day trial</span></span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+              <Col span={12}>
+                <div className="subscription-plans-widget" onClick={() => this.changeTarif(4)}>
+                  <div className={"subscription-plan " + (currentTarif === 4 && "active")} >
+                    <div className={"plan-name " + (currentTarif === 4 && "active")}>
+                      Basic
+                    </div>
+                    <div className="plan-details">
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-money"/></p>
+                        <p><span>$290 USD - annual</span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-orders"/></p>
+                        <p><span><span>Up to 6,000 orders</span></span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-order"/></p>
+                        <p><span><span>$0.12 per extra order</span></span></p>
+                      </div>
+                      <div className="plan-detail">
+                        <p><IconFont type="icon-timer-sand"/></p>
+                        <p><span><span>30 day trial</span></span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>              
+              </Col>
             </Row>
             <Divider dashed />
             <FormItem>
