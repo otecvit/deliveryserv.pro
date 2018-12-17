@@ -38,26 +38,26 @@ const timezones = [
 ];
 
 const money = [
-{ name: 'Российский рубль - RUB',       value: "₽"},
-{ name: 'Украинская гривна - UAH',      value: "₴"},
-{ name: 'Белорусский рубль - BYN',      value: "BYN"},
-{ name: 'Азербайджанский манат - AZN',  value: "₼"},
-{ name: 'Казахстанский тенге - KZT',    value: "₸"},
-{ name: 'Грузинский лари - GEL',        value: "₾"},
-{ name: 'Армянский драм - AMD',         value: "֏"},
-{ name: 'Узбекский сум - UZS',          value: "UZS"},
-{ name: 'Евро - EUR',                   value: "€"},
-{ name: 'Польский злотый - PLN',        value: "zł"},
-{ name: 'Монгольский Тугрик - MNT',     value: "MNT"},
-];
-
-
+  { name: 'Российский рубль - RUB',       value: "₽"},
+  { name: 'Украинская гривна - UAH',      value: "₴"},
+  { name: 'Белорусский рубль - BYN',      value: "BYN"},
+  { name: 'Азербайджанский манат - AZN',  value: "₼"},
+  { name: 'Казахстанский тенге - KZT',    value: "₸"},
+  { name: 'Грузинский лари - GEL',        value: "₾"},
+  { name: 'Армянский драм - AMD',         value: "֏"},
+  { name: 'Узбекский сум - UZS',          value: "UZS"},
+  { name: 'Евро - EUR',                   value: "€"},
+  { name: 'Польский злотый - PLN',        value: "zł"},
+  { name: 'Монгольский Тугрик - MNT',     value: "MNT"},
+  ];
+      
 class Setup extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentStep: 2,
+            currentStep: 0,
             currentTarif: 1,
+            currentPeriodMonth: true,
             chName: "",
             chTagline: "",
             chEmailStore: "",
@@ -108,14 +108,19 @@ class Setup extends Component {
 
     prevStep = () => {
       const form = this.props.form;
-      
       const currentStep = this.state.currentStep - 1;
       this.setState({
         currentStep: currentStep,
-        chNameLocation: form.getFieldValue('chNameLocation'),
-        chAddressLocation: form.getFieldValue('chAddressLocation'),
-        chPhoneLocation: form.getFieldValue('chPhoneLocation')
       })
+
+      
+      if (this.state.currentStep == 1)
+        this.setState({
+          chNameLocation: form.getFieldValue('chNameLocation'),
+          chAddressLocation: form.getFieldValue('chAddressLocation'),
+          chPhoneLocation: form.getFieldValue('chPhoneLocation')
+        })
+      
     }
 
     changeTarif = (e) => {
@@ -124,11 +129,18 @@ class Setup extends Component {
       })      
     }
 
+    changePeriod = () => {
+      this.setState({
+        currentPeriodMonth: !this.state.currentPeriodMonth
+      })
+      
+    }
+
 
     render() {
 
 
-      const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation, currentTarif } = this.state;
+      const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation, currentTarif, currentPeriodMonth } = this.state;
       const { getFieldDecorator } = this.props.form;
 
       const options = timezones.map(item => <Option value={item.name} key={item.name}>{item.value}</Option>);
@@ -348,29 +360,39 @@ class Setup extends Component {
               </Col>
             </Row>
             <Divider dashed />
+            <Row>
+              <Col>
+                <div className="period-payments">
+                  <Radio.Group defaultValue={currentPeriodMonth} onChange={this.changePeriod} buttonStyle="solid">
+                    <Radio.Button value={true}>Месяц</Radio.Button>
+                    <Radio.Button value={false}>Год</Radio.Button>
+                  </Radio.Group>
+                </div>
+              </Col>
+            </Row>
             <Row gutter={24}>
               <Col span={12}>
                 <div className="subscription-plans-widget" onClick={() => this.changeTarif(1)}>
                   <div className={"subscription-plan " + (currentTarif === 1 && "active")} >
                     <div className={"plan-name " + (currentTarif === 1 && "active")}>
-                      Basic
+                      Начинающий
                     </div>
                     <div className="plan-details">
                       <div className="plan-detail">
                         <p><IconFont type="icon-money"/></p>
-                        <p><span>$290 USD - annual</span></p>
+                        <p><span>{currentPeriodMonth ? "19$ - месяц" : "190$ - год"}</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-orders"/></p>
-                        <p><span><span>Up to 6,000 orders</span></span></p>
+                        <p><span>{currentPeriodMonth ? "До 500 заказов" : "До 6 000 заказов"}</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-order"/></p>
-                        <p><span><span>$0.12 per extra order</span></span></p>
+                        <p><span>0.10$ за заказ сверх лимита</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-timer-sand"/></p>
-                        <p><span><span>30 day trial</span></span></p>
+                        <p><span><span>30 дней бесплатно</span></span></p>
                       </div>
                     </div>
                   </div>
@@ -380,24 +402,24 @@ class Setup extends Component {
                 <div className="subscription-plans-widget" onClick={() => this.changeTarif(2)}>
                   <div className={"subscription-plan " + (currentTarif === 2 && "active")} >
                     <div className={"plan-name " + (currentTarif === 2 && "active")}>
-                      Basic
+                      Профессионал
                     </div>
                     <div className="plan-details">
                       <div className="plan-detail">
                         <p><IconFont type="icon-money"/></p>
-                        <p><span>$290 USD - annual</span></p>
+                        <p><span>{currentPeriodMonth ? "39$ - месяц" : "390$ - год"}</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-orders"/></p>
-                        <p><span><span>Up to 6,000 orders</span></span></p>
+                        <p><span>{currentPeriodMonth ? "До 1 500 заказов" : "До 18 000 заказов"}</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-order"/></p>
-                        <p><span><span>$0.12 per extra order</span></span></p>
+                        <p><span>0.07$ за заказ сверх лимита</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-timer-sand"/></p>
-                        <p><span><span>30 day trial</span></span></p>
+                        <p><span><span>30 дней бесплатно</span></span></p>
                       </div>
                     </div>
                   </div>
@@ -409,24 +431,24 @@ class Setup extends Component {
                 <div className="subscription-plans-widget"  onClick={() => this.changeTarif(3)}>
                   <div className={"subscription-plan " + (currentTarif === 3 && "active")} >
                     <div className={"plan-name " + (currentTarif === 3 && "active")}>
-                      Basic
+                      Премиум
                     </div>
                     <div className="plan-details">
                       <div className="plan-detail">
                         <p><IconFont type="icon-money"/></p>
-                        <p><span>$290 USD - annual</span></p>
+                        <p><span>{currentPeriodMonth ? "89$ - месяц" : "890$ - год"}</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-orders"/></p>
-                        <p><span><span>Up to 6,000 orders</span></span></p>
+                        <p><span>{currentPeriodMonth ? "До 4 000 заказов" : "До 48 000 заказов"}</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-order"/></p>
-                        <p><span><span>$0.12 per extra order</span></span></p>
+                        <p><span>0.05$ за заказ сверх лимита</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-timer-sand"/></p>
-                        <p><span><span>30 day trial</span></span></p>
+                        <p><span><span>30 дней бесплатно</span></span></p>
                       </div>
                     </div>
                   </div>
@@ -436,24 +458,24 @@ class Setup extends Component {
                 <div className="subscription-plans-widget" onClick={() => this.changeTarif(4)}>
                   <div className={"subscription-plan " + (currentTarif === 4 && "active")} >
                     <div className={"plan-name " + (currentTarif === 4 && "active")}>
-                      Basic
+                      Эксперт
                     </div>
                     <div className="plan-details">
                       <div className="plan-detail">
                         <p><IconFont type="icon-money"/></p>
-                        <p><span>$290 USD - annual</span></p>
+                        <p><span>{currentPeriodMonth ? "169$ - месяц" : "1690$ - год"}</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-orders"/></p>
-                        <p><span><span>Up to 6,000 orders</span></span></p>
+                        <p><span>{currentPeriodMonth ? "До 10 000 заказов" : "До 120 000 заказов"}</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-order"/></p>
-                        <p><span><span>$0.12 per extra order</span></span></p>
+                        <p><span>0.03$ за заказ сверх лимита</span></p>
                       </div>
                       <div className="plan-detail">
                         <p><IconFont type="icon-timer-sand"/></p>
-                        <p><span><span>30 day trial</span></span></p>
+                        <p><span><span>30 дней бесплатно</span></span></p>
                       </div>
                     </div>
                   </div>

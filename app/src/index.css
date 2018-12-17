@@ -286,6 +286,10 @@ thead[class*="ant-table-thead"] th{
   padding: 25px 0px 10px 0px;
 }
 
+.period-payments {
+  padding-bottom: 25px;
+}
+
 
 .subscription-plans-widget {
   -ms-flex-wrap: wrap;
