@@ -1,4 +1,4 @@
-const initialState = [];
+const initialState = {/*chUID: "a3b461d5e2c48b09e7a1"*/};
 
 export default function owner (state = initialState, action) {
     switch (action.type) {

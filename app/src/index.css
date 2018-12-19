@@ -348,3 +348,7 @@ thead[class*="ant-table-thead"] th{
 .plan-detail p {
   margin: 0px 10px 0px 10px;
 }
+
+.time-picker-width {
+  width: 110px;
+}

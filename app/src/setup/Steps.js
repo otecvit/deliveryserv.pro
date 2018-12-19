@@ -1,15 +1,18 @@
 import React, { Component } from 'react'
-import { Modal, Button, Radio, Form, Icon, Input, Divider, message, Steps, Select, Switch, Row, Col } from 'antd'
+import { Modal, Button, Radio, Form, Icon, Input, Divider, message, Steps, Select, Switch, Row, Col, TimePicker } from 'antd'
 import { Link } from 'react-router-dom'
 import { Route, Redirect } from 'react-router'
 import { connect } from 'react-redux'
+import moment from 'moment'
+
+
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const FormItem = Form.Item;
 const Step = Steps.Step;
 const Option = Select.Option;
-
+const format = 'HH:mm';
 
 //const chUID = "222333";
 
@@ -50,12 +53,14 @@ const money = [
   { name: 'Польский злотый - PLN',        value: "zł"},
   { name: 'Монгольский Тугрик - MNT',     value: "MNT"},
   ];
+
+
       
 class Setup extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentStep: 0,
+            currentStep: 1,
             currentTarif: 1,
             currentPeriodMonth: true,
             chName: "",
@@ -66,6 +71,15 @@ class Setup extends Component {
             chNameLocation: "",
             chAddressLocation: "",
             chPhoneLocation: "",
+            arrOperationMode: [
+              {iDay: "Понедельник", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
+              {iDay: "Вторник", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
+              {iDay: "Среда", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
+              {iDay: "Четверг", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
+              {iDay: "Пятница", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
+              {iDay: "Суббота", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
+              {iDay: "Воскресенье", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
+            ],
          };
     }
 
@@ -123,7 +137,21 @@ class Setup extends Component {
       
     }
 
-    changeTarif = (e) => {
+    onChangeTimeZone = (e) => {
+      this.setState({
+        chTimeZone: e,
+      })
+    }
+
+    onChangeCurrency = (e) => {
+      this.setState({
+        chCurrency: e,
+      })
+    }
+
+    
+
+    onChangeTarif = (e) => {
       this.setState({
         currentTarif: e,
       })      
@@ -133,18 +161,89 @@ class Setup extends Component {
       this.setState({
         currentPeriodMonth: !this.state.currentPeriodMonth
       })
+    }
+
+    AddTimePeriod =(e) => {
+        const { arrOperationMode } = this.state;
+        const newData = {
+          iDay: e, 
+          tStartTime: "10:00", 
+          tEndTime: "22:00", 
+          blDayOff: "false"
+        };
+        this.setState({
+          arrOperationMode: [...arrOperationMode, newData],
+        }); 
       
+    }
+
+    saveSetup = () => {
+      
+      var val={};
+      const {currentTarif, currentPeriodMonth, chName, chEmailStore, chTimeZone, chCurrency, chNameLocation, chAddressLocation, chPhoneLocation} = this.state;
+
+      console.log(chTimeZone);
+      
+
+      const url = this.props.optionapp[0].serverUrl + "/SaveSetup.php"; // изменяем категорию
+              fetch(url, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
+                  /*chUID: this.props.owner.chUID,*/
+                  chUID: "a3b461d5e2c48b09e7a1",
+                  chName: chName,
+                  chEmailStore: chEmailStore,
+                  chEmailOwner: chEmailStore,
+                  iTarif: currentPeriodMonth ? currentTarif : this.state.currentTarif + 4,
+                  chTimeZone: chTimeZone,
+                  chCurrency: chCurrency,
+                  blPickup: "true",
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                val = {
+                  /*chUID: this.props.owner.chUID,*/
+                  chUID: "a3b461d5e2c48b09e7a1",
+                  chName: chName,
+                  chEmailStore: chEmailStore,
+                  chEmailOwner: chEmailStore,
+                  iTarif: currentPeriodMonth ? currentTarif : this.state.currentTarif + 4,
+                  chTimeZone: chTimeZone,
+                  chCurrency: chCurrency,
+                  blPickup: "true",
+                }
+                //this.props.onEdit(val);  // вызываем action
+              }).catch((error) => {
+                  console.error(error);
+              });
+          
     }
 
 
     render() {
 
 
-      const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation, currentTarif, currentPeriodMonth } = this.state;
+      const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation, currentTarif, currentPeriodMonth, arrOperationMode } = this.state;
       const { getFieldDecorator } = this.props.form;
 
       const options = timezones.map(item => <Option value={item.name} key={item.name}>{item.value}</Option>);
       const optionsMoney = money.map(item => <Option value={item.value} key={item.value}>{item.name} - {item.value}</Option>)
+      const OperationMode = arrOperationMode.map( (item, index) => {
+        return (
+          <Row gutter={4} key={index}>
+            <Col span={5}>{item.iDay}:</Col>
+            <Col span={6}>c <TimePicker defaultValue={moment(item.tStartTime, format)} format={format} className="time-picker-width"/></Col>
+            <Col span={6}>по <TimePicker defaultValue={moment(item.tEndTime, format)} format={format} className="time-picker-width"/></Col>
+            <Col span={2}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
+            <Col span={3}><Button type="default">Выходной</Button></Col>
+          </Row>
+        );
+      });
 
       const IconFont = Icon.createFromIconfontCN({
         scriptUrl: this.props.optionapp[0].scriptIconUrl,
@@ -189,19 +288,7 @@ class Setup extends Component {
               </FormItem>
               <Divider dashed />
               <FormItem
-                label="Слоган (необязательно)"  
-                hasFeedback
-                className="content-form-not-required"
-              >
-                {getFieldDecorator('chTagline', {
-                  initialValue: chTagline.length ? chTagline : ""
-                })(
-                  <Input prefix={<IconFont type="icon-eyes" style={{ color: 'rgba(0,0,0,.25)' }} />} />
-                )}
-              </FormItem>
-              <Divider dashed />
-              <FormItem
-                label="E-mail магазина (необязательно)"  
+                label="E-mail организации (необязательно)"  
                 hasFeedback
                 className="content-form-not-required" 
               >
@@ -225,7 +312,7 @@ class Setup extends Component {
                   <Select
                       showSearch
                       filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                      onChange={this.onChangeClient}
+                      onChange={this.onChangeTimeZone}
                       >
                       {options}
                   </Select>
@@ -244,7 +331,7 @@ class Setup extends Component {
                             <Select
                                 showSearch
                                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                onChange={this.onChangeClient}
+                                onChange={this.onChangeCurrency}
                                 >
                                 {optionsMoney}
                             </Select>
@@ -317,11 +404,7 @@ class Setup extends Component {
               hasFeedback
               className="content-form-not-required"
             >
-              {getFieldDecorator('chPhoneLocation', {
-                initialValue: chPhoneLocation.length ? chPhoneLocation : ""
-              })(
-                <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
-              )}
+              {OperationMode}
             </FormItem>
             <Divider dashed />
             <FormItem
@@ -372,7 +455,7 @@ class Setup extends Component {
             </Row>
             <Row gutter={24}>
               <Col span={12}>
-                <div className="subscription-plans-widget" onClick={() => this.changeTarif(1)}>
+                <div className="subscription-plans-widget" onClick={() => this.onChangeTarif(1)}>
                   <div className={"subscription-plan " + (currentTarif === 1 && "active")} >
                     <div className={"plan-name " + (currentTarif === 1 && "active")}>
                       Начинающий
@@ -399,7 +482,7 @@ class Setup extends Component {
                 </div>
               </Col>
               <Col span={12}>
-                <div className="subscription-plans-widget" onClick={() => this.changeTarif(2)}>
+                <div className="subscription-plans-widget" onClick={() => this.onChangeTarif(2)}>
                   <div className={"subscription-plan " + (currentTarif === 2 && "active")} >
                     <div className={"plan-name " + (currentTarif === 2 && "active")}>
                       Профессионал
@@ -428,7 +511,7 @@ class Setup extends Component {
             </Row>
             <Row gutter={24}>
               <Col span={12}>
-                <div className="subscription-plans-widget"  onClick={() => this.changeTarif(3)}>
+                <div className="subscription-plans-widget"  onClick={() => this.onChangeTarif(3)}>
                   <div className={"subscription-plan " + (currentTarif === 3 && "active")} >
                     <div className={"plan-name " + (currentTarif === 3 && "active")}>
                       Премиум
@@ -455,7 +538,7 @@ class Setup extends Component {
                 </div>
               </Col>
               <Col span={12}>
-                <div className="subscription-plans-widget" onClick={() => this.changeTarif(4)}>
+                <div className="subscription-plans-widget" onClick={() => this.onChangeTarif(4)}>
                   <div className={"subscription-plan " + (currentTarif === 4 && "active")} >
                     <div className={"plan-name " + (currentTarif === 4 && "active")}>
                       Эксперт
@@ -484,7 +567,7 @@ class Setup extends Component {
             </Row>
             <Divider dashed />
             <FormItem>
-              <Button type="primary" htmlType="submit" className="button-login">
+              <Button type="primary" htmlType="submit" className="button-login" onClick={this.saveSetup}>
                 <IconFont type="icon-rocket" style={{ color: 'rgba(255, 255, 255, 1)' }} />Готово
               </Button>
             </FormItem>
