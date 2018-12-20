@@ -283,8 +283,17 @@ thead[class*="ant-table-thead"] th{
 .title-setup {
   font-size: 21px;
   font-weight: 400;
-  padding: 25px 0px 10px 0px;
+  padding: 25px 0px 0px 0px;
 }
+
+.describe-setup {
+ 
+}
+
+.describe-setup-form {
+  margin-top: -25px;
+}
+
 
 .period-payments {
   padding-bottom: 25px;

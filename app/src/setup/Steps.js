@@ -54,7 +54,9 @@ const money = [
   { name: 'Монгольский Тугрик - MNT',     value: "MNT"},
   ];
 
-
+  const generateKey = (pre) => {
+    return `${ new Date().getTime() }`;
+  }
       
 class Setup extends Component {
     constructor(props) {
@@ -70,15 +72,16 @@ class Setup extends Component {
             chCurrency: "₽",
             chNameLocation: "",
             chAddressLocation: "",
-            chPhoneLocation: "",
+            blPickup: true,
+            chPhoneLocation: [{iPhone:"1", chPhone: ""}],
             arrOperationMode: [
-              {iDay: "Понедельник", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
-              {iDay: "Вторник", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
-              {iDay: "Среда", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
-              {iDay: "Четверг", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
-              {iDay: "Пятница", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
-              {iDay: "Суббота", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
-              {iDay: "Воскресенье", tStartTime: "10:00", tEndTime: "22:00", blDayOff: "false"},
+              {iDay: 0, chDay: "Понедельник", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
+              {iDay: 1, chDay: "Вторник", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
+              {iDay: 2, chDay: "Среда", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
+              {iDay: 3, chDay: "Четверг", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
+              {iDay: 4, chDay: "Пятница", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
+              {iDay: 5, chDay: "Суббота", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
+              {iDay: 6, chDay: "Воскресенье", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
             ],
          };
     }
@@ -163,27 +166,113 @@ class Setup extends Component {
       })
     }
 
-    AddTimePeriod =(e) => {
-        const { arrOperationMode } = this.state;
-        const newData = {
-          iDay: e, 
-          tStartTime: "10:00", 
-          tEndTime: "22:00", 
-          blDayOff: "false"
-        };
-        this.setState({
-          arrOperationMode: [...arrOperationMode, newData],
-        }); 
-      
+    AddPhone = () => {
+      const { chPhoneLocation } = this.state;
+
+      const newdata = {
+        iPhone: generateKey(), 
+        chPhone: ""
+      };
+
+      this.setState({
+        chPhoneLocation: [...chPhoneLocation, newdata]
+      });       
     }
+
+    DelPhone = (e) => {
+      const { chPhoneLocation } = this.state;
+      const updatedArrPhone = chPhoneLocation.filter(a => a.iPhone !== e.iPhone);
+       this.setState({
+        chPhoneLocation: updatedArrPhone,
+      }); 
+    }
+
+    AddTimePeriod =(e) => {
+      const { arrOperationMode } = this.state;
+
+      const updatedArrOperationMode = arrOperationMode.map(item => {
+        if(item.iDay === e){
+          item.time.push({
+            iTime: generateKey(),
+            tStartTime: "10:00", 
+            tEndTime: "22:00", 
+          });
+        }
+        return item;
+      });
+
+      this.setState({
+        arrOperationMode: updatedArrOperationMode,
+      }); 
+
+    }
+
+    DelTimePeriod = (e, iDelTime) => {
+      const { arrOperationMode } = this.state;
+      const updatedArrOperationMode = arrOperationMode.map(item => {
+        if(item.iDay === e.iDay){
+          const time = e.time.filter(a => a.iTime !== iDelTime );
+          return {...item, time}
+        }
+        return item;
+      });
+
+      this.setState({
+        arrOperationMode: updatedArrOperationMode,
+      }); 
+    }
+
+    onDayOff = (e) => {
+      const { arrOperationMode } = this.state;
+      const updatedArrOperationMode = arrOperationMode.map(item => {
+        if(item.iDay === e.iDay){
+          const newdata = {
+            iDay: e.iDay, 
+            chDay: e.chDay, 
+            blDayOff: true, 
+            time: [] 
+          };
+          return newdata;
+        }
+        return item;
+      });
+
+      this.setState({
+        arrOperationMode: updatedArrOperationMode,
+      });       
+    }
+
+    onDayWork = (e) => {
+      const { arrOperationMode } = this.state;
+      const updatedArrOperationMode = arrOperationMode.map(item => {
+        if(item.iDay === e.iDay){
+          const newdata = {
+            iDay: e.iDay, 
+            chDay: e.chDay, 
+            blDayOff: false, 
+            time: [{ iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }],
+          };
+          return newdata;
+        }
+        return item;
+      });
+
+      this.setState({
+        arrOperationMode: updatedArrOperationMode,
+      });       
+    }
+
+    onChangePickup = () => {
+      this.setState({
+        blPickup: !this.state.blPickup
+      });
+    }
+
 
     saveSetup = () => {
       
       var val={};
       const {currentTarif, currentPeriodMonth, chName, chEmailStore, chTimeZone, chCurrency, chNameLocation, chAddressLocation, chPhoneLocation} = this.state;
-
-      console.log(chTimeZone);
-      
 
       const url = this.props.optionapp[0].serverUrl + "/SaveSetup.php"; // изменяем категорию
               fetch(url, {
@@ -228,26 +317,59 @@ class Setup extends Component {
     render() {
 
 
-      const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation, currentTarif, currentPeriodMonth, arrOperationMode } = this.state;
+      const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation, currentTarif, currentPeriodMonth, arrOperationMode, blPickup } = this.state;
       const { getFieldDecorator } = this.props.form;
-
-      const options = timezones.map(item => <Option value={item.name} key={item.name}>{item.value}</Option>);
-      const optionsMoney = money.map(item => <Option value={item.value} key={item.value}>{item.name} - {item.value}</Option>)
-      const OperationMode = arrOperationMode.map( (item, index) => {
-        return (
-          <Row gutter={4} key={index}>
-            <Col span={5}>{item.iDay}:</Col>
-            <Col span={6}>c <TimePicker defaultValue={moment(item.tStartTime, format)} format={format} className="time-picker-width"/></Col>
-            <Col span={6}>по <TimePicker defaultValue={moment(item.tEndTime, format)} format={format} className="time-picker-width"/></Col>
-            <Col span={2}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
-            <Col span={3}><Button type="default">Выходной</Button></Col>
-          </Row>
-        );
-      });
 
       const IconFont = Icon.createFromIconfontCN({
         scriptUrl: this.props.optionapp[0].scriptIconUrl,
       });
+
+      const options = timezones.map(item => <Option value={item.name} key={item.name}>{item.value}</Option>);
+      const phonesLocation = chPhoneLocation.map( (item, index, arr) => {
+        return (
+          <Row gutter={4} key={item.iPhone}>
+            <Col span={23}><Input prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" /></Col>
+            <Col span={1}>
+              { arr.length - 1 === index ? <Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddPhone()}/> :
+                <Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelPhone(item)}/> }
+            </Col>
+          </Row>);
+      });
+      const optionsMoney = money.map(item => <Option value={item.value} key={item.value}>{item.name} - {item.value}</Option>)
+      const OperationMode = arrOperationMode.map( (item, index) => {
+        if (!item.blDayOff)
+          return item.time.map( (a, indexTime, arr) => {
+            if (arr.length - 1 === indexTime) 
+              return (
+                <Row gutter={4} key={indexTime}>
+                  <Col span={5}>{item.chDay}:</Col>
+                  <Col span={6}>c <TimePicker addonBefore="Http://" defaultValue={moment(a.tStartTime, format)} format={format} className="time-picker-width"/></Col>
+                  <Col span={6}>по <TimePicker defaultValue={moment(a.tEndTime, format)} format={format} className="time-picker-width"/></Col>
+                  <Col span={2}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
+                  <Col span={3}><Button type="default" onClick = {() => this.onDayOff(item)}>Выходной</Button></Col>
+                </Row>
+              ); 
+            else
+              return (
+                <Row gutter={4} key={indexTime}>
+                  <Col span={5}>{item.chDay}:</Col>
+                  <Col span={6}>c <TimePicker defaultValue={moment(a.tStartTime, format)} format={format} className="time-picker-width"/></Col>
+                  <Col span={6}>по <TimePicker defaultValue={moment(a.tEndTime, format)} format={format} className="time-picker-width"/></Col>
+                  <Col span={2}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
+                  <Col span={3}></Col>
+                </Row>
+              ); 
+          });
+        else 
+          return (
+            <Row gutter={4} key={index}>
+              <Col span={5}>{item.chDay}:</Col>
+              <Col span={19}><Button type="default" onClick = {() => this.onDayWork(item)}>Рабочий день</Button></Col>
+            </Row>
+          );
+      });
+
+
 
     if (typeof this.props.owner.chUID !== 'undefined') {
       return <Redirect to="/"/>
@@ -273,6 +395,9 @@ class Setup extends Component {
               <div className="title-setup">
                 Базовые настройки
               </div>
+              <div className="describe-setup">
+                  Вы всегда сможете изменить данную информацию
+                </div>
               <Divider dashed />
               <FormItem
                 label="Название организации"  
@@ -320,7 +445,7 @@ class Setup extends Component {
               </FormItem>
               <Divider dashed />
                     <FormItem 
-                        label="Валюта магазина"
+                        label="Валюта"
                         hasFeedback
                         className="content-form"
                         >
@@ -349,7 +474,10 @@ class Setup extends Component {
             <Row>
               <Col span={18}>
                 <div className="title-setup">
-                  Добавьте Ваш первый магазин
+                  Добавьте Ваш первый объект
+                </div>
+                <div className="describe-setup">
+                  Вы сможете добавить больше торговых объектов позже
                 </div>
               </Col>
               <Col span={6}>
@@ -373,6 +501,9 @@ class Setup extends Component {
                 <Input prefix={<IconFont type="icon-map-marker" style={{ color: 'rgba(0,0,0,.25)' }} />} />
               )}
             </FormItem>
+            <div className="describe-setup-form">
+              Данное название будет доступно только Вам
+            </div>
             <Divider dashed />
             <FormItem
               label="Адрес"  
@@ -386,18 +517,25 @@ class Setup extends Component {
                 <Input prefix={<IconFont type="icon-map-marker" style={{ color: 'rgba(0,0,0,.25)' }} />} />
               )}
             </FormItem>
+            <div className="describe-setup-form">
+              Адрес будет доступен клиентам
+            </div>
             <Divider dashed />
             <FormItem
               label="Номер телефона (необязательно)"  
               hasFeedback
               className="content-form-not-required"
             >
-              {getFieldDecorator('chPhoneLocation', {
+              {phonesLocation}
+              {/*getFieldDecorator('chPhoneLocation', {
                 initialValue: chPhoneLocation.length ? chPhoneLocation : ""
               })(
                 <Input prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
-              )}
+              )*/}
             </FormItem>
+            <div className="describe-setup-form">
+              Укажите номер телефона торгового объекта, либо единый номер
+            </div>
             <Divider dashed />
             <FormItem
               label="Режим работы"  
@@ -412,10 +550,10 @@ class Setup extends Component {
               className="content-form-not-required"
             >
               {getFieldDecorator('enPickup', { 
-                initialValue: true,
+                initialValue: blPickup,
                 valuePropName: 'checked'
               })(
-                <Switch/>
+                <Switch onChange={this.onChangePickup}/>
               )}
             </FormItem>
             <Divider dashed />
