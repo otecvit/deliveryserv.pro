@@ -62,7 +62,7 @@ class Setup extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentStep: 1,
+            currentStep: 0,
             currentTarif: 1,
             currentPeriodMonth: true,
             chName: "",
@@ -110,7 +110,6 @@ class Setup extends Component {
               currentStep: 2,
               chNameLocation: values.chNameLocation,
               chAddressLocation: values.chAddressLocation,
-              chPhoneLocation: values.chPhoneLocation
             });
          }
       });
@@ -272,7 +271,7 @@ class Setup extends Component {
     saveSetup = () => {
       
       var val={};
-      const {currentTarif, currentPeriodMonth, chName, chEmailStore, chTimeZone, chCurrency, chNameLocation, chAddressLocation, chPhoneLocation} = this.state;
+      const {currentTarif, currentPeriodMonth, chName, chEmailStore, chTimeZone, chCurrency, chNameLocation, chAddressLocation, chPhoneLocation, blPickup, arrOperationMode} = this.state;
 
       const url = this.props.optionapp[0].serverUrl + "/SaveSetup.php"; // изменяем категорию
               fetch(url, {
@@ -292,7 +291,7 @@ class Setup extends Component {
                   iTarif: currentPeriodMonth ? currentTarif : this.state.currentTarif + 4,
                   chTimeZone: chTimeZone,
                   chCurrency: chCurrency,
-                  blPickup: "true",
+                  blPickup: blPickup ? "1" : "0",
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
@@ -304,9 +303,48 @@ class Setup extends Component {
                   iTarif: currentPeriodMonth ? currentTarif : this.state.currentTarif + 4,
                   chTimeZone: chTimeZone,
                   chCurrency: chCurrency,
-                  blPickup: "true",
+                  blPickup: blPickup ? "1" : "0",
                 }
                 //this.props.onEdit(val);  // вызываем action
+              }).catch((error) => {
+                  console.error(error);
+              });
+
+          const urlLocation = this.props.optionapp[0].serverUrl + "/InsertLocation.php"; // изменяем категорию
+              fetch(urlLocation, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
+                  /*chUID: this.props.owner.chUID,*/
+                  chUID: "a3b461d5e2c48b09e7a1",
+                  blShow: "1",
+                  chName: chNameLocation,
+                  chAddress: chAddressLocation,
+                  arrPhones: chPhoneLocation,
+                  arrOperationMode: arrOperationMode,
+                  blPickup: blPickup ? "1" : "0",
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                console.log(responseJsonFromServer);
+                
+                /*
+                val = {
+                  chUID: "a3b461d5e2c48b09e7a1",
+                  chName: chName,
+                  chEmailStore: chEmailStore,
+                  chEmailOwner: chEmailStore,
+                  iTarif: currentPeriodMonth ? currentTarif : this.state.currentTarif + 4,
+                  chTimeZone: chTimeZone,
+                  chCurrency: chCurrency,
+                  blPickup: blPickup ? "1" : "0",
+                }
+                //this.props.onEdit(val);  // вызываем action
+                */
               }).catch((error) => {
                   console.error(error);
               });
@@ -335,6 +373,7 @@ class Setup extends Component {
             </Col>
           </Row>);
       });
+
       const optionsMoney = money.map(item => <Option value={item.value} key={item.value}>{item.name} - {item.value}</Option>)
       const OperationMode = arrOperationMode.map( (item, index) => {
         if (!item.blDayOff)
