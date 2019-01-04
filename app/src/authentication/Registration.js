@@ -3,6 +3,7 @@ import { Modal, Button, Radio, Form, Icon, Input, Divider, message } from 'antd'
 import { Link } from 'react-router-dom'
 import { Route, Redirect } from 'react-router'
 import { connect } from 'react-redux'
+import Cookies from 'js-cookie'
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -12,9 +13,12 @@ const chUID = "222333"
 
 class Registration extends Component {
 
+
     constructor(props) {
         super(props);
+        const { cookies } = props;
         this.state = {
+            username: Cookies.get('username'),
             confirmDirty: false,
          };
     }
@@ -62,21 +66,26 @@ class Registration extends Component {
             }).then((response) => response.json()).then((responseServer) => {
               console.log(responseServer);
 
-            if (responseServer.status === "1") {
-              const val = {
-                chUID: responseServer.chUID,
+              if (responseServer.status === "1") {
+                const val = {
+                  chUID: responseServer.chUID,
+                }
+                this.props.onAdd(val);  // вызываем action
+                /// делаем куку
+                const { cookies } = this.props;
+                Cookies.set('cookiename', responseServer.chUID, { path: '/' });
               }
-              this.props.onAdd(val);  // вызываем action
-            }
-            else {
-              message.error('Пользователь с данным e-mail уже зарегистрирован');
-            }
+              else {
+                message.error('Пользователь с данным e-mail уже зарегистрирован');
+              }
             
 
             
         }).catch((error) => {
               console.error(error);
         }); 
+            
+            
             /*
             var val = {};
               const url = this.props.optionapp[0].serverUrl + "/EditProducts.php"; // изменяем категорию
