@@ -11,7 +11,6 @@ import { Layout } from 'antd';
 import createHistory from 'history/createBrowserHistory';
 import { Route, Redirect } from 'react-router';
 import { ConnectedRouter} from 'react-router-redux';
-import { CookiesProvider } from 'react-cookie';
 
 import 'antd/dist/antd.css';
 import './index.css';
@@ -51,13 +50,11 @@ const Application = connect(state => ({
 }))(ApplicationContainer);
 
 ReactDOM.render(
-  <CookiesProvider>
     <Provider store={store}>
         <ConnectedRouter history={history}>
             <Application/>
         </ConnectedRouter>
-    </Provider>
-  </CookiesProvider>,
+    </Provider>,
   document.getElementById('root'),
 );
 
