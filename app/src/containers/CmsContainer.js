@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { Layout } from 'antd';
+import Cookies from 'js-cookie'
 
 import Startup from '../components/Startup';
 import Dashboard from '../components/Dashboard';
@@ -44,8 +45,41 @@ class CmsWrapper extends Component {
         });
      }
 
+     componentDidMount() {
+        // получаем cookies
+        const currentUser = Cookies.get('cookiename');
+        if (typeof currentUser !== 'undefined') {
+            
+            const url = this.props.optionapp[0].serverUrl + "/SelectOwner.php"; // изменяем категорию
+            fetch(url, {
+              method: 'POST',
+              headers: 
+              {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(
+              {
+                chUID: currentUser,
+              })
+            }).then((response) => response.json()).then((responseJsonFromServer) => {
+                if (responseJsonFromServer.owner.length)
+                    this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
+
+            }).catch((error) => {
+                console.error(error);
+            });
+
+
+            //this.props.onCheckUser({chUID: currentUser});  // вызываем action
+            //console.log(Cookies.get('cookiename'));
+        } else 
+            console.log("неизвестный чувак");
+      }
+
     render() {
         const { loadingStatus } = this.state;
+
 
        
         if (typeof this.props.owner.chUID === 'undefined') {
@@ -102,6 +136,9 @@ export default connect (
       onEditStatus: (data) => {
           dispatch({ type: 'EDIT_ORDERS_STATUS', payload: data});
         },
+      onCheckUser: (data) => {
+           dispatch({ type: 'LOAD_OWNER_ALL', payload: data})
+      },    
     })
   )(CmsWrapper);
 

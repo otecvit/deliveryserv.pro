@@ -14,10 +14,10 @@ export default function owner (state = initialState, action) {
           ...state,
           action.payload.dataload
         ];   
-      case "EDIT_OWNER": 
+        case "EDIT_OWNER": 
         // проходим по основному state
             return {...state, ...action.payload};
-
+                
         case "DELETE_OWNER": 
           return state.filter(optionset => optionset.idDishes !== action.payload.idDishes );
       default:

@@ -64,8 +64,7 @@ class Registration extends Component {
               })
 
             }).then((response) => response.json()).then((responseServer) => {
-              console.log(responseServer);
-
+              
               if (responseServer.status === "1") {
                 const val = {
                   chUID: responseServer.chUID,
@@ -84,39 +83,9 @@ class Registration extends Component {
         }).catch((error) => {
               console.error(error);
         }); 
-            
-            
-            /*
-            var val = {};
-              const url = this.props.optionapp[0].serverUrl + "/EditProducts.php"; // изменяем категорию
-              fetch(url, {
-                method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                {
-                  idDishes: this.props.param,
-                })
-              }).then((response) => response.json()).then((responseJsonFromServer) => {
-                val = {
-                  dataload: { 
-                    key: this.props.param,
-                  }
-                }
-                this.props.onEdit(val);  // вызываем action
-                message.success('Товар изменен');
-                this.props.form.resetFields(); // ресет полей
-
-              }).catch((error) => {
-                  console.error(error);
-              });
-   */
-          }
-        });
-      }
+       }
+      });
+    }
 
 
     render() {

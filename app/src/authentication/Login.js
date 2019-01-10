@@ -8,10 +8,8 @@ const FormItem = Form.Item;
 
 
 class Login extends Component {
-    render() {
-    
-    console.log("fsdfsd");
-      
+
+  render() {
     const { getFieldDecorator } = this.props.form;
 
     return (
