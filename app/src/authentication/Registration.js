@@ -72,7 +72,7 @@ class Registration extends Component {
                 this.props.onAdd(val);  // вызываем action
                 /// делаем куку
                 const { cookies } = this.props;
-                Cookies.set('cookiename', responseServer.chUID, { path: '/' });
+                Cookies.set('cookiename', responseServer.chUID, { expires: 365 , path: '/' });
               }
               else {
                 message.error('Пользователь с данным e-mail уже зарегистрирован');

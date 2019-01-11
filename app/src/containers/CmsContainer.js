@@ -5,7 +5,7 @@ import {
     Link
 } from 'react-router-dom'
 import { connect } from 'react-redux';
-import { Layout } from 'antd';
+import { Layout, Spin } from 'antd';
 import Cookies from 'js-cookie'
 
 import Startup from '../components/Startup';
@@ -36,6 +36,7 @@ class CmsWrapper extends Component {
         this.handler = this.handler.bind(this)
         this.state = {
             loadingStatus: false,
+            checkCookies: false,
           };
     }
 
@@ -45,7 +46,7 @@ class CmsWrapper extends Component {
         });
      }
 
-     componentDidMount() {
+     componentDidMount()  {
         // получаем cookies
         const currentUser = Cookies.get('cookiename');
         if (typeof currentUser !== 'undefined') {
@@ -63,28 +64,49 @@ class CmsWrapper extends Component {
                 chUID: currentUser,
               })
             }).then((response) => response.json()).then((responseJsonFromServer) => {
-                if (responseJsonFromServer.owner.length)
+                if (responseJsonFromServer.owner.length) {
                     this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
+                }
+
+                this.setState ({
+                    checkCookies: true,
+                })
 
             }).catch((error) => {
                 console.error(error);
             });
-
-
-            //this.props.onCheckUser({chUID: currentUser});  // вызываем action
-            //console.log(Cookies.get('cookiename'));
-        } else 
-            console.log("неизвестный чувак");
+        } 
+        
       }
 
     render() {
-        const { loadingStatus } = this.state;
+        const { loadingStatus, checkCookies } = this.state;
 
-
+        // загружаем данные с сервера
+       if (!checkCookies) return <Spin />;
+        
        
-        if (typeof this.props.owner.chUID === 'undefined') {
-          return <Redirect to="/login"/>
+       if (typeof this.props.owner.chUID === 'undefined') {
+        return <Redirect to="/login"/>
+       } 
+       
+       
+       if (this.props.owner.chName.length === 0) {
+            return <Redirect to="/setup"/>
         }
+       //console.log(this.props.owner.chName.length);
+       
+
+       /*
+       if (!this.props.owner.chName.length) {
+        //console.log(this.props.owner.chName.length);
+            return <Redirect to="/setup"/>
+        }
+        */
+       
+
+
+        
 
         return (
             <div>

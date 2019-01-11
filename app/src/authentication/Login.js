@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
-import { Modal, Button, Radio, Form, Icon, Input, Divider } from 'antd'
+import Cookies from 'js-cookie'
+import { Modal, Button, Radio, Form, Icon, Input, Divider, Spin } from 'antd'
+import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -9,8 +12,55 @@ const FormItem = Form.Item;
 
 class Login extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+         checkCookies: false,
+      };
+}
+
+  componentDidMount()  {
+    // получаем cookies
+    const currentUser = Cookies.get('cookiename');
+    if (typeof currentUser !== 'undefined') {
+        
+        const url = this.props.optionapp[0].serverUrl + "/SelectOwner.php"; // изменяем категорию
+        fetch(url, {
+          method: 'POST',
+          headers: 
+          {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(
+          {
+            chUID: currentUser,
+          })
+        }).then((response) => response.json()).then((responseJsonFromServer) => {
+            if (responseJsonFromServer.owner.length) {
+                this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
+            }
+
+            this.setState ({
+                checkCookies: true,
+            })
+
+        }).catch((error) => {
+            console.error(error);
+        });
+    } 
+    
+  }  
+
   render() {
     const { getFieldDecorator } = this.props.form;
+
+    const { checkCookies } = this.state;
+    if (!checkCookies) return <Spin />;
+
+    if (typeof this.props.owner.chUID !== 'undefined') {
+      return <Redirect to="/"/>
+    }  
 
     return (
         <Modal
@@ -77,4 +127,18 @@ class Login extends Component {
 }
 const LoginForm = Form.create()(Login);
 
-export default LoginForm
+export default connect (
+  state => ({
+    orders: state.orders,
+    optionapp: state.optionapp,
+    owner: state.owner,
+  }),
+  dispatch => ({
+    onEditStatus: (data) => {
+        dispatch({ type: 'EDIT_ORDERS_STATUS', payload: data});
+      },
+    onCheckUser: (data) => {
+         dispatch({ type: 'LOAD_OWNER_ALL', payload: data})
+    },    
+  })
+)(LoginForm);

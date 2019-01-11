@@ -355,6 +355,8 @@ class Setup extends Component {
     render() {
 
 
+      
+
       const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation, currentTarif, currentPeriodMonth, arrOperationMode, blPickup } = this.state;
       const { getFieldDecorator } = this.props.form;
 
@@ -407,12 +409,6 @@ class Setup extends Component {
             </Row>
           );
       });
-
-
-
-    if (typeof this.props.owner.chUID !== 'undefined') {
-      return <Redirect to="/"/>
-    }
 
     return (
         <Modal
