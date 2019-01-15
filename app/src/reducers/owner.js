@@ -18,8 +18,8 @@ export default function owner (state = initialState, action) {
         // проходим по основному state
             return {...state, ...action.payload};
                 
-        case "DELETE_OWNER": 
-          return state.filter(optionset => optionset.idDishes !== action.payload.idDishes );
+        case "LOGOUT_OWNER": 
+          return {};
       default:
         return state;
     }

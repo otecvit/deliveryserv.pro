@@ -83,6 +83,7 @@ class Setup extends Component {
               {iDay: 5, chDay: "Суббота", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
               {iDay: 6, chDay: "Воскресенье", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
             ],
+            SetupSuccessful: false,
          };
     }
 
@@ -283,8 +284,7 @@ class Setup extends Component {
                 },
                 body: JSON.stringify(
                 {
-                  /*chUID: this.props.owner.chUID,*/
-                  chUID: "a3b461d5e2c48b09e7a1",
+                  chUID: this.props.owner.chUID,
                   chName: chName,
                   chEmailStore: chEmailStore,
                   chEmailOwner: chEmailStore,
@@ -295,8 +295,7 @@ class Setup extends Component {
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
-                  /*chUID: this.props.owner.chUID,*/
-                  chUID: "a3b461d5e2c48b09e7a1",
+                  chUID: this.props.owner.chUID,
                   chName: chName,
                   chEmailStore: chEmailStore,
                   chEmailOwner: chEmailStore,
@@ -305,9 +304,15 @@ class Setup extends Component {
                   chCurrency: chCurrency,
                   blPickup: blPickup ? "1" : "0",
                 }
-                //this.props.onEdit(val);  // вызываем action
+                this.props.onEdit(val);  // вызываем action
+                this.setState ({
+                  SetupSuccessful: true,
+                });
               }).catch((error) => {
-                  console.error(error);
+                this.setState ({
+                  SetupSuccessful: false,
+                });
+                console.error(error);
               });
 
           const urlLocation = this.props.optionapp[0].serverUrl + "/InsertLocation.php"; // изменяем категорию
@@ -320,8 +325,7 @@ class Setup extends Component {
                 },
                 body: JSON.stringify(
                 {
-                  /*chUID: this.props.owner.chUID,*/
-                  chUID: "a3b461d5e2c48b09e7a1",
+                  chUID: this.props.owner.chUID,
                   blShow: "1",
                   chName: chNameLocation,
                   chAddress: chAddressLocation,
@@ -357,7 +361,7 @@ class Setup extends Component {
 
       
 
-      const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation, currentTarif, currentPeriodMonth, arrOperationMode, blPickup } = this.state;
+      const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation, currentTarif, currentPeriodMonth, arrOperationMode, blPickup, SetupSuccessful } = this.state;
       const { getFieldDecorator } = this.props.form;
 
       const IconFont = Icon.createFromIconfontCN({
@@ -409,6 +413,10 @@ class Setup extends Component {
             </Row>
           );
       });
+
+    if (SetupSuccessful) {
+      return <Redirect to="/"/>
+    }
 
     return (
         <Modal
@@ -765,6 +773,9 @@ const LoginForm = Form.create()(Setup);
           },
         onAdd: (data) => {
             dispatch({ type: 'LOAD_OWNER_ALL', payload: data});
+          },
+        onEdit: (data) => {
+            dispatch({ type: 'EDIT_OWNER', payload: data});
           },
     }
 ))(LoginForm)

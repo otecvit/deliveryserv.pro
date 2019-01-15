@@ -39,6 +39,7 @@ class Login extends Component {
         }).then((response) => response.json()).then((responseJsonFromServer) => {
             if (responseJsonFromServer.owner.length) {
                 this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
+
             }
 
             this.setState ({
@@ -48,9 +49,48 @@ class Login extends Component {
         }).catch((error) => {
             console.error(error);
         });
-    } 
+    } else {
+      this.setState ({
+          checkCookies: true,
+      })
+    }
     
   }  
+
+    handleSubmit = (e) => {
+      e.preventDefault();
+      this.props.form.validateFields((err, values) => {
+        if (!err) {
+         
+            const url = this.props.optionapp[0].serverUrl + "/CheckOwner.php"; // изменяем категорию
+            fetch(url, {
+              method: 'POST',
+              headers: 
+              {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(
+              {
+                chEmailOwner: values.chEmailOwner,
+                chHashPassword: values.password,
+              })
+            }).then((response) => response.json()).then((responseJsonFromServer) => {
+                console.log(responseJsonFromServer);
+                
+                if (responseJsonFromServer.owner.length) {
+                    this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
+                    console.log(responseJsonFromServer.owner[0].chUID);
+                    Cookies.set('cookiename', responseJsonFromServer.owner[0].chUID, { expires: 365 , path: '/' });
+                }
+
+            }).catch((error) => {
+                console.error(error);
+            });
+ 
+    }
+    });
+  }
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -93,8 +133,8 @@ class Login extends Component {
             label="E-mail"  
             className="content-form"
           >
-            {getFieldDecorator('userName', {
-              rules: [{ required: true, message: 'Please input your username!' }],
+            {getFieldDecorator('chEmailOwner', {
+              rules: [{ required: true, message: 'Введите e-mail' }],
             })(
               <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
             )}
@@ -104,7 +144,7 @@ class Login extends Component {
              className="content-form"
           >
             {getFieldDecorator('password', {
-              rules: [{ required: true, message: 'Please input your Password!' }],
+              rules: [{ required: true, message: 'Введите пароль' }],
             })(
               <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="" />
             )}

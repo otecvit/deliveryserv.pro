@@ -48,6 +48,7 @@ class CmsWrapper extends Component {
 
      componentDidMount()  {
         // получаем cookies
+
         const currentUser = Cookies.get('cookiename');
         if (typeof currentUser !== 'undefined') {
             
@@ -75,7 +76,12 @@ class CmsWrapper extends Component {
             }).catch((error) => {
                 console.error(error);
             });
-        } 
+        } else {
+             this.setState ({
+                    checkCookies: true,
+                })
+        }
+
         
       }
 

@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon, Modal } from 'antd';
+import Cookies from 'js-cookie'
+
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
+const confirm = Modal.confirm;
 
 class SiderMenu extends Component {
     state = {
@@ -15,6 +18,31 @@ class SiderMenu extends Component {
             {collapsed}
         );
     }
+
+    onClickMenu = (e) => {
+       
+        if (e.key === "20") { // проверяем "Выход"
+            
+            Cookies.remove('cookiename');
+            this.props.onLogout(); // выход
+            //this.showLogout()
+        };
+    }
+
+    showLogout = () => {
+        confirm({
+          title: 'Вы действительно хотите выйти?',
+          content: 'После выходы Вы сможете авторизоваться в любое удобное время',
+          okText: 'Да',
+          cancelText: 'Нет',
+          onOk() {
+           // this.props.onLogout(); // выход
+          },
+          onCancel() {
+            
+          },
+        });
+      }
 
     render() {
         const IconFont = Icon.createFromIconfontCN({
@@ -28,7 +56,7 @@ class SiderMenu extends Component {
                 onCollapse={this.onCollapse}
             >
             <div className="logo" />
-            <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+            <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" onClick={this.onClickMenu}>
                 <Menu.Item key="1"><Link to="/"><Icon type="home" /><span>Рабочий стол</span></Link></Menu.Item>
                 <Menu.Item key="2"><Link to="orders"><IconFont type="icon-orders"/><span>Заказы</span></Link></Menu.Item>
                 <Menu.Item key="3"><Link to="customers"><Icon type="team" /><span>Клиенты</span></Link></Menu.Item>
@@ -60,8 +88,14 @@ class SiderMenu extends Component {
 export default connect (
     state => ({
         optionapp: state.optionapp,
+        owner: state.owner,
     }),
-  )(SiderMenu);
+    dispatch => ({
+        onLogout: () => {
+            dispatch({ type: 'LOGOUT_OWNER'});
+          },
+    }
+  ))(SiderMenu);
 
 
 
