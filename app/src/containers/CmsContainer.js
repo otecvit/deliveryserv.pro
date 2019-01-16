@@ -5,7 +5,7 @@ import {
     Link
 } from 'react-router-dom'
 import { connect } from 'react-redux';
-import { Layout, Spin } from 'antd';
+import { Layout, Spin, Alert } from 'antd';
 import Cookies from 'js-cookie'
 
 import Startup from '../components/Startup';
@@ -37,6 +37,7 @@ class CmsWrapper extends Component {
         this.state = {
             loadingStatus: false,
             checkCookies: false,
+            showMessage: false,
           };
     }
 
@@ -85,8 +86,18 @@ class CmsWrapper extends Component {
         
       }
 
+    sendMailVerification = () => {
+        const { showMessage } = this.state;
+
+        
+
+        this.setState ({
+            showMessage : !showMessage,
+        })
+    }
+
     render() {
-        const { loadingStatus, checkCookies } = this.state;
+        const { loadingStatus, checkCookies, showMessage } = this.state;
 
         // загружаем данные с сервера
        if (!checkCookies) return <Spin />;
@@ -100,19 +111,7 @@ class CmsWrapper extends Component {
        if (this.props.owner.chName.length === 0) {
             return <Redirect to="/setup"/>
         }
-       //console.log(this.props.owner.chName.length);
        
-
-       /*
-       if (!this.props.owner.chName.length) {
-        //console.log(this.props.owner.chName.length);
-            return <Redirect to="/setup"/>
-        }
-        */
-       
-
-
-        
 
         return (
             <div>
@@ -125,10 +124,21 @@ class CmsWrapper extends Component {
                         <div style={{ padding: 16 }}>
                             <HeaderStatus />
                         </div>
-                        
+
                         </Header>
                         <Content>
-                        <div style={{ padding: 16, minHeight: 360 }}>
+                        
+                            { this.props.owner.blVerification === "0" ? <div style={{ padding: "16px 16px 0 16px" }}><Alert 
+                                        message="E-mail не подтверждён." 
+                                        closable 
+                                        type="warning" 
+                                        style={{ margin: '0', textAlign: "center" }} 
+                                        closeText="Отправить письмо ещё раз" 
+                                        afterClose={this.sendMailVerification}
+                                        className="alert-order"/> </div> : null }
+
+                       
+                        <div style={{ padding: !showMessage ? 16 : "0px 16px 16px 16px", minHeight: 360 }}>
                             <Route exact path="/" component={Dashboard}/>
                             <Route exact path="/categories" component={Categories}/>
                             <Route exact path="/option-sets" component={OptionSets}/>

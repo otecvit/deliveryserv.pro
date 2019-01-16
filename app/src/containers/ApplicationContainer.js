@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import CmsContainer from './CmsContainer';
 import Login from '../authentication/Login';
 import Registration from '../authentication/Registration';
+import ResetPassword from '../authentication/ResetPassword';
 import Setup from '../setup/Steps';
 
 const ConnectedSwitch = connect(state => ({
@@ -19,6 +20,7 @@ const AppContent = ({location, error}) => (
                 <Route exact path="/login" component={Login}/>
                 <Route exact path="/register" component={Registration}/>
                 <Route exact path="/setup" component={Setup}/>
+                <Route exact path="/reset-password" component={ResetPassword}/>
                 <Route path='/' component={CmsContainer}/>
             </ConnectedSwitch>
         </div>
