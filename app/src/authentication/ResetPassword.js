@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Cookies from 'js-cookie'
-import { Modal, Button, Radio, Form, Icon, Input, Divider, Spin } from 'antd'
+import { Modal, Button, Radio, Form, Icon, Input, Divider, Spin, message } from 'antd'
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
@@ -75,7 +75,8 @@ class ResetPassword extends Component {
                 chEmailOwner: values.chEmailOwner
               })
             }).then((response) => response.json()).then((responseJsonFromServer) => {
-                console.log(responseJsonFromServer);
+                //console.log(responseJsonFromServer);
+                message.success('Ссылка для сброса пароля отправлена на указанный e-mail');
                 /*
                 if (responseJsonFromServer.owner.length) {
                     this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action

@@ -7,6 +7,7 @@ import CmsContainer from './CmsContainer';
 import Login from '../authentication/Login';
 import Registration from '../authentication/Registration';
 import ResetPassword from '../authentication/ResetPassword';
+import ChangePassword from '../authentication/ChangePassword';
 import Setup from '../setup/Steps';
 
 const ConnectedSwitch = connect(state => ({
@@ -21,6 +22,7 @@ const AppContent = ({location, error}) => (
                 <Route exact path="/register" component={Registration}/>
                 <Route exact path="/setup" component={Setup}/>
                 <Route exact path="/reset-password" component={ResetPassword}/>
+                <Route exact path="/change-password" component={ChangePassword}/>
                 <Route path='/' component={CmsContainer}/>
             </ConnectedSwitch>
         </div>
