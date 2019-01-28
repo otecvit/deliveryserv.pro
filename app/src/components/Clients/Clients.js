@@ -82,7 +82,18 @@ class Customers extends Component {
             flLoading: true,
         })
 
-        fetch(url)
+        fetch(url, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
         .then((response) => response.json())
         .then((responseJson) => {
             this.props.onAdd(responseJson.clients);
@@ -126,11 +137,6 @@ class Customers extends Component {
     };/////////
 
     onRowClick = (record, index, event) => {
-            console.log(record);
-            console.log(index);
-            console.log(event);
-
-            console.log("onRowClick");
             this.val = record;
             this.setState({
                 showOrders: !this.state.showOrders,
@@ -313,6 +319,7 @@ export default connect (
     state => ({
         orders: state.orders,
         optionapp: state.optionapp,
+        owner: state.owner,
     }),
     dispatch => ({
         onAdd: (data) => {

@@ -46,7 +46,10 @@ class Registration extends Component {
     }
 
     handleSubmit = (e) => {
+        
         e.preventDefault();
+        
+        
         this.props.form.validateFields((err, values) => {
           if (!err) {
             const urlOwner = this.props.optionapp[0].serverUrl + "/InsertOwner.php";
@@ -64,7 +67,6 @@ class Registration extends Component {
               })
 
             }).then((response) => response.json()).then((responseServer) => {
-              
               if (responseServer.status === "1") {
                 const val = {
                   chUID: responseServer.chUID,

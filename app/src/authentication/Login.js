@@ -15,7 +15,8 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-         checkCookies: false,
+        checkCookies: false,
+        iStaffType: 0,
       };
 }
 
@@ -34,7 +35,7 @@ class Login extends Component {
           },
           body: JSON.stringify(
           {
-            chUID: currentUser,
+            chUIDStaff: currentUser,
           })
         }).then((response) => response.json()).then((responseJsonFromServer) => {
             if (responseJsonFromServer.owner.length) {
@@ -80,8 +81,8 @@ class Login extends Component {
                 
                 if (responseJsonFromServer.owner.length) {
                     this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
-                    console.log(responseJsonFromServer.owner[0].chUID);
-                    Cookies.set('cookiename', responseJsonFromServer.owner[0].chUID, { expires: 365 , path: '/' });
+                    //console.log(responseJsonFromServer.owner[0].chUID);
+                    Cookies.set('cookiename', responseJsonFromServer.owner[0].chUIDStaff, { expires: 365 , path: '/' });
                 }
 
             }).catch((error) => {
@@ -92,10 +93,16 @@ class Login extends Component {
     });
   }
 
+  onStaffType = (e) => {
+    this.setState({
+      iStaffType: e.target.value === "0" ? 0 : 1
+    });
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
 
-    const { checkCookies } = this.state;
+    const { checkCookies, iStaffType } = this.state;
     if (!checkCookies) return <Spin />;
 
     if (typeof this.props.owner.chUID !== 'undefined') {
@@ -118,19 +125,20 @@ class Login extends Component {
             formLayout='vertical'
           >
             {getFieldDecorator('radio-group', {
-              initialValue: "a"
+              initialValue: "0"
             })(
               <RadioGroup
                 buttonStyle="solid"
+                onChange={this.onStaffType} 
               >
-                <RadioButton  value="a">Владелец</RadioButton >
-                <RadioButton  value="b">Сотрудник</RadioButton >
+                <RadioButton  value="0">Владелец</RadioButton >
+                <RadioButton  value="1">Сотрудник</RadioButton >
               </RadioGroup>
             )}
           </FormItem>
           <Divider dashed />
           <FormItem
-            label="E-mail"  
+            label={!iStaffType ? "E-mail" : "Логин"}  
             className="content-form"
           >
             {getFieldDecorator('chEmailOwner', {

@@ -78,14 +78,25 @@ class Orders extends Component {
 
 
     loadingData = () => {
-        //const proxyurl = "https://cors-anywhere.herokuapp.com/";
-        const url = "http://mircoffee.by/deliveryserv/app/SelectOrders.php";
+
+        const url = this.props.optionapp[0].serverUrl +  "/SelectOrders.php";
 
         this.setState({
             flLoading: true,
         })
 
-        fetch(url)
+        fetch(url, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
         .then((response) => response.json())
         .then((responseJson) => {
             this.props.onAdd(responseJson.orders);
@@ -150,11 +161,6 @@ class Orders extends Component {
     };/////////
 
     onRowClick = (record, index, event) => {
-            console.log(record);
-            console.log(index);
-            console.log(event);
-
-            console.log("onRowClick");
             this.val = record;
             this.setState({
                 showOrders: !this.state.showOrders,
@@ -195,6 +201,7 @@ class Orders extends Component {
 
     render() {
         const { dataSource, newOrderCount, flLoading } = this.state;
+
         const columns = [{ 
                 title: 'Тип', 
                 dataIndex: 'iStatus',
