@@ -18,7 +18,7 @@ export default function staff (state = initialState, action) {
       case "ADD_STAFF":
         return [
           ...state,
-          action.payload.dataload
+          action.payload
         ];   
       case "EDIT_STAFF": 
         // проходим по основному state

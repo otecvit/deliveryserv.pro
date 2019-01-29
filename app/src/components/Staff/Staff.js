@@ -69,7 +69,6 @@ class Staff extends Component {
               body: JSON.stringify(
               {
                 idCategories: e.record.idCategories,
-                tmpFileName: e.record.chMainImage.length ? e.record.chMainImage.replace(/^.*(\\|\/|\:)/, '') : "",
              })
           }).then((response) => response.json()).then((responseJsonFromServer) =>
           {
