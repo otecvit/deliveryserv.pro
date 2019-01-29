@@ -21,6 +21,7 @@ import Clients from '../components/Clients/Clients';
 import Locations from '../components/Locations/Locations';
 import Sorting from '../components/Menu/Sorting';
 import Stock from '../components/Stock/Stock';
+import Staff from '../components/Staff/Staff';
 import GeneralSettings from '../components/Settings/General';
 import Times from '../components/Settings/Times';
 import TypeOrder from '../components/Settings/TypeOrder';
@@ -149,6 +150,7 @@ class CmsWrapper extends Component {
                             <Route exact path="/locations" component={Locations}/>
                             <Route exact path="/sorting" component={Sorting}/>
                             <Route exact path="/stock" component={Stock}/>
+                            <Route exact path="/staff" component={Staff}/>
                             <Route exact path="/general-settings" component={GeneralSettings}/>
                             <Route exact path="/times" component={Times}/>
                             <Route exact path="/type-order" component={TypeOrder}/>

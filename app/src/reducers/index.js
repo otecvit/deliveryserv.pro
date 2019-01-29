@@ -10,6 +10,7 @@ import OptionApp from './optionapp';
 import Customers from './customers';
 import Locations from './locations';
 import Stock from './stock';
+import Staff from './staff';
 import Owner from './owner';
 
 const allReducers = combineReducers ({
@@ -23,6 +24,7 @@ const allReducers = combineReducers ({
     customers: Customers,
     locations: Locations,
     stock: Stock,
+    staff: Staff,
     owner: Owner
 });
 
