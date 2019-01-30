@@ -60,9 +60,8 @@ class StaffForm extends React.Component {
 
 
             if (this.props.param) {
-              /*
-              const url = this.props.optionapp[0].serverUrl + "/EditCategories.php"; // изменяем категорию
-
+              
+              const url = this.props.optionapp[0].serverUrl + "/EditStaff.php"; // добавляем категорию
               fetch(url, {
                 method: 'POST',
                 headers: 
@@ -72,31 +71,31 @@ class StaffForm extends React.Component {
                 },
                 body: JSON.stringify(
                 {
-                  idCategories: this.props.param,
-                  chName: values.chName,
-                  chNamePrint: values.chNamePrint,
-                  enShow: values.enShow ? "1" : "0",
-                  tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
+                  idStaff: this.props.param,
+                  chPassword: values.chPassword,
+                  arrAccess: obj
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
-                val = {
-                  dataload: { 
-                    key: this.props.param,
-                    idCategories: this.props.param,
-                    chName: values.chName,
-                    chNamePrint: values.chNamePrint,
-                    enShow: values.enShow ? "true" : "false",
-                    chMainImage:responseJsonFromServer, 
+                  if (responseJsonFromServer.status === "1") {
+                  const val = {
+                    idStaff: this.props.param,
+                    arrAccess: obj,
                   }
-                }
+                  this.props.onEdit(val);  // вызываем action
+                  message.success('Сотрудник изменен успешно');
+                  this.setState({ 
 
-                this.props.onEdit(val);  // вызываем action
-                message.success('Категория изменена');
-                this.props.form.resetFields(); // ресет полей
+                  });
+
+                }
+                else {
+                  message.error('Сотрудемк с данным именем уже сушествует в системе');
+                }
+                
               }).catch((error) => {
                   console.error(error);
               });
-                */
+
             } else {
 
               const url = this.props.optionapp[0].serverUrl + "/InsertStaff.php"; // добавляем категорию
@@ -131,41 +130,13 @@ class StaffForm extends React.Component {
                   });
 
                   this.props.form.setFieldsValue({
-                    'enShow': true,
-                    'chName': "",
                     'chPassword': "",
                   });
                 }
                 else {
-                  message.error('Сотрудемк с данным именем уже сушествует в системе');
+                  message.error('Сотрудник с данным именем уже сушествует в системе');
                 }
-                /*
-                val = {
-                  dataload: { 
-                    key: responseJsonFromServer.id.toString(),
-                    idCategories: responseJsonFromServer.id.toString(),
-                    chName: values.chName,
-                    chNamePrint: values.chNamePrint,
-                    enShow: values.enShow ? "true" : "false",
-                    chMainImage: responseJsonFromServer.tmpFileName, 
-                  }
-                }
-
-                this.props.onAdd(val);  // вызываем action
-                message.success('Категория создана'); 
-                this.props.form.resetFields(); // ресет полей
-                this.setState({
-                  tmpFileName: generateKey(),
-                  fileList: [],
-                })
-
-                this.props.form.setFieldsValue({
-                  'enShow': true,
-                  'chName': "",
-                  'chNamePrint': "",
-                });
-                */
-
+                
               }).catch((error) => {
                   console.error(error);
               });
@@ -176,9 +147,7 @@ class StaffForm extends React.Component {
       }
 
     DeleteCategory = () => {
-      const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
-      //console.log(this.state.fileList[0].serverUrl);
-      
+      const url = this.props.optionapp[0].serverUrl + "/DeleteStaff.php"; // удаление
       
       fetch(url,
         {
@@ -190,20 +159,19 @@ class StaffForm extends React.Component {
             },
             body: JSON.stringify(
             {
-              idCategories: this.props.param,
-              tmpFileName: this.state.fileList.length ? this.state.fileList[0].name : "",
+              idStaff: this.props.param,
            })
         }).then((response) => response.json()).then((responseJsonFromServer) =>
         {
             var val = {
-                idCategories: this.props.param,
+                idStaff: this.props.param,
             }
             this.props.onDelete(val);  // вызываем action
         }).catch((error) =>
         {
             console.error(error);
         });
-        message.success('Категория удалена'); 
+        message.success('Сотрудник удален'); 
         this.props.handler();
         
     }
@@ -278,17 +246,17 @@ class StaffForm extends React.Component {
                 initialValue: this.props.param ? this.props.staff.find(x => x.idStaff ===  this.props.param).chName : 
                   this.props.copyrecord.length !== 0 ? this.props.copyrecord.chName + " - Копия" : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя пользователя" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} disabled = {this.props.param ? true : false} placeholder="Имя пользователя" />
               )}
             </FormItem>
             <FormItem
-              label="Пароль"  
+              label={this.props.param ? "Новый пароль" : "Пароль" }
               abelCol={{ span: labelColSpan }}
               style={{ marginBottom: 10 }}
               hasFeedback
             >
               {getFieldDecorator('chPassword', {
-                rules: [{ required: true, message: 'Введите пароль' }],
+                rules: [{ required: this.props.param ? false : true, message: 'Введите пароль' }],
                 initialValue: ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Пароль" />
@@ -324,12 +292,11 @@ export default connect (
     onAdd: (data) => {
       dispatch({ type: 'ADD_STAFF', payload: data});
     },
-    onEdit: (categoryData) => {
-      dispatch({ type: 'EDIT_CATEGORY', payload: categoryData});
+    onEdit: (data) => {
+      dispatch({ type: 'EDIT_STAFF', payload: data});
     },
-    
-    onDelete: (categoryData) => {
-      dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
+    onDelete: (data) => {
+      dispatch({ type: 'DELETE_STAFF', payload: data});
     },
   })
 )(WrappedNormalLoginForm);

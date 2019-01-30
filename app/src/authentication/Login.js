@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Cookies from 'js-cookie'
-import { Modal, Button, Radio, Form, Icon, Input, Divider, Spin } from 'antd'
+import { Modal, Button, Radio, Form, Icon, Input, Divider, Spin, message } from 'antd'
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
@@ -63,6 +63,12 @@ class Login extends Component {
       this.props.form.validateFields((err, values) => {
         if (!err) {
          
+            console.log( {
+              iStaffType: this.state.iStaffType,
+              chEmailOwner: values.chEmailOwner,
+              chHashPassword: values.password,
+            });
+            
             const url = this.props.optionapp[0].serverUrl + "/CheckOwner.php"; // изменяем категорию
             fetch(url, {
               method: 'POST',
@@ -73,17 +79,19 @@ class Login extends Component {
               },
               body: JSON.stringify(
               {
+                iStaffType: this.state.iStaffType,
                 chEmailOwner: values.chEmailOwner,
                 chHashPassword: values.password,
               })
             }).then((response) => response.json()).then((responseJsonFromServer) => {
-                console.log(responseJsonFromServer);
-                
-                if (responseJsonFromServer.owner.length) {
+               
+                if (responseJsonFromServer.owner[0].status === "1") {
                     this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
-                    //console.log(responseJsonFromServer.owner[0].chUID);
                     Cookies.set('cookiename', responseJsonFromServer.owner[0].chUIDStaff, { expires: 365 , path: '/' });
+                } else {
+                  message.error("Проверьте имя пользователя или пароль");
                 }
+
 
             }).catch((error) => {
                 console.error(error);
