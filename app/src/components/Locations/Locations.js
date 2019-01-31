@@ -91,16 +91,27 @@ class Locations extends Component {
 
       loadingData = () => {
 
-        const url = this.props.optionapp[0].serverUrl + "/SelectCategories.php";
+        const url = this.props.optionapp[0].serverUrl + "/SelectLocations.php";
         this.setState({
             flLoading: true,
         })
-        fetch(url)
+        fetch(url, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
         .then((response) => response.json())
         .then((responseJson) => {
-            this.props.onAdd(responseJson.categories);
+            this.props.onAdd(responseJson.locations);
             this.setState({
-                dataSource: responseJson.categories,
+                dataSource: responseJson.locations,
                 flLoading: false,
             });
         })
@@ -115,7 +126,7 @@ class Locations extends Component {
         this.setState({ 
             searchString: e.target.value,
             filtered: !!e.target.value,
-            dataSource: this.props.categories.map((record) => {
+            dataSource: this.props.locations.map((record) => {
                 if (record.chName.length)
                 { 
                 const match = record.chName.match(reg);
@@ -187,7 +198,8 @@ class Locations extends Component {
         const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
           });             
-        const options = this.props.categories.map(item => <Option key={item.idCategories}>{item.chName}</Option>);
+          
+        const options = this.props.locations.map(item => <Option key={item.idLocations}>{item.chName}</Option>);
 
         return (<div>
         <Content style={{ background: '#fff'}}>
@@ -220,7 +232,7 @@ class Locations extends Component {
                                 </div>
                             </div>
                         }
-                        dataSource={!this.state.filtered ? this.props.categories : dataSource}
+                        dataSource={!this.state.filtered ? this.props.locations : dataSource}
                         size="small"  
                         pagination={false}
                         loading={flLoading}
@@ -240,7 +252,7 @@ class Locations extends Component {
                     labelInValue 
                     value={{ key: currentEditCat }}
                     >
-                    <Option key="0">Выберите категорию для редактирования</Option>
+                    <Option key="0">Выберите ресторан для редактирования</Option>
                     {options}
                 </Select>
                 { currentEditCat === "0" ? null : <LocationsForm handler = {this.handler} param={currentEditCat}/> }
@@ -254,15 +266,16 @@ class Locations extends Component {
 
 export default connect (
     state => ({
-        categories: state.categories,
+        locations: state.locations,
         optionapp: state.optionapp,
+        owner: state.owner,
     }),
     dispatch => ({
         onAdd: (data) => {
-            dispatch({ type: 'LOAD_CATEGORIES_ALL', payload: data});
+            dispatch({ type: 'LOAD_LOCATIONS_ALL', payload: data});
           },
-        onDelete: (categoryData) => {
-            dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
+        onDelete: (data) => {
+            dispatch({ type: 'DELETE_LOCATIONS', payload: data});
         },
     })
   )(Locations);

@@ -1,8 +1,4 @@
-const initialState = [
-    { key: "1", idLocations: "1", chName: 'Витебск', chNamePrint: "Johni", enShow: "1", description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
-    { key: "2", idLocations: "2", chName: 'Полоцк', chNamePrint: "Jimi", enShow: "1", description: 'My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.' },
-  
-];
+const initialState = [];
 
 
 export default function locations (state = initialState, action) {
@@ -17,7 +13,7 @@ export default function locations (state = initialState, action) {
       case "ADD_LOCATIONS":
         return [
           ...state,
-          action.payload.dataload
+          action.payload
         ];   
       case "EDIT_LOCATIONS": 
         // проходим по основному state

@@ -358,9 +358,6 @@ class Setup extends Component {
 
     render() {
 
-
-      
-
       const { currentStep, chName, chTagline, chTimeZone, chCurrency, chEmailStore, chNameLocation, chPhoneLocation, chAddressLocation, currentTarif, currentPeriodMonth, arrOperationMode, blPickup, SetupSuccessful } = this.state;
       const { getFieldDecorator } = this.props.form;
 
@@ -381,6 +378,7 @@ class Setup extends Component {
       });
 
       const optionsMoney = money.map(item => <Option value={item.value} key={item.value}>{item.name} - {item.value}</Option>)
+      
       const OperationMode = arrOperationMode.map( (item, index) => {
         if (!item.blDayOff)
           return item.time.map( (a, indexTime, arr) => {
