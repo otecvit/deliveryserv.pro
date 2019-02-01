@@ -156,8 +156,8 @@ class CmsWrapper extends Component {
                             <Route exact path="/type-order" component={TypeOrder}/>
                         </div>
                         </Content>
-                        <Footer style={{ textAlign: 'center' }}>
-                            Deliveryserv ©2018 Created by overcode
+                        <Footer style={{ textAlign: 'center', color: '#bfbfbf', fontSize: 12 }}>
+                            Deliveryserv ©2018 Created by Overcode
                         </Footer>
                     </Layout>
                 </Layout> }

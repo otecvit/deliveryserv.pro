@@ -34,26 +34,26 @@ class Dashboard extends Component {
             </Row>
         </div>
       </Content>
-      <Content style={{ background: '#fff', margin: '16px 0' }}>
-      <div style={{ padding: 10 }}>
+      <Content style={{ background: '#fff', margin: '16px 0', width: 800 }}>
+      <div style={{ padding: 20 }}>
       <Row type="flex" justify="space-around" align="middle" style={{ margin: '5px 0 15px 0' }}>
           <Col span={24}>
           <div style = {{ fontWeight: 600 }}>31 января 2019 г.</div>
           </Col>
         </Row>        
-        <Row type="flex" align="middle" gutter={32}>
-        <Col span={4}>
+        <Row type="flex" align="middle" gutter={45}>
+        <Col span={6}>
             <IconFont type="icon-svgmoneybag" style = {{ fontSize: 80 }}/>
           </Col>
-          <Col span={3} style = {{ textAlign: 'right' }}>
+          <Col span={6} style = {{ textAlign: 'right' }}>
             <div style = {{ fontWeight: 600 }}>Продажи</div>
-            <div style = {{ fontWeight: 300, fontSize: 25 }}>252 BYN</div>
+            <div style = {{ fontWeight: 300, fontSize: 25 }}>252.00 BYN</div>
             
           </Col>
-          <Col span={4}>
+          <Col span={6}>
             <IconFont type="icon-shopping" style = {{ fontSize: 80 }}/>
           </Col>
-          <Col style = {{ textAlign: 'right' }}>
+          <Col span={6} style = {{ textAlign: 'right' }}>
             <div style = {{ fontWeight: 600 }}>Заказы</div>
             <div style = {{ fontWeight: 300, fontSize: 25 }}>10</div>
           </Col>
