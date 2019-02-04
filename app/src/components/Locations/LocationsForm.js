@@ -8,6 +8,7 @@ const generateKey = (pre) => {
   return `${ new Date().getTime() }`;
 }
 const format = 'HH:mm';
+const InputGroup = Input.Group;
 
 
 class LocationsForm extends React.Component {
@@ -18,7 +19,7 @@ class LocationsForm extends React.Component {
         blPickup: true,
             chPhoneLocation: [{iPhone:"1", chPhone: ""}],
             arrOperationMode: [
-              {iDay: 0, chDay: "Понедельник", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
+              {iDay: 0, chDay: "Понедельник", blDayOff: false, time: [ { iTime: "1", tStartTime: "11:00", tEndTime: "22:00" }] },
               {iDay: 1, chDay: "Вторник", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
               {iDay: 2, chDay: "Среда", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
               {iDay: 3, chDay: "Четверг", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
@@ -37,13 +38,29 @@ class LocationsForm extends React.Component {
             const {chPhoneLocation, arrOperationMode} = this.state;
             var val = {};
 
-            var arrPhones = chPhoneLocation.map( (item, index) => {
+            const arrPhones = chPhoneLocation.map( (item, index) => {
               var newArr = {};
               newArr.iPhone= index.toString();
               newArr.chPhone = values["chPhone" + index];
               return newArr;
             });
 
+            const OperationMode = arrOperationMode.map( (item, index) => {
+              const newdata = {
+                  ...item,
+                  time: item.time.map( (a, indexTime, arr) => {
+                  var newArr = {};
+                  newArr.iTime= index.toString();
+                  newArr.tStartTime = values["tStartTime" + index + indexTime].format('HH:mm');
+                  newArr.tEndTime = values["tEndTime" + index + indexTime].format('HH:mm');
+                  return newArr;
+                })
+              };
+              return newdata;
+            });
+
+            console.log(OperationMode);
+            
 
             if (this.props.param) {
               const url = this.props.optionapp[0].serverUrl + "/EditCategories.php"; // изменяем категорию
@@ -77,9 +94,8 @@ class LocationsForm extends React.Component {
               }).catch((error) => {
                   console.error(error);
               });
-
             } else {
-
+              /*
              const urlLocation = this.props.optionapp[0].serverUrl + "/InsertLocation.php"; // изменяем категорию
               fetch(urlLocation, {
                 method: 'POST',
@@ -118,7 +134,7 @@ class LocationsForm extends React.Component {
                 this.setState({
                   chPhoneLocation: [{iPhone:"1", chPhone: ""}],
                   arrOperationMode: [
-                    {iDay: 0, chDay: "Понедельник", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
+                    {iDay: 0, chDay: "Понедельник", blDayOff: false, time: [ { iTime: "1", tStartTime: "11:00", tEndTime: "22:00" }] },
                     {iDay: 1, chDay: "Вторник", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
                     {iDay: 2, chDay: "Среда", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
                     {iDay: 3, chDay: "Четверг", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
@@ -131,38 +147,7 @@ class LocationsForm extends React.Component {
               }).catch((error) => {
                   console.error(error);
               });
-
-              /*
-              const url = this.props.optionapp[0].serverUrl + "/InsertCategories.php"; // добавляем категорию
-              fetch(url, {
-                method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                {
-                  chName: values.chName,
-                  chNamePrint: values.chNamePrint,
-                  enShow: values.enShow ? "1" : "0",
-                })
-              }).then((response) => response.json()).then((responseJsonFromServer) => {
-                val = {
-                  dataload: { 
-                    key: responseJsonFromServer.toString(),
-                    idCategories: responseJsonFromServer.toString(),
-                    chName: values.chName,
-                    chNamePrint: values.chNamePrint,
-                    enShow: values.enShow ? "true" : "false",
-                  }
-                }
-                this.props.onAdd(val);  // вызываем action
-                message.success('Категория создана'); 
-                this.props.form.resetFields(); // ресет полей
-              }).catch((error) => {
-                  console.error(error);
-              });*/
+              */
             }
           }
         });
@@ -337,26 +322,70 @@ class LocationsForm extends React.Component {
               </Col>
             </Row>);
         });
-
+        
         const OperationMode = arrOperationMode.map( (item, index) => {
           if (!item.blDayOff)
             return item.time.map( (a, indexTime, arr) => {
               if (arr.length - 1 === indexTime) 
                 return (
-                  <Row gutter={4} key={indexTime} style={{ marginBottom: 10  }} >
+                  <Row gutter={4} key={indexTime} style={{ marginBottom: 5  }} >
                     <Col span={3}>{item.chDay}:</Col>
-                    <Col span={3}>c <TimePicker addonBefore="Http://" defaultValue={moment(a.tStartTime, format)} format={format} className="time-picker-width"/></Col>
-                    <Col span={3}>по <TimePicker defaultValue={moment(a.tEndTime, format)} format={format} className="time-picker-width"/></Col>
+                    <Col span={3}> 
+                      <FormItem
+                         style={{ marginBottom: 0 }}
+                      >
+                        <span style={{ marginRight: 5 }}>с</span>
+                        {getFieldDecorator('tStartTime' + index + indexTime, {
+                          initialValue: moment(a.tStartTime, format)
+                        })(
+                          <TimePicker format={format} className="time-picker-width"/>
+                        )}   
+                      </FormItem>         
+                    </Col>
+                    <Col span={3}>
+                      <FormItem
+                        style={{ marginBottom: 0 }}
+                      >
+                        <span style={{ marginRight: 5 }}>по</span>
+                        {getFieldDecorator('tEndTime' + index + indexTime, {
+                          initialValue: moment(a.tEndTime, format)
+                        })(
+                          <TimePicker format={format} className="time-picker-width"/>
+                        )}   
+                      </FormItem>         
+                    </Col>
                     <Col span={1}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
                     <Col span={2}><Button type="default" onClick = {() => this.onDayOff(item)}>Выходной</Button></Col>
                   </Row>
                 ); 
               else
                 return (
-                  <Row gutter={4} key={indexTime} style={{ marginBottom: 10  }} >
+                  <Row gutter={4} key={indexTime} style={{ marginBottom: 5  }} >
                     <Col span={3}>{item.chDay}:</Col>
-                    <Col span={3}>c <TimePicker defaultValue={moment(a.tStartTime, format)} format={format} className="time-picker-width"/></Col>
-                    <Col span={3}>по <TimePicker defaultValue={moment(a.tEndTime, format)} format={format} className="time-picker-width"/></Col>
+                    <Col span={3}> 
+                      <FormItem
+                         style={{ marginBottom: 0 }}
+                      >
+                        <span style={{ marginRight: 5 }}>с</span>
+                        {getFieldDecorator('tStartTime' + index + indexTime, {
+                          initialValue: moment(a.tStartTime, format)
+                        })(
+                          <TimePicker format={format} className="time-picker-width"/>
+                        )}   
+                      </FormItem>         
+                    </Col>
+                    <Col span={3}>
+                      <FormItem
+                        style={{ marginBottom: 0 }}
+                      >
+                        <span style={{ marginRight: 5 }}>по</span>
+                        {getFieldDecorator('tEndTime' + index + indexTime, {
+                          initialValue: moment(a.tEndTime, format)
+                        })(
+                          <TimePicker format={format} className="time-picker-width"/>
+                        )}   
+                      </FormItem>         
+                    </Col>
                     <Col span={1}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
                     <Col span={2}></Col>
                   </Row>
@@ -364,13 +393,13 @@ class LocationsForm extends React.Component {
             });
           else 
             return (
-              <Row gutter={4} key={index} style={{ marginBottom: 10  }} >
+              <Row gutter={4} key={index} style={{ marginBottom: 13  }} >
                 <Col span={3}>{item.chDay}:</Col>
                 <Col span={19}><Button type="default" onClick = {() => this.onDayWork(item)}>Рабочий день</Button></Col>
               </Row>
             );
         });
-
+       
         return (
           <div>
             { this.props.param ? (       
@@ -440,13 +469,9 @@ class LocationsForm extends React.Component {
                 <Input prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
               )*/}
             </FormItem>
-            <FormItem
-              label="Режим работы"  
-              hasFeedback
-              className="content-form-not-required"
-            >
+           
               {OperationMode}
-            </FormItem>
+            
             <FormItem
               label="Возможен самовывоз"
               className="content-form-not-required"

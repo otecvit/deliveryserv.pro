@@ -99,7 +99,6 @@ class Staff extends Component {
       }
 
       loadingData = () => {
-
         const url = this.props.optionapp[0].serverUrl + "/SelectStaff.php";
         this.setState({
             flLoading: true,
@@ -118,6 +117,7 @@ class Staff extends Component {
           })
         .then((response) => response.json())
         .then((responseJson) => {
+                        
             this.props.onAdd(responseJson.staff);
             this.setState({
                 dataSource: responseJson.staff,
