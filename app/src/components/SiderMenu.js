@@ -44,6 +44,10 @@ class SiderMenu extends Component {
         });
       }
 
+    checkAccess = (page) => {
+        
+    }
+
     render() {
         const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,

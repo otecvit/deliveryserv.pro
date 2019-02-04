@@ -306,6 +306,7 @@ class Customers extends Component {
                                 onClick: (event) => { this.onRowClick(record, index, event) } 
                               })}
                             rowClassName="cursor-pointer"
+                            locale={{emptyText: 'Нет данных'}}
     
                         />
                 {this.state.showOrders && !this.state.openDropMenu ? <ClientsForm handler = {this.handler} param={this.val}/> : null}

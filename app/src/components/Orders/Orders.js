@@ -360,8 +360,9 @@ class Orders extends Component {
                             onRow={(record, index) => ({
                                 onClick: (event) => { this.onRowClick(record, index, event) } 
                               })}
-                            rowClassName={(record) => {return this.styleRow(record)}
-                            }
+                            rowClassName={(record) => {return this.styleRow(record)}}
+                            locale={{emptyText: 'Нет данных'}}
+                            
     
                         />
                 {this.state.showOrders && !this.state.openDropMenu ? <OrdersForm handler = {this.handler} param={this.val}/> : null}
