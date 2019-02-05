@@ -5,6 +5,8 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 
+import LoadingScreen from '../components/LoadingScreen';
+
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const FormItem = Form.Item;
@@ -111,7 +113,9 @@ class Login extends Component {
     const { getFieldDecorator } = this.props.form;
 
     const { checkCookies, iStaffType } = this.state;
-    if (!checkCookies) return <Spin />;
+
+    // загружаем данные с сервера
+    if (!checkCookies) return <LoadingScreen />;
 
     if (typeof this.props.owner.chUID !== 'undefined') {
       return <Redirect to="/"/>

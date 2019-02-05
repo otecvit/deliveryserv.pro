@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { Layout, Spin, Alert } from 'antd';
 import Cookies from 'js-cookie'
 
+import LoadingScreen from '../components/LoadingScreen';
 import Startup from '../components/Startup';
 import Dashboard from '../components/Dashboard';
 import SiderMenu from '../components/SiderMenu';
@@ -101,7 +102,7 @@ class CmsWrapper extends Component {
         const { loadingStatus, checkCookies, showMessage } = this.state;
 
         // загружаем данные с сервера
-       if (!checkCookies) return <Spin />;
+       if (!checkCookies) return <LoadingScreen />;
         
        
        if (typeof this.props.owner.chUID === 'undefined') {

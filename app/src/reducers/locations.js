@@ -18,8 +18,8 @@ export default function locations (state = initialState, action) {
       case "EDIT_LOCATIONS": 
         // проходим по основному state
         const updatedRootItems = state.map(item => {
-          if(item.idCategories === action.payload.dataload.idCategories){
-            return {...item, ...action.payload.dataload};
+          if(item.idLocations === action.payload.idLocations){
+            return {...item, ...action.payload};
           }
           return item;
         });
@@ -27,7 +27,7 @@ export default function locations (state = initialState, action) {
         return updatedRootItems;
 
         case "DELETE_LOCATIONS": 
-          return state.filter(category => category.idCategories !== action.payload.idCategories );
+          return state.filter(item => item.idLocations !== action.payload.idLocations );
       default:
         return state;
     }

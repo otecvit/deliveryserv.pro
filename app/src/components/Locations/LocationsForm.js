@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Popconfirm, Upload, message, Switch, Modal, Col, Row, TimePicker} from 'antd';
+import { Form, Icon, Input, Button, Popconfirm, Divider, message, Switch, Modal, Col, Row, TimePicker} from 'antd';
 import { connect } from 'react-redux';
 import moment from 'moment'
 
@@ -17,9 +17,10 @@ class LocationsForm extends React.Component {
       super(props);
       this.state = {
         blPickup: true,
-            chPhoneLocation: [{iPhone:"1", chPhone: ""}],
-            arrOperationMode: [
-              {iDay: 0, chDay: "Понедельник", blDayOff: false, time: [ { iTime: "1", tStartTime: "11:00", tEndTime: "22:00" }] },
+            chPhoneLocation: this.props.param ? this.props.locations.find(x => x.idLocations ===  this.props.param).arrPhones : [{iPhone:"1", chPhone: ""}],
+            arrOperationMode: this.props.param ? this.props.locations.find(x => x.idLocations ===  this.props.param).arrOperationMode :
+            [
+              {iDay: 0, chDay: "Понедельник", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
               {iDay: 1, chDay: "Вторник", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
               {iDay: 2, chDay: "Среда", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
               {iDay: 3, chDay: "Четверг", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
@@ -59,11 +60,8 @@ class LocationsForm extends React.Component {
               return newdata;
             });
 
-            console.log(OperationMode);
-            
-
             if (this.props.param) {
-              const url = this.props.optionapp[0].serverUrl + "/EditCategories.php"; // изменяем категорию
+              const url = this.props.optionapp[0].serverUrl + "/EditLocations.php"; // изменяем категорию
               fetch(url, {
                 method: 'POST',
                 headers: 
@@ -73,29 +71,33 @@ class LocationsForm extends React.Component {
                 },
                 body: JSON.stringify(
                 {
-                  idCategories: this.props.param,
+                  idLocations: this.props.param,
+                  blShow: values.enShow ? "1" : "0",
                   chName: values.chName,
-                  chNamePrint: values.chNamePrint,
-                  enShow: values.enShow ? "1" : "0",
+                  chAddress: values.chAddressLocation,
+                  arrPhones: arrPhones,
+                  arrOperationMode: OperationMode,
+                  blPickup: values.enPickup ? "1" : "0",
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
-                  dataload: { 
-                    key: this.props.param,
-                    idCategories: this.props.param,
-                    chName: values.chName,
-                    chNamePrint: values.chNamePrint,
-                    enShow: values.enShow ? "true" : "false",
-                  }
+                  key: this.props.param,
+                  idLocations: this.props.param,
+                  blShow: values.enShow ? "true" : "false",
+                  chName: values.chName,
+                  chAddress: values.chAddressLocation,
+                  arrPhones: arrPhones,
+                  arrOperationMode: OperationMode,
+                  blPickup: values.enPickup ? "true" : "false",
                 }
                 this.props.onEdit(val);  // вызываем action
-                message.success('Категория изменена');
-                this.props.form.resetFields(); // ресет полей
+                message.success('Ресторан изменен');
+                //this.props.form.resetFields(); // ресет полей
+
               }).catch((error) => {
                   console.error(error);
               });
             } else {
-              /*
              const urlLocation = this.props.optionapp[0].serverUrl + "/InsertLocation.php"; // изменяем категорию
               fetch(urlLocation, {
                 method: 'POST',
@@ -111,7 +113,7 @@ class LocationsForm extends React.Component {
                   chName: values.chName,
                   chAddress: values.chAddressLocation,
                   arrPhones: arrPhones,
-                  arrOperationMode: arrOperationMode,
+                  arrOperationMode: OperationMode,
                   blPickup: values.enPickup ? "1" : "0",
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
@@ -124,7 +126,7 @@ class LocationsForm extends React.Component {
                   chName: values.chName,
                   chAddress: values.chAddressLocation,
                   arrPhones: arrPhones,
-                  arrOperationMode: arrOperationMode,
+                  arrOperationMode: OperationMode,
                   blPickup: values.enPickup ? "true" : "false",
                 }
                 this.props.onAdd(val);  // вызываем action
@@ -133,8 +135,9 @@ class LocationsForm extends React.Component {
                 this.props.form.resetFields(); // ресет полей
                 this.setState({
                   chPhoneLocation: [{iPhone:"1", chPhone: ""}],
-                  arrOperationMode: [
-                    {iDay: 0, chDay: "Понедельник", blDayOff: false, time: [ { iTime: "1", tStartTime: "11:00", tEndTime: "22:00" }] },
+                  arrOperationMode: 
+                  [
+                    {iDay: 0, chDay: "Понедельник", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
                     {iDay: 1, chDay: "Вторник", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
                     {iDay: 2, chDay: "Среда", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
                     {iDay: 3, chDay: "Четверг", blDayOff: false, time: [ { iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }] },
@@ -147,14 +150,14 @@ class LocationsForm extends React.Component {
               }).catch((error) => {
                   console.error(error);
               });
-              */
+   
             }
           }
         });
       }
 
-    DeleteCategory = () => {
-      const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
+    Delete = () => {
+      const url = this.props.optionapp[0].serverUrl + "/DeleteLocations.php"; // удаление
       fetch(url,
         {
             method: 'POST',
@@ -165,29 +168,33 @@ class LocationsForm extends React.Component {
             },
             body: JSON.stringify(
             {
-              idCategories: this.props.param
+              idLocations: this.props.param
            })
         }).then((response) => response.json()).then((responseJsonFromServer) =>
         {
             var val = {
-                idCategories: this.props.param,
+              idLocations: this.props.param,
             }
             this.props.onDelete(val);  // вызываем action
         }).catch((error) =>
         {
             console.error(error);
         });
-        message.success('Категория удалена'); 
+        message.success('Ресторан удален'); 
         this.props.handler();
     }
 
     componentWillReceiveProps(nextProps) {
       if(nextProps.param !== this.props.param) {
         this.props.form.setFieldsValue({
-          'enShow': this.props.categories.find(x => x.idCategories ===  nextProps.param).enShow === "true",
+          'enShow': this.props.locations.find(x => x.idLocations ===  nextProps.param).blShow === "true",
+          'enPickup': this.props.locations.find(x => x.idLocations ===  nextProps.param).blPickup === "true",
+          'chName': this.props.locations.find(x => x.idLocations ===  nextProps.param).chName,
+          'chAddressLocation': this.props.locations.find(x => x.idLocations ===  nextProps.param).chAddress,
         });
         this.setState({
-
+          chPhoneLocation: this.props.locations.find(x => x.idLocations ===  nextProps.param).arrPhones,
+          arrOperationMode: this.props.locations.find(x => x.idLocations ===  nextProps.param).arrOperationMode,
         });
       }
     }
@@ -307,16 +314,19 @@ class LocationsForm extends React.Component {
 
         const phonesLocation = chPhoneLocation.map( (item, index, arr) => {
           return (
-            <Row gutter={4} key={item.iPhone} style={{ marginBottom: 10  }}>
+            <Row gutter={4} key={item.iPhone} style={{ marginBottom: 0  }}>
               <Col span={7}>
+              <FormItem
+                         style={{ marginBottom: 0 }}
+                      >
                 {getFieldDecorator('chPhone' + index, {
                   initialValue: item.chPhone
                 })(
                   <Input prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
                 )}              
-                
+              </FormItem>
               </Col>
-              <Col span={1}>
+              <Col span={1} style={{ marginTop: 4  }}>
                 { arr.length - 1 === index ? <Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddPhone()}/> :
                   <Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelPhone(item)}/> }
               </Col>
@@ -328,8 +338,8 @@ class LocationsForm extends React.Component {
             return item.time.map( (a, indexTime, arr) => {
               if (arr.length - 1 === indexTime) 
                 return (
-                  <Row gutter={4} key={indexTime} style={{ marginBottom: 5  }} >
-                    <Col span={3}>{item.chDay}:</Col>
+                  <Row gutter={4} key={indexTime} style={{ marginBottom: 0  }} >
+                    <Col span={3} style={{ marginTop: 6  }}>{item.chDay}:</Col>
                     <Col span={3}> 
                       <FormItem
                          style={{ marginBottom: 0 }}
@@ -354,14 +364,14 @@ class LocationsForm extends React.Component {
                         )}   
                       </FormItem>         
                     </Col>
-                    <Col span={1}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
+                    <Col span={1} style={{ marginTop: 4  }}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
                     <Col span={2}><Button type="default" onClick = {() => this.onDayOff(item)}>Выходной</Button></Col>
                   </Row>
                 ); 
               else
                 return (
-                  <Row gutter={4} key={indexTime} style={{ marginBottom: 5  }} >
-                    <Col span={3}>{item.chDay}:</Col>
+                  <Row gutter={4} key={indexTime} style={{ marginBottom: 0  }} >
+                    <Col span={3} style={{ marginTop: 6  }}>{item.chDay}:</Col>
                     <Col span={3}> 
                       <FormItem
                          style={{ marginBottom: 0 }}
@@ -386,14 +396,14 @@ class LocationsForm extends React.Component {
                         )}   
                       </FormItem>         
                     </Col>
-                    <Col span={1}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
+                    <Col span={1} style={{ marginTop: 4  }}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
                     <Col span={2}></Col>
                   </Row>
                 ); 
             });
           else 
             return (
-              <Row gutter={4} key={index} style={{ marginBottom: 13  }} >
+              <Row gutter={4} key={index} style={{ marginBottom: 8  }} >
                 <Col span={3}>{item.chDay}:</Col>
                 <Col span={19}><Button type="default" onClick = {() => this.onDayWork(item)}>Рабочий день</Button></Col>
               </Row>
@@ -414,7 +424,7 @@ class LocationsForm extends React.Component {
               borderBottomColor: "#cecece",
                }}>
                <h4>Удалить ресторан</h4>
-               <Popconfirm title="Удалить ресторан?" onConfirm={() => this.DeleteCategory()} okText="Да" cancelText="Нет">
+               <Popconfirm title="Удалить ресторан?" onConfirm={() => this.Delete()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>
@@ -426,7 +436,7 @@ class LocationsForm extends React.Component {
               label="Активность"
             >
               {getFieldDecorator('enShow', { 
-                initialValue: this.props.param  ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "true" ) : true,
+                initialValue: this.props.param  ? (this.props.locations.find(x => x.idLocations ===  this.props.param).blShow === "true" ) : true,
                 valuePropName: 'checked'
               })(
                 <Switch />
@@ -440,7 +450,7 @@ class LocationsForm extends React.Component {
             >
               {getFieldDecorator('chName', {
                 rules: [{ required: true, message: 'Введите название' }],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chName : ""
+                initialValue: this.props.param ? this.props.locations.find(x => x.idLocations ===  this.props.param).chName : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Название ресторана" />
               )}
@@ -452,32 +462,24 @@ class LocationsForm extends React.Component {
             >
               {getFieldDecorator('chAddressLocation', {
                 rules: [{required: true, message: 'Заполните это поле'}],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chName : ""
+                initialValue: this.props.param ? this.props.locations.find(x => x.idLocations ===  this.props.param).chAddress : ""
               })(
                 <Input prefix={<IconFont type="icon-map-marker" style={{ color: 'rgba(0,0,0,.25)' }} />} />
               )}
             </FormItem>
-            <FormItem
-              label="Номер телефона (необязательно)"  
-              hasFeedback
-              className="content-form-not-required"
-            >
-              {phonesLocation}
-              {/*getFieldDecorator('chPhoneLocation', {
-                initialValue: chPhoneLocation.length ? chPhoneLocation : ""
-              })(
-                <Input prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
-              )*/}
-            </FormItem>
-           
-              {OperationMode}
-            
+            <Divider dashed />
+            <div className="ant-form-item-label"><label>Номер телефона</label></div>
+            {phonesLocation}
+            <Divider dashed />
+            <div className="ant-form-item-label"><label>Режим работы</label></div>
+            {OperationMode}
+            <Divider dashed />
             <FormItem
               label="Возможен самовывоз"
               className="content-form-not-required"
             >
               {getFieldDecorator('enPickup', { 
-                initialValue: this.props.param  ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "true" ) : true,
+                initialValue: this.props.param  ? (this.props.locations.find(x => x.idLocations ===  this.props.param).blPickup === "true" ) : true,
                 valuePropName: 'checked'
               })(
                 <Switch onChange={this.onChangePickup}/>
@@ -499,7 +501,7 @@ const WrappedNormalLoginForm = Form.create()(LocationsForm);
 
 export default connect (
   state => ({
-      categories: state.categories,
+      locations: state.locations,
       owner: state.owner,
       optionapp: state.optionapp,
   }),
@@ -507,12 +509,12 @@ export default connect (
     onAdd: (data) => {
       dispatch({ type: 'ADD_LOCATIONS', payload: data});
     },
-    onEdit: (categoryData) => {
-      dispatch({ type: 'EDIT_CATEGORY', payload: categoryData});
+    onEdit: (data) => {
+      dispatch({ type: 'EDIT_LOCATIONS', payload: data});
     },
     
-    onDelete: (categoryData) => {
-      dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
+    onDelete: (data) => {
+      dispatch({ type: 'DELETE_LOCATIONS', payload: data});
     },
   })
 )(WrappedNormalLoginForm);
