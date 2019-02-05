@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { Route, Redirect } from 'react-router'
 import { connect } from 'react-redux'
 import moment from 'moment'
+import Cookies from 'js-cookie'
 
 
 
@@ -13,8 +14,6 @@ const FormItem = Form.Item;
 const Step = Steps.Step;
 const Option = Select.Option;
 const format = 'HH:mm';
-
-//const chUID = "222333";
 
 const timezones = [
   { name: 'Europe/Warsaw',      value: "(GMT+01:00) Варшава"},
@@ -62,7 +61,7 @@ class Setup extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentStep: 0,
+            currentStep: 1,
             currentTarif: 1,
             currentPeriodMonth: true,
             chName: "",
@@ -355,6 +354,11 @@ class Setup extends Component {
           
     }
 
+    onExit = () => {
+      Cookies.remove('cookiename');
+      this.props.onLogout(); // выход
+  }
+
 
     render() {
 
@@ -366,53 +370,108 @@ class Setup extends Component {
       });
 
       const options = timezones.map(item => <Option value={item.name} key={item.name}>{item.value}</Option>);
+      const optionsMoney = money.map(item => <Option value={item.value} key={item.value}>{item.name} - {item.value}</Option>)
+      
       const phonesLocation = chPhoneLocation.map( (item, index, arr) => {
         return (
-          <Row gutter={4} key={item.iPhone}>
-            <Col span={23}><Input prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" /></Col>
-            <Col span={1}>
+          <Row gutter={4} key={item.iPhone} style={{ marginBottom: 0  }}>
+            <Col span={7}>
+            <FormItem
+                       style={{ marginBottom: 0 }}
+                    >
+              {getFieldDecorator('chPhone' + index, {
+                initialValue: item.chPhone
+              })(
+                <Input prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
+              )}              
+            </FormItem>
+            </Col>
+            <Col span={1} style={{ marginTop: 4  }}>
               { arr.length - 1 === index ? <Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddPhone()}/> :
                 <Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelPhone(item)}/> }
             </Col>
           </Row>);
       });
-
-      const optionsMoney = money.map(item => <Option value={item.value} key={item.value}>{item.name} - {item.value}</Option>)
       
       const OperationMode = arrOperationMode.map( (item, index) => {
         if (!item.blDayOff)
           return item.time.map( (a, indexTime, arr) => {
             if (arr.length - 1 === indexTime) 
               return (
-                <Row gutter={4} key={indexTime}>
-                  <Col span={5}>{item.chDay}:</Col>
-                  <Col span={6}>c <TimePicker addonBefore="Http://" defaultValue={moment(a.tStartTime, format)} format={format} className="time-picker-width"/></Col>
-                  <Col span={6}>по <TimePicker defaultValue={moment(a.tEndTime, format)} format={format} className="time-picker-width"/></Col>
-                  <Col span={2}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
+                <Row gutter={4} key={indexTime} style={{ marginBottom: 0  }} >
+                  <Col span={5} style={{ marginTop: 6  }}>{item.chDay}:</Col>
+                  <Col span={6}> 
+                    <FormItem
+                       style={{ marginBottom: 0 }}
+                    >
+                      <span style={{ marginRight: 5 }}>с</span>
+                      {getFieldDecorator('tStartTime' + index + indexTime, {
+                        initialValue: moment(a.tStartTime, format)
+                      })(
+                        <TimePicker format={format} className="time-picker-width"/>
+                      )}   
+                    </FormItem>         
+                  </Col>
+                  <Col span={2}>
+                    <FormItem
+                      style={{ marginBottom: 0 }}
+                    >
+                      <span style={{ marginRight: 5 }}>по</span>
+                      {getFieldDecorator('tEndTime' + index + indexTime, {
+                        initialValue: moment(a.tEndTime, format)
+                      })(
+                        <TimePicker format={format} className="time-picker-width"/>
+                      )}   
+                    </FormItem>         
+                  </Col>
+                  <Col span={2} style={{ marginTop: 4  }}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
                   <Col span={3}><Button type="default" onClick = {() => this.onDayOff(item)}>Выходной</Button></Col>
                 </Row>
               ); 
             else
               return (
-                <Row gutter={4} key={indexTime}>
-                  <Col span={5}>{item.chDay}:</Col>
-                  <Col span={6}>c <TimePicker defaultValue={moment(a.tStartTime, format)} format={format} className="time-picker-width"/></Col>
-                  <Col span={6}>по <TimePicker defaultValue={moment(a.tEndTime, format)} format={format} className="time-picker-width"/></Col>
-                  <Col span={2}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
-                  <Col span={3}></Col>
+                <Row gutter={4} key={indexTime} style={{ marginBottom: 0  }} >
+                  <Col span={3} style={{ marginTop: 6  }}>{item.chDay}:</Col>
+                  <Col span={3}> 
+                    <FormItem
+                       style={{ marginBottom: 0 }}
+                    >
+                      <span style={{ marginRight: 5 }}>с</span>
+                      {getFieldDecorator('tStartTime' + index + indexTime, {
+                        initialValue: moment(a.tStartTime, format)
+                      })(
+                        <TimePicker format={format} className="time-picker-width"/>
+                      )}   
+                    </FormItem>         
+                  </Col>
+                  <Col span={3}>
+                    <FormItem
+                      style={{ marginBottom: 0 }}
+                    >
+                      <span style={{ marginRight: 5 }}>по</span>
+                      {getFieldDecorator('tEndTime' + index + indexTime, {
+                        initialValue: moment(a.tEndTime, format)
+                      })(
+                        <TimePicker format={format} className="time-picker-width"/>
+                      )}   
+                    </FormItem>         
+                  </Col>
+                  <Col span={1} style={{ marginTop: 4  }}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
+                  <Col span={2}></Col>
                 </Row>
               ); 
           });
         else 
           return (
-            <Row gutter={4} key={index}>
-              <Col span={5}>{item.chDay}:</Col>
+            <Row gutter={4} key={index} style={{ marginBottom: 8  }} >
+              <Col span={3}>{item.chDay}:</Col>
               <Col span={19}><Button type="default" onClick = {() => this.onDayWork(item)}>Рабочий день</Button></Col>
             </Row>
           );
       });
 
-    if (SetupSuccessful) {
+        
+    if ((SetupSuccessful) || (typeof this.props.owner.chUID === "undefined")) {
       return <Redirect to="/"/>
     }
 
@@ -433,12 +492,23 @@ class Setup extends Component {
           </Steps>
           { currentStep === 0 && 
             <Form onSubmit={this.handleStep_1}>
-              <div className="title-setup">
-                Базовые настройки
-              </div>
-              <div className="describe-setup">
-                  Вы всегда сможете изменить данную информацию
-                </div>
+              <Row>
+                <Col span={16}>
+                  <div className="title-setup">
+                    Базовые настройки
+                  </div>
+                  <div className="describe-setup">
+                    Вы всегда сможете изменить данную информацию
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className="title-setup" style={{textAlign: "right"}}>
+                    <Button type="dashed" onClick={() => this.onExit()} style = {{ padding: '0 20px'}}>
+                        Выход
+                    </Button>
+                  </div>
+                </Col>
+              </Row>
               <Divider dashed />
               <FormItem
                 label="Название организации"  
@@ -513,7 +583,7 @@ class Setup extends Component {
           { currentStep === 1 && 
             <Form onSubmit={this.handleStep_2}>
             <Row>
-              <Col span={18}>
+              <Col span={16}>
                 <div className="title-setup">
                   Добавьте Ваш первый объект
                 </div>
@@ -521,10 +591,17 @@ class Setup extends Component {
                   Вы сможете добавить больше торговых объектов позже
                 </div>
               </Col>
-              <Col span={6}>
+              <Col span={4}>
                 <div className="title-setup" style={{textAlign: "right"}}>
-                  <Button type="default" onClick={() => this.prevStep()}>
+                  <Button type="default" onClick={() => this.prevStep()} style = {{ padding: '0 20px'}}>
                       Назад
+                  </Button>
+                </div>
+              </Col>
+              <Col span={4}>
+                <div className="title-setup" style={{textAlign: "right"}}>
+                  <Button type="dashed" onClick={() => this.onExit()} style = {{ padding: '0 20px'}}>
+                      Выход
                   </Button>
                 </div>
               </Col>
@@ -562,29 +639,14 @@ class Setup extends Component {
               Адрес будет доступен клиентам
             </div>
             <Divider dashed />
-            <FormItem
-              label="Номер телефона (необязательно)"  
-              hasFeedback
-              className="content-form-not-required"
-            >
+              <div className="ant-form-item-label"><label>Номер телефона (необязательно)</label></div>
               {phonesLocation}
-              {/*getFieldDecorator('chPhoneLocation', {
-                initialValue: chPhoneLocation.length ? chPhoneLocation : ""
-              })(
-                <Input prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
-              )*/}
-            </FormItem>
             <div className="describe-setup-form">
               Укажите номер телефона торгового объекта, либо единый номер
             </div>
             <Divider dashed />
-            <FormItem
-              label="Режим работы"  
-              hasFeedback
-              className="content-form-not-required"
-            >
+            <div className="ant-form-item-label"><label>Режим работы</label></div>
               {OperationMode}
-            </FormItem>
             <Divider dashed />
             <FormItem
               label="Возможен самовывоз"
@@ -608,15 +670,22 @@ class Setup extends Component {
           { currentStep === 2 && 
             <Form onSubmit={this.handleStep_2}>
             <Row>
-              <Col span={18}>
+              <Col span={16}>
                 <div className="title-setup">
                   Выберите тарифный план
                 </div>
               </Col>
-              <Col span={6}>
+              <Col span={4}>
                 <div className="title-setup" style={{textAlign: "right"}}>
-                  <Button type="default" onClick={() => this.prevStep()}>
+                  <Button type="default" onClick={() => this.prevStep()} style = {{ padding: '0 20px'}}>
                       Назад
+                  </Button>
+                </div>
+              </Col>
+              <Col span={4}>
+                <div className="title-setup" style={{textAlign: "right"}}>
+                  <Button type="dashed" onClick={() => this.onExit()} style = {{ padding: '0 20px'}}>
+                      Выход
                   </Button>
                 </div>
               </Col>
@@ -774,6 +843,9 @@ const LoginForm = Form.create()(Setup);
           },
         onEdit: (data) => {
             dispatch({ type: 'EDIT_OWNER', payload: data});
+          },
+        onLogout: () => {
+            dispatch({ type: 'LOGOUT_OWNER'});
           },
     }
 ))(LoginForm)

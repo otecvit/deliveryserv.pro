@@ -278,6 +278,7 @@ class LocationsForm extends React.Component {
 
     onDayWork = (e) => {
       const { arrOperationMode } = this.state;
+      
       const updatedArrOperationMode = arrOperationMode.map(item => {
         if(item.iDay === e.iDay){
           const newdata = {

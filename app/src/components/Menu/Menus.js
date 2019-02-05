@@ -284,9 +284,6 @@ class Menus extends Component {
                     </Select>
                     { currentEditOptionSets === "0" ? null : <MenusForm handler = {this.handler} param={currentEditOptionSets} /> }
                     </TabPane>
-                    <TabPane tab="Сортировка" key="4">
-
-                    </TabPane>
                 </Tabs>
                 </div>
             </Content>
