@@ -375,7 +375,7 @@ class Setup extends Component {
       const phonesLocation = chPhoneLocation.map( (item, index, arr) => {
         return (
           <Row gutter={4} key={item.iPhone} style={{ marginBottom: 0  }}>
-            <Col span={7}>
+            <Col span={22}>
             <FormItem
                        style={{ marginBottom: 0 }}
                     >
@@ -386,7 +386,7 @@ class Setup extends Component {
               )}              
             </FormItem>
             </Col>
-            <Col span={1} style={{ marginTop: 4  }}>
+            <Col span={2} style={{ marginTop: 8, paddingBottom: 7, paddingLeft: 5 }}>
               { arr.length - 1 === index ? <Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddPhone()}/> :
                 <Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelPhone(item)}/> }
             </Col>
@@ -399,7 +399,7 @@ class Setup extends Component {
             if (arr.length - 1 === indexTime) 
               return (
                 <Row gutter={4} key={indexTime} style={{ marginBottom: 0  }} >
-                  <Col span={5} style={{ marginTop: 6  }}>{item.chDay}:</Col>
+                  <Col span={4} style={{ marginTop: 9, paddingLeft: '0px'  }}>{item.chDay}:</Col>
                   <Col span={6}> 
                     <FormItem
                        style={{ marginBottom: 0 }}
@@ -412,7 +412,7 @@ class Setup extends Component {
                       )}   
                     </FormItem>         
                   </Col>
-                  <Col span={2}>
+                  <Col span={6}>
                     <FormItem
                       style={{ marginBottom: 0 }}
                     >
@@ -424,15 +424,15 @@ class Setup extends Component {
                       )}   
                     </FormItem>         
                   </Col>
-                  <Col span={2} style={{ marginTop: 4  }}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
-                  <Col span={3}><Button type="default" onClick = {() => this.onDayOff(item)}>Выходной</Button></Col>
+                  <Col span={2} style={{ marginTop: 8  }}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
+                  <Col span={6} style={{ marginTop: 4  }}><Button type="default" onClick = {() => this.onDayOff(item)}>Выходной</Button></Col>
                 </Row>
               ); 
             else
               return (
                 <Row gutter={4} key={indexTime} style={{ marginBottom: 0  }} >
-                  <Col span={3} style={{ marginTop: 6  }}>{item.chDay}:</Col>
-                  <Col span={3}> 
+                  <Col span={4} style={{ marginTop: 9, paddingLeft: '0px'  }}>{item.chDay}:</Col>
+                  <Col span={6}> 
                     <FormItem
                        style={{ marginBottom: 0 }}
                     >
@@ -444,7 +444,7 @@ class Setup extends Component {
                       )}   
                     </FormItem>         
                   </Col>
-                  <Col span={3}>
+                  <Col span={6}>
                     <FormItem
                       style={{ marginBottom: 0 }}
                     >
@@ -456,16 +456,16 @@ class Setup extends Component {
                       )}   
                     </FormItem>         
                   </Col>
-                  <Col span={1} style={{ marginTop: 4  }}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
-                  <Col span={2}></Col>
+                  <Col span={2} style={{ marginTop: 8  }}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
+                  <Col span={6}></Col>
                 </Row>
               ); 
           });
         else 
           return (
-            <Row gutter={4} key={index} style={{ marginBottom: 8  }} >
-              <Col span={3}>{item.chDay}:</Col>
-              <Col span={19}><Button type="default" onClick = {() => this.onDayWork(item)}>Рабочий день</Button></Col>
+            <Row gutter={4} key={index} style={{ marginBottom: 3  }} >
+              <Col span={4} style={{ marginTop: 9, paddingLeft: 0  }}>{item.chDay}:</Col>
+              <Col span={20} style={{ marginTop: 4  }}><Button type="default" onClick = {() => this.onDayWork(item)}>Рабочий день</Button></Col>
             </Row>
           );
       });
@@ -639,7 +639,7 @@ class Setup extends Component {
               Адрес будет доступен клиентам
             </div>
             <Divider dashed />
-              <div className="ant-form-item-label"><label>Номер телефона (необязательно)</label></div>
+              <div className="ant-form-item-label" style = {{ lineHeight: '19px' }}><label>Номер телефона (необязательно)</label></div>
               {phonesLocation}
             <div className="describe-setup-form">
               Укажите номер телефона торгового объекта, либо единый номер
