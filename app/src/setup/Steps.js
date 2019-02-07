@@ -273,6 +273,34 @@ class Setup extends Component {
       var val={};
       const {currentTarif, currentPeriodMonth, chName, chEmailStore, chTimeZone, chCurrency, chNameLocation, chAddressLocation, chPhoneLocation, blPickup, arrOperationMode} = this.state;
 
+      this.props.form.validateFields((err, values) => {
+        if (!err) {
+          const {chPhoneLocation, arrOperationMode} = this.state;
+          var val = {};
+
+          const arrPhones = chPhoneLocation.map( (item, index) => {
+            var newArr = {};
+            newArr.iPhone= index.toString();
+            newArr.chPhone = values["chPhone" + index];
+            return newArr;
+          });
+
+          const OperationMode = arrOperationMode.map( (item, index) => {
+            const newdata = {
+                ...item,
+                time: item.time.map( (a, indexTime, arr) => {
+                var newArr = {};
+                newArr.iTime= index.toString();
+                newArr.tStartTime = values["tStartTime" + index + indexTime].format('HH:mm');
+                newArr.tEndTime = values["tEndTime" + index + indexTime].format('HH:mm');
+                return newArr;
+              })
+            };
+            return newdata;
+          });
+        }
+      });
+
       const url = this.props.optionapp[0].serverUrl + "/SaveSetup.php"; // изменяем категорию
               fetch(url, {
                 method: 'POST',
