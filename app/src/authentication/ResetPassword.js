@@ -5,8 +5,8 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 
-const RadioGroup = Radio.Group;
-const RadioButton = Radio.Button;
+import LoadingScreen from '../components/LoadingScreen';
+
 const FormItem = Form.Item;
 
 
@@ -96,7 +96,7 @@ class ResetPassword extends Component {
     const { getFieldDecorator } = this.props.form;
 
     const { checkCookies } = this.state;
-    if (!checkCookies) return <Spin />;
+    if (!checkCookies) return <LoadingScreen />;
 
     if (typeof this.props.owner.chUID !== 'undefined') {
       return <Redirect to="/"/>

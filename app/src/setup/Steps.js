@@ -61,7 +61,7 @@ class Setup extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentStep: 1,
+            currentStep: 0,
             currentTarif: 1,
             currentPeriodMonth: true,
             chName: "",
@@ -106,16 +106,44 @@ class Setup extends Component {
       e.preventDefault();
       this.props.form.validateFields((err, values) => {
         if (!err) {
+            const {chPhoneLocation, arrOperationMode} = this.state;
+            var val = {};
+
+            const arrPhones = chPhoneLocation.map( (item, index) => {
+              var newArr = {};
+              newArr.iPhone= index.toString();
+              newArr.chPhone = values["chPhone" + index];
+              return newArr;
+            });
+
+            const OperationMode = arrOperationMode.map( (item, index) => {
+              const newdata = {
+                  ...item,
+                  time: item.time.map( (a, indexTime, arr) => {
+                  var newArr = {};
+                  newArr.iTime= index.toString();
+                  newArr.tStartTime = values["tStartTime" + index + indexTime].format('HH:mm');
+                  newArr.tEndTime = values["tEndTime" + index + indexTime].format('HH:mm');
+                  return newArr;
+                })
+              };
+              return newdata;
+            });
+            console.log(arrPhones);
+            console.log(OperationMode);
+
             this.setState({
               currentStep: 2,
               chNameLocation: values.chNameLocation,
               chAddressLocation: values.chAddressLocation,
+              chPhoneLocation: arrPhones,
+              arrOperationMode: OperationMode,
             });
          }
       });
     }
 
-      next = () => {
+    next = () => {
         const currentStep = this.state.currentStep + 1;
         this.setState({
           currentStep: currentStep
@@ -134,7 +162,25 @@ class Setup extends Component {
         this.setState({
           chNameLocation: form.getFieldValue('chNameLocation'),
           chAddressLocation: form.getFieldValue('chAddressLocation'),
-          chPhoneLocation: form.getFieldValue('chPhoneLocation')
+          chPhoneLocation: this.state.chPhoneLocation.map( (item, index) => {
+            var newArr = {};
+            newArr.iPhone= index.toString();
+            newArr.chPhone = form.getFieldValue("chPhone" + index);
+            return newArr;
+          }),
+          arrOperationMode: this.state.arrOperationMode.map( (item, index) => {
+            const newdata = {
+                ...item,
+                time: item.time.map( (a, indexTime, arr) => {
+                var newArr = {};
+                newArr.iTime= index.toString();
+                newArr.tStartTime = form.getFieldValue("tStartTime" + index + indexTime).format('HH:mm');
+                newArr.tEndTime = form.getFieldValue("tEndTime" + index + indexTime).format('HH:mm');
+                return newArr;
+              })
+            };
+            return newdata;
+          })
         })
       
     }
@@ -270,38 +316,12 @@ class Setup extends Component {
 
     saveSetup = () => {
       
-      var val={};
+      //var val={};
       const {currentTarif, currentPeriodMonth, chName, chEmailStore, chTimeZone, chCurrency, chNameLocation, chAddressLocation, chPhoneLocation, blPickup, arrOperationMode} = this.state;
 
-      this.props.form.validateFields((err, values) => {
-        if (!err) {
-          const {chPhoneLocation, arrOperationMode} = this.state;
-          var val = {};
+      var val = {};
 
-          const arrPhones = chPhoneLocation.map( (item, index) => {
-            var newArr = {};
-            newArr.iPhone= index.toString();
-            newArr.chPhone = values["chPhone" + index];
-            return newArr;
-          });
-
-          const OperationMode = arrOperationMode.map( (item, index) => {
-            const newdata = {
-                ...item,
-                time: item.time.map( (a, indexTime, arr) => {
-                var newArr = {};
-                newArr.iTime= index.toString();
-                newArr.tStartTime = values["tStartTime" + index + indexTime].format('HH:mm');
-                newArr.tEndTime = values["tEndTime" + index + indexTime].format('HH:mm');
-                return newArr;
-              })
-            };
-            return newdata;
-          });
-        }
-      });
-
-      const url = this.props.optionapp[0].serverUrl + "/SaveSetup.php"; // изменяем категорию
+      const url = this.props.optionapp[0].serverUrl + "/SaveSetup.php"; // сохраняем настройки
               fetch(url, {
                 method: 'POST',
                 headers: 
@@ -314,7 +334,6 @@ class Setup extends Component {
                   chUID: this.props.owner.chUID,
                   chName: chName,
                   chEmailStore: chEmailStore,
-                  chEmailOwner: chEmailStore,
                   iTarif: currentPeriodMonth ? currentTarif : this.state.currentTarif + 4,
                   chTimeZone: chTimeZone,
                   chCurrency: chCurrency,
@@ -325,7 +344,6 @@ class Setup extends Component {
                   chUID: this.props.owner.chUID,
                   chName: chName,
                   chEmailStore: chEmailStore,
-                  chEmailOwner: chEmailStore,
                   iTarif: currentPeriodMonth ? currentTarif : this.state.currentTarif + 4,
                   chTimeZone: chTimeZone,
                   chCurrency: chCurrency,
@@ -340,7 +358,11 @@ class Setup extends Component {
                   SetupSuccessful: false,
                 });
                 console.error(error);
+                console.error(error);
               });
+          
+          // отправляем письмо с подтверждением email
+          
 
           const urlLocation = this.props.optionapp[0].serverUrl + "/InsertLocation.php"; // изменяем категорию
               fetch(urlLocation, {
@@ -361,31 +383,43 @@ class Setup extends Component {
                   blPickup: blPickup ? "1" : "0",
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
-                console.log(responseJsonFromServer);
-                
-                /*
-                val = {
-                  chUID: "a3b461d5e2c48b09e7a1",
-                  chName: chName,
-                  chEmailStore: chEmailStore,
-                  chEmailOwner: chEmailStore,
-                  iTarif: currentPeriodMonth ? currentTarif : this.state.currentTarif + 4,
-                  chTimeZone: chTimeZone,
-                  chCurrency: chCurrency,
-                  blPickup: blPickup ? "1" : "0",
-                }
-                //this.props.onEdit(val);  // вызываем action
-                */
+
               }).catch((error) => {
+                  console.error(error);
                   console.error(error);
               });
           
     }
 
+    // выход из регистрации
     onExit = () => {
-      Cookies.remove('cookiename');
-      this.props.onLogout(); // выход
-  }
+
+      const url = this.props.optionapp[0].serverUrl + "/DeleteOwner.php"; // удаление
+      fetch(url,
+        {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              idCustomer: this.props.owner.idCustomer
+           })
+        }).then((response) => response.json()).then((responseJsonFromServer) =>
+        {
+          console.log(responseJsonFromServer);
+          // удаляяем куки
+          Cookies.remove('cookiename');
+          // очищаем редюсер
+          this.props.onLogout(); // выход
+        }).catch((error) =>
+        {
+            console.error(error);
+        });
+   
+    }
 
 
     render() {
@@ -399,6 +433,8 @@ class Setup extends Component {
 
       const options = timezones.map(item => <Option value={item.name} key={item.name}>{item.value}</Option>);
       const optionsMoney = money.map(item => <Option value={item.value} key={item.value}>{item.name} - {item.value}</Option>)
+      
+      console.log(chPhoneLocation);
       
       const phonesLocation = chPhoneLocation.map( (item, index, arr) => {
         return (

@@ -117,8 +117,6 @@ class LocationsForm extends React.Component {
                   blPickup: values.enPickup ? "1" : "0",
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
-                console.log(responseJsonFromServer.id);
-                
                 val = {
                   key: responseJsonFromServer.id.toString(),
                   idLocations: responseJsonFromServer.id.toString(),
