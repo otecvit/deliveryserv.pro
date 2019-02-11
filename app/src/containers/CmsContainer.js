@@ -91,6 +91,24 @@ class CmsWrapper extends Component {
     sendMailVerification = () => {
         const { showMessage } = this.state;
 
+        const urlLocation = this.props.optionapp[0].serverUrl + "/SendMailAct.php"; // изменяем категорию
+              fetch(urlLocation, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
+                    chUIDStaff: this.props.owner.chUIDStaff,
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                  console.log(responseJsonFromServer);
+
+              }).catch((error) => {
+                  console.error(error);
+              });
         
 
         this.setState ({
@@ -130,7 +148,7 @@ class CmsWrapper extends Component {
                         </Header>
                         <Content>
                         
-                            { this.props.owner.blVerification === "0" ? <div style={{ padding: "16px 16px 0 16px" }}><Alert 
+                            { (this.props.owner.blVerification === "0") && (this.props.owner.iStaffType === "0") ? <div style={{ padding: "16px 16px 0 16px" }}><Alert 
                                         message="E-mail не подтверждён." 
                                         closable 
                                         type="warning" 
