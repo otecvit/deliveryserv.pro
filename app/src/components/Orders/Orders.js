@@ -6,13 +6,6 @@ import moment from 'moment';
 import OrdersForm from './OrdersForm';
 
 const { Content } = Layout;
-const TabPane = Tabs.TabPane;
-const Option = Select.Option;
-const confirm = Modal.confirm;
-
-const generateKey = (pre) => {
-    return `${ new Date().getTime() }`;
-  }
 
 class Orders extends Component {
     
