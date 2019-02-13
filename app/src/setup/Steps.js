@@ -347,6 +347,7 @@ class Setup extends Component {
                   iTarif: currentPeriodMonth ? currentTarif : this.state.currentTarif + 4,
                   chTimeZone: chTimeZone,
                   chCurrency: chCurrency,
+                  blVerification: "0",
                   blPickup: blPickup ? "1" : "0",
                 }
                 this.props.onEdit(val);  // вызываем action
@@ -362,7 +363,24 @@ class Setup extends Component {
               });
           
           // отправляем письмо с подтверждением email
-          
+          const urlSendMailAct = this.props.optionapp[0].serverUrl + "/SendMailAct.php"; // изменяем категорию
+              fetch(urlSendMailAct, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
+                  chUIDStaff: this.props.owner.chUIDStaff,
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                  console.log(responseJsonFromServer);
+                  
+              }).catch((error) => {
+                  console.error(error);
+              });
 
           const urlLocation = this.props.optionapp[0].serverUrl + "/InsertLocation.php"; // изменяем категорию
               fetch(urlLocation, {
@@ -385,7 +403,6 @@ class Setup extends Component {
               }).then((response) => response.json()).then((responseJsonFromServer) => {
 
               }).catch((error) => {
-                  console.error(error);
                   console.error(error);
               });
           
@@ -732,7 +749,7 @@ class Setup extends Component {
           </Form> 
           }
           { currentStep === 2 && 
-            <Form onSubmit={this.handleStep_2}>
+            <Form>
             <Row>
               <Col span={16}>
                 <div className="title-setup">

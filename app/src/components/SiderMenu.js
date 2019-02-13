@@ -75,7 +75,7 @@ class SiderMenu extends Component {
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["staff"]) && <Menu.Item key="11"><Link to="staff"><Icon type="idcard" /><span>Сотрудники</span></Link></Menu.Item> }
                 <SubMenu key="sub2" title={<span><IconFont type="icon-marketing"></IconFont><span>Маркетинг</span></span>}>    
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["stock"]) && <Menu.Item key="12"><Link to="stock"><Icon type="gift" /><span>Акции</span></Link></Menu.Item> }
-                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["push"]) && <Menu.Item key="21"><Link to="push"><IconFont type="icon-push" /><span style={{ fontSize: 13 }}>Push-уведомление</span></Link></Menu.Item> }
+                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["push"]) && <Menu.Item key="21"><Link to="push"><IconFont type="icon-push" /><span style={{ fontSize: 13 }}>Push-уведомления</span></Link></Menu.Item> }
                 </SubMenu>
                 <SubMenu key="sub3" title={<span><Icon type="setting"/><span>Настройки</span></span>}>
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["general-settings"]) && <Menu.Item key="13"><Link to="general-settings">Общие</Link></Menu.Item> }

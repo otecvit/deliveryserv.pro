@@ -175,7 +175,7 @@ class Push extends Component {
         const { searchString, currentEditCat, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
-            { title: 'Имя', dataIndex: 'chName', key: 'name' },
+            { title: 'Заголовок', dataIndex: 'chName', key: 'name' },
             { 
                 title: 'Действие', 
                 key: 'operation', 

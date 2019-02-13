@@ -13,32 +13,8 @@ class CategoriesForm extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        previewVisible: false,
-        previewImage: '',
-        tmpFileName: generateKey(),
-        fileList: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.length ? [{
-          uid: '-1',
-          name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
-          status: 'done',
-          url: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage,
-          
-        }] : [] : [],
       };
     }
-
-    handleCancel = () => this.setState({ previewVisible: false })
-
-    handlePreview = (file) => {
-      this.setState({
-        previewImage: file.url || file.thumbUrl,
-        previewVisible: true,
-      });
-    }
-
-    handleChange = ({ fileList }) => {
-      this.setState({ fileList })
-    }
-
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -168,159 +144,56 @@ class CategoriesForm extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-      
-      if(nextProps.param !== this.props.param) {
-        this.DeleteTmpFile(); // удаляем временный файл
-        
-        this.props.form.setFieldsValue({
-          'enShow': this.props.categories.find(x => x.idCategories ===  nextProps.param).enShow === "true",
-          'chName': this.props.categories.find(x => x.idCategories ===  nextProps.param).chName,
-          'chNamePrint': this.props.categories.find(x => x.idCategories ===  nextProps.param).chNamePrint,
-        });
-        this.setState({
-          tmpFileName: generateKey(),
-          fileList: this.props.categories.find(x => x.idCategories ===  nextProps.param).chMainImage.length ? [{
-            uid: '-1',
-            name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
-            status: 'done',
-            url: this.props.categories.find(x => x.idCategories ===  nextProps.param).chMainImage,
-        }] : [] });
-      }
+  
+
     }
 
     
     componentWillUnmount () {
-      this.DeleteTmpFile();
+     
     }
 
-    DeleteTmpFile = () => {
-      const url = this.props.optionapp[0].serverUrl + "/DeleteTmpFile.php"; // удаление
-      fetch(url,
-        {
-            method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-            {
-              tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
-           })
-        }).then((response) => response.json()).then((responseJsonFromServer) =>
-        {
-          //console.log(responseJsonFromServer);
-        }).catch((error) =>
-        {
-          //console.error(error);
-        });
-    }
+
 
 
 
     render() {
-        const { getFieldDecorator } = this.props.form;
+        
+      
+      const { getFieldDecorator } = this.props.form;
         const { previewVisible, previewImage, fileList, tmpFileName } = this.state;
         const labelColSpan = 8;
-        const tmpFilePath = this.props.optionapp[0].serverUrl +  "/UploadFile.php?fName=" + tmpFileName;
-
-        const uploadButton = (
-          <div>
-            <Icon type="plus" />
-            <div className="ant-upload-text">Загрузить</div>
-          </div>
-        );
-
         return (
           <div>
-            { this.props.param ? (       
-            <div style={{ 
-              margin: "15px 0", 
-              padding: "15px 0", 
-              borderTopStyle: "dashed", 
-              borderTopWidth: "1px", 
-              borderTopColor: "#cecece",
-              borderBottomStyle: "dashed", 
-              borderBottomWidth: "1px", 
-              borderBottomColor: "#cecece",
-               }}>
-               <h4>Удалить категорию</h4>
-               <Popconfirm title="Удалить категорию?" onConfirm={() => this.DeleteCategory()} okText="Да" cancelText="Нет">
-                  <Button type="primary">
-                    Удалить
-                  </Button>
-                </Popconfirm>
-            </div>) : null
-            }
             <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px"}}>
             <FormItem
-              label="Активность"
-            >
-              {getFieldDecorator('enShow', { 
-                initialValue: this.props.param  ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "true" ) : true,
-                valuePropName: 'checked'
-              })(
-                <Switch />
-              )}
-            </FormItem>
-            <FormItem
-              label="Имя"
+              label="Заголовок"
               abelCol={{ span: labelColSpan }}
               style={{ marginBottom: 10 }}
               hasFeedback
             >
-              {getFieldDecorator('chName', {
-                rules: [{ required: true, message: 'Введите имя категории' }],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chName : 
-                  this.props.copyrecord.length !== 0 ? this.props.copyrecord.chName + " - Копия" : ""
+              {getFieldDecorator('chTitlePush', {
+                rules: [{ required: true, message: 'Введите заголовок Push-уведомления' }],
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя категории" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Заголовок Push-уведомления" />
               )}
             </FormItem>
             <FormItem
-              label="Отображаемое имя"  
+              label="Текст уведомления"  
               abelCol={{ span: labelColSpan }}
               style={{ marginBottom: 10 }}
               hasFeedback
             >
-              {getFieldDecorator('chNamePrint', {
-                rules: [{ }],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chNamePrint :  
-                  this.props.copyrecord.length !== 0 ? this.props.copyrecord.chNamePrint : ""
+              {getFieldDecorator('chTextPush', {
+                 rules: [{ required: true, message: 'Введите текст Push-уведомления' }],
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Текст Push-уведомления" />
               )}
-            </FormItem>
-            <FormItem
-              label="Изображение"
-            >
-              <div className="dropbox">
-                {getFieldDecorator('chMainImage', {
-                  /*valuePropName: 'fileList',
-                  getValueFromEvent: this.normFile,*/
-                })(
-                  <div>
-                  <Upload
-                    action={tmpFilePath}
-                    listType="picture-card"
-                    enctype="multipart/form-data"
-                    fileList={fileList}
-                    onPreview={this.handlePreview}
-                    onChange={this.handleChange}
-                  >
-                    {fileList.length >= 1 ? null : uploadButton}
-                  </Upload>
-                  <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-                    <img alt="" style={{ width: '100%' }} src={previewImage} />
-                  </Modal>
-                  </div>
-                )}
-              </div>
             </FormItem>
             <FormItem
             >
               <Button type="primary" htmlType="submit">
-                <Icon type="plus"/>Сохранить
+                <Icon type="plus"/>Отправить
               </Button>
             </FormItem>
           </Form>
