@@ -39,6 +39,7 @@ class CmsWrapper extends Component {
         super(props);
         this.handler = this.handler.bind(this)
         this.state = {
+            loadStatus: false,
             loadingStatus: false,
             checkCookies: false,
             showMessage: false,
@@ -72,6 +73,7 @@ class CmsWrapper extends Component {
             }).then((response) => response.json()).then((responseJsonFromServer) => {
                 if (responseJsonFromServer.owner.length) {
                     this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
+                    this.timer = setInterval(()=> this.getItems(), 1000);
                 }
 
                 this.setState ({
@@ -89,6 +91,15 @@ class CmsWrapper extends Component {
 
         
       }
+
+      componentWillUnmount() {
+        this.timer = null; // here...
+      }
+
+      getItems() {
+        this.setState({loadStatus: !this.state.loadStatus})
+      }
+
 
     sendMailVerification = () => {
         const { showMessage } = this.state;
@@ -140,7 +151,7 @@ class CmsWrapper extends Component {
                 { !loadingStatus ? <Startup handler = { this.handler }/> : 
                 <Layout style={{ minHeight: '100vh' }}>
                     <SiderMenu/>
-                    {this.state.loadStatus ? <СheckNewOrder/> : null}
+                    {this.state.loadStatus && <СheckNewOrder/>}
                     <Layout>
                         <Header style={{ background: '#fff', padding: 0 }}>
                         <div style={{ padding: 16 }}>
@@ -203,15 +214,3 @@ export default connect (
       },    
     })
   )(CmsWrapper);
-
-/*
-                <ul className="content-menu">
-                    <li className="content-menu__item active"><Link to={`/`}>Рабочий стол</Link></li>
-                    <li className="content-menu__item active"><Link to={`/invoices`}>Счета</Link></li>
-                    <li className="content-menu__item"><Link to={`/meters`}>Показания счётчиков</Link></li>
-                    <li className="content-menu__item"><Link to={`/login`}>выход</Link></li>
-                </ul>
-                <Route exact path={`/`} render={() => <h2>робочий стол</h2>}/>
-                <Route path={`/invoices`} render={() => <h2>Invoices</h2>}/>
-                <Route path={`/meters`} render={() => <h2>Meters</h2>}/>
-*/

@@ -4,11 +4,6 @@ import Sound from 'react-sound';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
 
 
-const { Content } = Layout;
-const TabPane = Tabs.TabPane;
-const Option = Select.Option;
-const confirm = Modal.confirm;
-
 class test extends Component {
     
     constructor(props) {

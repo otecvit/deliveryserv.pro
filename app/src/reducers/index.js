@@ -12,6 +12,7 @@ import Locations from './locations';
 import Stock from './stock';
 import Staff from './staff';
 import Owner from './owner';
+import PushNotification from './pushNotification';
 
 const allReducers = combineReducers ({
     routing: routerReducer,
@@ -25,7 +26,8 @@ const allReducers = combineReducers ({
     locations: Locations,
     stock: Stock,
     staff: Staff,
-    owner: Owner
+    owner: Owner,
+    pushNotification: PushNotification,
 });
 
 export default allReducers;

@@ -5,6 +5,7 @@ const initialState = [
         isLoggedIn: 0,
         statusCloud: 0,
         serverUrl: "http://mircoffee.by/deliveryserv/app/api/admin",
+        serverUrlStart: "http://mircoffee.by/deliveryserv/app",
         scriptIconUrl: "//at.alicdn.com/t/font_888167_ne847fa1w5q.js",
     },       
 ];

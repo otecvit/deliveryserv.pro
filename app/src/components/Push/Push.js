@@ -1,24 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
+import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, message} from 'antd';
+import moment from 'moment';
 
 import PushForm from './PushForm';
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
-const FormItem = Form.Item;
-const Option = Select.Option;
-const confirm = Modal.confirm;
 
 const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
-  }
+}
 
 class Push extends Component {
     constructor(props) {
         super(props);
         this.handler = this.handler.bind(this)
-
         this.state = {
           searchString: '',
           activeKey: "1",
@@ -30,92 +27,124 @@ class Push extends Component {
         };
     }
 
+    // Обрабатываем нажатие на контекстное меню записи
     handleMenuClick = (e, record) => {
         switch (e.key) {
-            case "0": this.editCategory(record); break; //Редактировать
-            case "1": this.copyCategory(record); break; //Копировать
-            case "2": this.DeleteCategory(record); break; 
+            case "0": this.RepeatSend(record); break; //Повторить отправку сообщения
+            case "1": this.Delete(record); break; //Удалить сообщение из списка
             default: this.setState({activeKey: "1"});    
-        }        
-      }
+        }      
+    }
 
-      editCategory = (e) => {
-        this.setState({
-            activeKey: "3",
-            currentEditCat: e.record.idCategories,
+    RepeatSend = (e) => {
+        var val = {};
+        const url = this.props.optionapp[0].serverUrl + "/EditPushNotification.php"; // добавляем категорию
+        fetch(url, {
+          method: 'POST',
+          headers: 
+          {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(
+          {
+            idPush: e.record.idPush,
+          })
+        }).then((response) => response.json()).then((responseJsonFromServer) => {
+          val = {
+              idPush: e.record.idPush,
+              dDateLastSending: moment().format('DD.MM.YYYY HH:mm'),
+          }
+          this.props.onEdit(val);  // вызываем action
+        }).catch((error) => {
+            console.error(error);
+        });
+    
+        const urlPushSending = this.props.optionapp[0].serverUrlStart + "/SendPushMessage.php"; // добавляем категорию
+        fetch(urlPushSending, {
+          method: 'POST',
+          headers: 
+          {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(
+          {
+            chUID: this.props.owner.chUID,
+            chTitlePush: e.record.chTitlePush,
+            chTextPush: e.record.chTextPush,
+          })
+        }).then((response) => response.json()).then((responseJsonFromServer) => {
+          message.success("Push-уведомление успешно отправлено");
+        }).catch((error) => {
+            console.error(error);
         });
     }
 
-    copyCategory = (e) => {
-        // открываем вкладку копирования
-        this.setState({
-            activeKey: "2",
-            currentRecord: e.record,
-        });
-    }
-
-    DeleteCategory = (e) => {
-        const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
+    Delete = (e) => {
+        const url = this.props.optionapp[0].serverUrl + "/DeletePushNotification.php"; // удаление
         fetch(url,
-          {
-              method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(
-              {
-                idCategories: e.record.idCategories,
-                tmpFileName: e.record.chMainImage.length ? e.record.chMainImage.replace(/^.*(\\|\/|\:)/, '') : "",
-             })
-          }).then((response) => response.json()).then((responseJsonFromServer) =>
-          {
-              var val = {
-                  idCategories: e.record.idCategories,
-              }
-              this.props.onDelete(val);  // вызываем action
-          }).catch((error) =>
-          {
-              console.error(error);
-          });
+            {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    idPush: e.record.idPush,
+                })
+            }).then((response) => response.json()).then((responseJsonFromServer) =>
+            {
+                this.props.onDelete({idPush: e.record.idPush});  // вызываем action
+                message.success("Push-уведомление удалено");
+            }).catch((error) => {
+                console.error(error);
+            });
     }
-
 
     componentDidMount() {
         this.loadingData();
     }
 
-
-
     emitEmpty = () => {
         this.searchStringInput.focus();
-        this.setState({ searchString: '' });
+        this.setState({ 
+            filtered: !this.state.filtered,
+            searchString: '' });
     }
 
     handler = () => {
         this.setState({
             currentEditCat: "0",
         });
-      }
+    }
 
-      loadingData = () => {
+    loadingData = () => {
 
-        const url = this.props.optionapp[0].serverUrl + "/SelectCategories.php";
+        const url = this.props.optionapp[0].serverUrl + "/SelectPushNotification.php";
         this.setState({
             flLoading: true,
         })
-        fetch(url)
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                chUID: this.props.owner.chUID,
+            })
+            })
         .then((response) => response.json())
         .then((responseJson) => {
-            this.props.onAdd(responseJson.categories);
+            this.props.onAdd(responseJson.pushNotification);
             this.setState({
-                dataSource: responseJson.categories,
+                dataSource: responseJson.pushNotification,
                 flLoading: false,
             });
         })
         .catch((error) => {
-          console.error(error);
+            console.error(error);
         });
     }
 
@@ -125,19 +154,19 @@ class Push extends Component {
         this.setState({ 
             searchString: e.target.value,
             filtered: !!e.target.value,
-            dataSource: this.props.categories.map((record) => {
-                if (record.chName.length)
+            dataSource: this.props.pushNotification.map((record) => {
+                if (record.chTitlePush.length)
                 { 
-                const match = record.chName.match(reg);
+                const match = record.chTitlePush.match(reg);
             
                 if (!match) {
                 return null;
                 }
                 return {
                 ...record,
-                chName: (
+                chTitlePush: (
                     <span>
-                    {record.chName.split(reg).map((text, i) => (
+                    {record.chTitlePush.split(reg).map((text, i) => (
                         i > 0 ? [<span className="highlight" key={generateKey()}>{match[0]}</span>, text] : text
                     ))}
                     </span>
@@ -155,27 +184,24 @@ class Push extends Component {
     createDropdownMenu = (record) => {
         const menu = (
             <Menu onClick={e => this.handleMenuClick(e, record)}>
-              <Menu.Item key="0">Редактировать</Menu.Item>
-              <Menu.Item key="1">Копировать</Menu.Item>
-              <Menu.Item key="2"> Удалить </Menu.Item>
+              <Menu.Item key="0">Повторить отправку</Menu.Item>
+              <Menu.Item key="1">Удалить</Menu.Item>
             </Menu>
           );
-        
         return menu;
-    }
-
-    onChangeCategory = (e) => {
-        this.setState ({ 
-            currentEditCat: e.key
-        });
     }
 
     render() {
 
-        const { searchString, currentEditCat, dataSource, flLoading } = this.state;
-        const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
+        const { searchString, dataSource, flLoading } = this.state;
+        const suffix = searchString && <Icon type="close-circle" onClick={this.emitEmpty} />;
+        
+        const IconFont = Icon.createFromIconfontCN({
+            scriptUrl: this.props.optionapp[0].scriptIconUrl,
+          }); 
+
         const columns = [
-            { title: 'Заголовок', dataIndex: 'chName', key: 'name' },
+            { title: 'Заголовок', dataIndex: 'chTitlePush', key: 'name' },
             { 
                 title: 'Действие', 
                 key: 'operation', 
@@ -191,10 +217,7 @@ class Push extends Component {
           },
         ];
 
-        const IconFont = Icon.createFromIconfontCN({
-            scriptUrl: this.props.optionapp[0].scriptIconUrl,
-          });             
-        const options = this.props.categories.map(item => <Option key={item.idCategories}>{item.chName}</Option>);
+                    
 
         return (<div>
         <Content style={{ background: '#fff'}}>
@@ -222,12 +245,16 @@ class Push extends Component {
                         expandedRowRender={record => 
                             <div className="d-table">
                                 <div className="d-tr">
-                                    <div className="d-td title-detail">Отображаемое имя</div>
-                                    <div className="d-td content-detail">{record.chNamePrint}</div>
+                                    <div className="d-td title-detail">Текст уведомления</div>
+                                    <div className="d-td content-detail">{record.chTextPush}</div>
+                                </div>                                
+                                <div className="d-tr">
+                                    <div className="d-td title-detail">Дата последней отправки</div>
+                                    <div className="d-td content-detail">{record.dDateLastSending}</div>
                                 </div>
                             </div>
                         }
-                        dataSource={!this.state.filtered ? this.props.categories : dataSource}
+                        dataSource={!this.state.filtered ? this.props.pushNotification : dataSource}
                         size="small"  
                         pagination={false}
                         loading={flLoading}
@@ -238,20 +265,6 @@ class Push extends Component {
                 <TabPane tab="Создать" key="2">
                     <PushForm copyrecord={this.state.currentRecord}/>
                 </TabPane>
-                <TabPane tab="Редактировать" key="3">
-                    <Select
-                    showSearch
-                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    onChange={this.onChangeCategory}
-                    style={{ width: "100%" }}
-                    labelInValue 
-                    value={{ key: currentEditCat }}
-                    >
-                    <Option key="0">Выберите категорию для редактирования</Option>
-                    {options}
-                </Select>
-                { currentEditCat === "0" ? null : <PushForm handler = {this.handler} param={currentEditCat}/> }
-                </TabPane>
             </Tabs>
             </div>
         </Content>
@@ -261,16 +274,20 @@ class Push extends Component {
 
 export default connect (
     state => ({
-        categories: state.categories,
+        pushNotification: state.pushNotification,
         optionapp: state.optionapp,
+        owner: state.owner,
     }),
     dispatch => ({
         onAdd: (data) => {
-            dispatch({ type: 'LOAD_CATEGORIES_ALL', payload: data});
+            dispatch({ type: 'LOAD_PUSH_ALL', payload: data});
           },
-        onDelete: (categoryData) => {
-            dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
+        onDelete: (data) => {
+            dispatch({ type: 'DELETE_PUSH', payload: data});
         },
+        onEdit: (data) => {
+            dispatch({type: 'EDIT_PUSH', payload: data})
+        }
     })
   )(Push);
 

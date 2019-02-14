@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Modal, Form, Input, Radio, Select, message, Tabs, Table, DatePicker  } from 'antd';
 import { Row, Col } from 'antd';
-import moment from 'moment';
 
 const FormItem = Form.Item;
 const TabPane = Tabs.TabPane;
@@ -32,7 +31,7 @@ const CollectionCreateForm = Form.create()(
 
     constructor(props) {
         super(props);
-
+        
         this.state = {
           currentStatus: this.props.param ? "status-" + this.props.param.iStatus : "status-0",
           chStatusName: this.getStatusName(this.props.param.iStatus),
