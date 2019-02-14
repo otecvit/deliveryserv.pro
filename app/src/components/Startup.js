@@ -2,14 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router';
 
-//const chUID = "222333"
-//const chUID = "66665555"
-const chUID = "";
 
 class Startup extends Component {
+
     componentDidMount() {
-        console.log(chUID);
-        
         const urlOwner = this.props.optionapp[0].serverUrl + "/SelectOwner.php";
         fetch(urlOwner, {
             method: 'POST',
@@ -20,14 +16,14 @@ class Startup extends Component {
             },
             body: JSON.stringify(
             {
-                chUID: chUID,
+                chUID: this.props.owner.chUID,
             })
           }).then((response) => response.json()).then((responseServer) => {
             console.log(responseServer);
               
             const val = {
                 idCustomer: responseServer.owner[0].idCustomer,
-                chUID: chUID,
+                chUID: this.props.owner.chUID,
                 chName: responseServer.owner[0].chName,
                 chTagline: responseServer.owner[0].chTagline,
                 chEmailStore: responseServer.owner[0].chEmailStore,

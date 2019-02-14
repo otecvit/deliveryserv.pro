@@ -42,7 +42,6 @@ class Login extends Component {
         }).then((response) => response.json()).then((responseJsonFromServer) => {
             if (responseJsonFromServer.owner.length) {
                 this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
-
             }
 
             this.setState ({
@@ -198,7 +197,7 @@ export default connect (
         dispatch({ type: 'EDIT_ORDERS_STATUS', payload: data});
       },
     onCheckUser: (data) => {
-         dispatch({ type: 'LOAD_OWNER_ALL', payload: data})
+        dispatch({ type: 'LOAD_OWNER_ALL', payload: data})
     },    
   })
 )(LoginForm);

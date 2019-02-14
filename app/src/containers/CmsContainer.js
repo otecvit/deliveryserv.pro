@@ -54,11 +54,12 @@ class CmsWrapper extends Component {
 
      componentDidMount()  {
         // получаем cookies
-
+        
         const currentUser = Cookies.get('cookiename');
         if (typeof currentUser !== 'undefined') {
             
             const url = this.props.optionapp[0].serverUrl + "/SelectOwner.php"; // изменяем категорию
+            
             fetch(url, {
               method: 'POST',
               headers: 
@@ -68,7 +69,7 @@ class CmsWrapper extends Component {
               },
               body: JSON.stringify(
               {
-                chUID: currentUser,
+                chUIDStaff: currentUser,
               })
             }).then((response) => response.json()).then((responseJsonFromServer) => {
                 if (responseJsonFromServer.owner.length) {
@@ -147,54 +148,51 @@ class CmsWrapper extends Component {
        
 
         return (
-            <div>
-                { !loadingStatus ? <Startup handler = { this.handler }/> : 
-                <Layout style={{ minHeight: '100vh' }}>
-                    <SiderMenu/>
-                    {this.state.loadStatus && <СheckNewOrder/>}
-                    <Layout>
-                        <Header style={{ background: '#fff', padding: 0 }}>
-                        <div style={{ padding: 16 }}>
-                            <HeaderStatus />
-                        </div>
+            <Layout style={{ minHeight: '100vh' }}>
+                <SiderMenu/>
+                {this.state.loadStatus && <СheckNewOrder/>}
+                <Layout>
+                    <Header style={{ background: '#fff', padding: 0 }}>
+                    <div style={{ padding: 16 }}>
+                        <HeaderStatus />
+                    </div>
 
-                        </Header>
-                        <Content>
-                        
-                            { (this.props.owner.blVerification === "0") && (this.props.owner.iStaffType === "0") ? <div style={{ padding: "16px 16px 0 16px" }}><Alert 
-                                        message="E-mail не подтверждён." 
-                                        closable 
-                                        type="warning" 
-                                        style={{ margin: '0', textAlign: "center" }} 
-                                        closeText="Отправить письмо ещё раз" 
-                                        afterClose={this.sendMailVerification}
-                                        className="alert-order"/> </div> : null }
+                    </Header>
+                    <Content>
+                    
+                        { (this.props.owner.blVerification === "0") && (this.props.owner.iStaffType === "0") ? <div style={{ padding: "16px 16px 0 16px" }}><Alert 
+                                    message="E-mail не подтверждён." 
+                                    closable 
+                                    type="warning" 
+                                    style={{ margin: '0', textAlign: "center" }} 
+                                    closeText="Отправить письмо ещё раз" 
+                                    afterClose={this.sendMailVerification}
+                                    className="alert-order"/> </div> : null }
 
-                       
-                        <div style={{ padding: !showMessage ? 16 : "0px 16px 16px 16px", minHeight: 360 }}>
-                            <Route exact path="/" component={Dashboard}/>
-                            <Route exact path="/categories" component={Categories}/>
-                            <Route exact path="/option-sets" component={OptionSets}/>
-                            <Route exact path="/dishes" component={Dishes}/>
-                            <Route exact path="/menus" component={Menus}/>
-                            <Route exact path="/orders" component={Orders}/>
-                            <Route exact path="/customers" component={Clients}/>
-                            <Route exact path="/locations" component={Locations}/>
-                            <Route exact path="/sorting" component={Sorting}/>
-                            <Route exact path="/stock" component={Stock}/>
-                            <Route exact path="/push" component={Push}/>
-                            <Route exact path="/staff" component={Staff}/>
-                            <Route exact path="/general-settings" component={GeneralSettings}/>
-                            <Route exact path="/times" component={Times}/>
-                            <Route exact path="/type-order" component={TypeOrder}/>
-                        </div>
-                        </Content>
-                        <Footer style={{ textAlign: 'center', color: '#bfbfbf', fontSize: 12 }}>
-                            Deliveryserv ©2018 Created by Overcode
-                        </Footer>
-                    </Layout>
-                </Layout> }
-            </div>
+                    
+                    <div style={{ padding: !showMessage ? 16 : "0px 16px 16px 16px", minHeight: 360 }}>
+                        <Route exact path="/" component={Dashboard}/>
+                        <Route exact path="/categories" component={Categories}/>
+                        <Route exact path="/option-sets" component={OptionSets}/>
+                        <Route exact path="/dishes" component={Dishes}/>
+                        <Route exact path="/menus" component={Menus}/>
+                        <Route exact path="/orders" component={Orders}/>
+                        <Route exact path="/customers" component={Clients}/>
+                        <Route exact path="/locations" component={Locations}/>
+                        <Route exact path="/sorting" component={Sorting}/>
+                        <Route exact path="/stock" component={Stock}/>
+                        <Route exact path="/push" component={Push}/>
+                        <Route exact path="/staff" component={Staff}/>
+                        <Route exact path="/general-settings" component={GeneralSettings}/>
+                        <Route exact path="/times" component={Times}/>
+                        <Route exact path="/type-order" component={TypeOrder}/>
+                    </div>
+                    </Content>
+                    <Footer style={{ textAlign: 'center', color: '#bfbfbf', fontSize: 12 }}>
+                        Deliveryserv ©2018 Created by Overcode
+                    </Footer>
+                </Layout>
+            </Layout> 
         )
     }
 }

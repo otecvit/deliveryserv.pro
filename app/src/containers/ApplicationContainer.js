@@ -37,15 +37,6 @@ const ApplicationContainer = () => (
     </div>
 );
 
-
-/*
-const ApplicationContainer = () => (
-    <div className="component-app">
-        <HeaderContainer/>
-        <AppContent/>
-    </div>
-);
-*/
 const mapStateToProps = state => ({
     message: "state.messageReducer.haveMessage"
 });

@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import Sound from 'react-sound';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
-
 
 class test extends Component {
     
@@ -17,7 +15,18 @@ class test extends Component {
     componentDidMount() {
         const url = this.props.optionapp[0].serverUrl + "/SelectCountOrders.php";
 
-        fetch(url)
+        fetch(url, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
         .then((response) => response.json())
         .then((responseJson) => {
             this.checkCountOrder(responseJson.orders_count);
@@ -60,6 +69,7 @@ class test extends Component {
 export default connect (
     state => ({
         optionapp: state.optionapp,
+        owner: state.owner,
     }),
     dispatch => ({
         onControlOrder: (data) => {
