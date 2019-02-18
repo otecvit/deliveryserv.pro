@@ -9,8 +9,6 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const FormItem = Form.Item;
 
-const chUID = "222333"
-
 class Registration extends Component {
 
 

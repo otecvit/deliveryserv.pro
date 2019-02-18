@@ -13,7 +13,6 @@ class TypeOrder extends Component {
         this.state = {
             blPickup: this.props.owner.blPickup === "true",
             blDelivery: this.props.owner.blDelivery === "true"
-
         }
     }
     
@@ -22,7 +21,7 @@ class TypeOrder extends Component {
         this.props.form.validateFields((err, values) => {
           if (!err) {
             var val = {};
-                const url = this.props.optionapp[0].serverUrl + "/EditOwnerTypeOrder.php"; // изменяем категорию
+                const url = this.props.optionapp[0].serverUrl + "/EditOwnerSettings.php"; // изменяем категорию
               fetch(url, {
                 method: 'POST',
                 headers: 
@@ -35,6 +34,12 @@ class TypeOrder extends Component {
                   chUID: this.props.owner.chUID,
                   blPickup: this.state.blPickup ? "1" : "0",
                   blDelivery: this.state.blDelivery ? "1" : "0",
+                  blCashCourier: this.props.owner.blCashCourier ? "1" : "0",
+                  blCardCourier: this.props.owner.blCardCourier ? "1" : "0",
+                  blCashPickup: this.props.owner.blCashPickup ? "1" : "0",
+                  blCardPickup: this.props.owner.blCardPickup ? "1" : "0",
+                  blNewOrderNotification: this.props.owner.blNewOrderNotification ? "1" : "0",
+                  chListEmailNotification: this.props.owner.chListEmailNotification,
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {

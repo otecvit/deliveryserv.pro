@@ -27,6 +27,9 @@ import Staff from '../components/Staff/Staff';
 import GeneralSettings from '../components/Settings/General';
 import Times from '../components/Settings/Times';
 import TypeOrder from '../components/Settings/TypeOrder';
+import Payment from '../components/Settings/Payment';
+import EmailNotifications from '../components/Settings/EmailNotifications';
+import AutoExecution from '../components/Settings/AutoExecution';
 
 
 import СheckNewOrder from '../components/СheckNewOrder';
@@ -72,6 +75,8 @@ class CmsWrapper extends Component {
                 chUIDStaff: currentUser,
               })
             }).then((response) => response.json()).then((responseJsonFromServer) => {
+                console.log(responseJsonFromServer);
+                
                 if (responseJsonFromServer.owner.length) {
                     this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
                     this.timer = setInterval(()=> this.getItems(), 1000);
@@ -186,6 +191,9 @@ class CmsWrapper extends Component {
                         <Route exact path="/general-settings" component={GeneralSettings}/>
                         <Route exact path="/times" component={Times}/>
                         <Route exact path="/type-order" component={TypeOrder}/>
+                        <Route exact path="/payment" component={Payment}/>
+                        <Route exact path="/email-notifications" component={EmailNotifications}/>
+                        <Route exact path="/auto-execution" component={AutoExecution}/>
                     </div>
                     </Content>
                     <Footer style={{ textAlign: 'center', color: '#bfbfbf', fontSize: 12 }}>

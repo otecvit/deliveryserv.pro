@@ -371,11 +371,17 @@ thead[class*="ant-table-thead"] th{
 }
 
 .centered-spinner {
-    position: fixed; /* or absolute */
+    position: fixed; 
     top: 50%;
     left: 50%;
     width: 200px;
     height:100px;
     margin: -50px 0 0 -100px;
     text-align: center;
+}
+
+.email-list {
+  height: 24px;
+  font-size: 14px;
+  padding: 1px 11px;
 }
