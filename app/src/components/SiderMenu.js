@@ -21,7 +21,7 @@ class SiderMenu extends Component {
 
     onClickMenu = (e) => {
        
-        if (e.key === "20") { // проверяем "Выход"
+        if (e.key === "22") { // проверяем "Выход"
             
             Cookies.remove('cookiename');
             this.props.onLogout(); // выход
@@ -84,10 +84,10 @@ class SiderMenu extends Component {
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["payment"]) && <Menu.Item key="16"><Link to="payment">Оплата</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["email-notifications"]) && <Menu.Item key="17"><Link to="email-notifications">E-mail уведомления</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["auto-execution"]) && <Menu.Item key="18"><Link to="auto-execution">Автовыполнение</Link></Menu.Item> }
-                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["sorting"]) && <Menu.Item key="19">Оформление</Menu.Item> }
-                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["sorting"]) && <Menu.Item key="20">Правила</Menu.Item> }
+                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["customisation"]) && <Menu.Item key="19"><Link to="customisation">Оформление</Link></Menu.Item> }
+                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["information"]) && <Menu.Item key="20"><Link to="information">Информация</Link></Menu.Item> }
                 </SubMenu>
-                { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["sorting"]) && <Menu.Item key="21"><Icon type="credit-card" /><span>Оплата</span></Menu.Item> }
+                { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["license"]) && <Menu.Item key="21"><Link to="license"><Icon type="credit-card" /><span>Оплата</span></Link></Menu.Item> }
                 <Menu.Item key="22"><Icon type="logout" /><span>Выход</span></Menu.Item>
             </Menu>
             </Sider>

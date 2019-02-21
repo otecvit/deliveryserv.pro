@@ -34,14 +34,10 @@ class Payment extends Component {
                 body: JSON.stringify(
                 {
                   chUID: this.props.owner.chUID,
-                  blPickup: this.props.owner.blPickup ? "1" : "0",
-                  blDelivery: this.props.owner.blDelivery ? "1" : "0",
                   blCashCourier: this.state.blCashCourier ? "1" : "0",
                   blCardCourier: this.state.blCardCourier ? "1" : "0",
                   blCashPickup: this.state.blCashPickup ? "1" : "0",
                   blCardPickup: this.state.blCardPickup ? "1" : "0",
-                  blNewOrderNotification: this.props.owner.blNewOrderNotification ? "1" : "0",
-                  chListEmailNotification: this.props.owner.chListEmailNotification
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {

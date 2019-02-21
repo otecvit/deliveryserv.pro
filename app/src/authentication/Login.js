@@ -63,13 +63,7 @@ class Login extends Component {
       e.preventDefault();
       this.props.form.validateFields((err, values) => {
         if (!err) {
-         
-            console.log( {
-              iStaffType: this.state.iStaffType,
-              chEmailOwner: values.chEmailOwner,
-              chHashPassword: values.password,
-            });
-            
+           
             const url = this.props.optionapp[0].serverUrl + "/CheckOwner.php"; // изменяем категорию
             fetch(url, {
               method: 'POST',

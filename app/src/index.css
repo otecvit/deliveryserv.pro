@@ -385,3 +385,75 @@ thead[class*="ant-table-thead"] th{
   font-size: 14px;
   padding: 1px 11px;
 }
+
+.b-subscription__plan-box {
+  display: flex;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin-top: 15px;
+  margin-bottom: 25px;
+}
+
+.b-subscription__plan-box__helper {
+  display: flex;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  width: 100%;
+  margin-right: 16px;
+}
+
+.b-subscription__plan-full {
+  width: 100%;
+}
+
+.b-subscription__plan-full {
+  width: 100%;
+}
+.b-subscription__plan {
+  transition: all .26s;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #d0d0d0;
+
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 16px 20px;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.b-subscription__main {
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  -moz-box-orient: vertical;
+  -moz-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 180px;
+}
+
+.b-subscription__main-title {
+  margin-bottom: 4px;
+}
+
+.b-plans__title-sm-marg {
+  margin-bottom: 4px;
+}
+.b-plans__title-left {
+  -moz-box-pack: start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+}
+.b-plans__title {
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  color: #2190DC;
+  font-size: 18px;
+}

@@ -34,12 +34,7 @@ class TypeOrder extends Component {
                   chUID: this.props.owner.chUID,
                   blPickup: this.state.blPickup ? "1" : "0",
                   blDelivery: this.state.blDelivery ? "1" : "0",
-                  blCashCourier: this.props.owner.blCashCourier ? "1" : "0",
-                  blCardCourier: this.props.owner.blCardCourier ? "1" : "0",
-                  blCashPickup: this.props.owner.blCashPickup ? "1" : "0",
-                  blCardPickup: this.props.owner.blCardPickup ? "1" : "0",
-                  blNewOrderNotification: this.props.owner.blNewOrderNotification ? "1" : "0",
-                  chListEmailNotification: this.props.owner.chListEmailNotification,
+                  
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {

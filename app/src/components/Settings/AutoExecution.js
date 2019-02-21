@@ -19,6 +19,34 @@ class AutoExecution extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
           if (!err) {
+            var val = {};
+              const url = this.props.optionapp[0].serverUrl + "/EditOwnerSettings.php"; // изменяем категорию
+              fetch(url, {
+                method: 'POST',
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                {
+                  chUID: this.props.owner.chUID,
+                  blAutoComplete: this.state.blAutoComplete ? "1" : "0",
+                  tSetStatusComplete: typeof values.tSetStatusComplete !== "undefined" ? values.tSetStatusComplete : "0",
+                })
+              }).then((response) => response.json()).then((responseJsonFromServer) => {
+                val = {
+                  idCustomer: this.props.owner.idCustomer,
+                  blAutoComplete: values.blAutoComplete.toString(),
+                  tSetStatusComplete: typeof values.tSetStatusComplete !== "undefined" ? values.tSetStatusComplete : "0",
+                }
+
+                this.props.onEdit(val);  // вызываем action
+                message.success('Настройки сохранены');
+              }).catch((error) => {
+                  console.error(error);
+              });
+
 
           }
         });
@@ -58,14 +86,14 @@ class AutoExecution extends Component {
                 { blAutoComplete ?
                 <div>
                     <FormItem
-                        label='Время до изменения статуса "Выполнен" (минут)'
+                        label='Время до установки статуса "Выполнен" (минут)'
                         abelCol={{ span: labelColSpan }}
                         style={{ marginBottom: 10 }}
                         hasFeedback
                         >
-                        {getFieldDecorator('iDaysAhead', {
+                        {getFieldDecorator('tSetStatusComplete', {
                             rules: [],
-                            initialValue: this.props.owner.iDaysAhead
+                            initialValue: this.props.owner.tSetStatusComplete
                         })(
                             <Input prefix={<Icon type="clock-circle" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="7" />
                         )}
@@ -88,7 +116,6 @@ const WrappedNormalForm = Form.create()(AutoExecution);
 
 export default connect (
   state => ({
-      stock: state.stock,
       optionapp: state.optionapp,
       owner: state.owner,
   }),

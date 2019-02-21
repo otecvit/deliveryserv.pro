@@ -30,6 +30,10 @@ import TypeOrder from '../components/Settings/TypeOrder';
 import Payment from '../components/Settings/Payment';
 import EmailNotifications from '../components/Settings/EmailNotifications';
 import AutoExecution from '../components/Settings/AutoExecution';
+import Customisation from '../components/Settings/Customisation';
+import Information from '../components/Settings/Information';
+import License from '../components/Settings/License';
+
 
 
 import СheckNewOrder from '../components/СheckNewOrder';
@@ -194,6 +198,9 @@ class CmsWrapper extends Component {
                         <Route exact path="/payment" component={Payment}/>
                         <Route exact path="/email-notifications" component={EmailNotifications}/>
                         <Route exact path="/auto-execution" component={AutoExecution}/>
+                        <Route exact path="/customisation" component={Customisation}/>
+                        <Route exact path="/information" component={Information}/>
+                        <Route exact path="/license" component={License}/>
                     </div>
                     </Content>
                     <Footer style={{ textAlign: 'center', color: '#bfbfbf', fontSize: 12 }}>

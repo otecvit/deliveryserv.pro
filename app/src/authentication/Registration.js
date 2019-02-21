@@ -26,8 +26,8 @@ const arrAccess = [
   { keyName: "times",             name: 'Настройки - Время',        value: true},
   { keyName: "payment",           name: 'Настройки - Оплата',       value: true},
   { keyName: "email-notifications",name: 'Настройки - E-mail уведомления', value: true},
-  { keyName: "160",               name: 'Настройки - Оформление',   value: true},
-  { keyName: "170",               name: 'Настройки - Правила',      value: true},
+  { keyName: "customisation",     name: 'Настройки - Оформление',   value: true},
+  { keyName: "information",       name: 'Настройки - Информация',   value: true},
   { keyName: "180",               name: 'Оплата',                   value: true},
 ];
 
