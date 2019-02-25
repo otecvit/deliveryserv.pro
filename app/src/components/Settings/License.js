@@ -1,37 +1,40 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { Layout, Icon, Row, Col, Radio, Divider, Button } from 'antd'
 
+import TariffPlans, { Tariffs } from '../../items/TariffPlans';
+
 const { Content } = Layout;
 
+const CURRENCY = "$"; // валюта
+
 class License extends Component {
-    
+
     constructor(props){
         super(props);
+
         this.state = {
-            currentTarif: 1,
-            currentPeriodMonth: true,
+            currentTariff: this.props.owner.iTarif,
+            currentCost: Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].cost,
         }
+
     }
 
-    onChangeTarif = (e) => {
+    handleTariff = (tariff) => {
         this.setState({
-          currentTarif: e,
-        })      
-      }
-  
-    changePeriod = () => {
-        this.setState({
-            currentPeriodMonth: !this.state.currentPeriodMonth
+            currentTariff: Tariffs[Tariffs.findIndex(x => x.idTarif === tariff)].idTarif,
+            currentCost: Tariffs[Tariffs.findIndex(x => x.idTarif === tariff)].cost,
         })
     }
 
     render() {
-        const { currentPeriodMonth, currentTarif } = this.state;
+
+        const {currentTariff, currentCost} = this.state;
+        
         const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
           });
-
+        
         return (<div>
             <Content style={{ background: '#fff'}}>
             <div style={{ padding: 10 }}>
@@ -69,135 +72,14 @@ class License extends Component {
                         </div>
                     </Col>
                 </Row>
-                <Row>
-                <Col>
-                    <div className="period-payments">
-                    <Radio.Group defaultValue={currentPeriodMonth} onChange={this.changePeriod} buttonStyle="solid">
-                        <Radio.Button value={true}>Месяц</Radio.Button>
-                        <Radio.Button value={false}>Год</Radio.Button>
-                    </Radio.Group>
-                    </div>
-                </Col>
-                </Row>
-                <Row gutter={24}>
-                <Col span={12}>
-                    <div className="subscription-plans-widget" onClick={() => this.onChangeTarif(1)}>
-                    <div className={"subscription-plan " + (currentTarif === 1 && "active")} >
-                        <div className={"plan-name " + (currentTarif === 1 && "active")}>
-                        Начинающий
-                        </div>
-                        <div className="plan-details">
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-money"/></p>
-                            <p><span>{currentPeriodMonth ? "19$ - месяц" : "190$ - год"}</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-orders"/></p>
-                            <p><span>{currentPeriodMonth ? "До 500 заказов" : "До 6 000 заказов"}</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-order"/></p>
-                            <p><span>0.10$ за заказ сверх лимита</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-timer-sand"/></p>
-                            <p><span><span>30 дней бесплатно</span></span></p>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </Col>
-                <Col span={12}>
-                    <div className="subscription-plans-widget" onClick={() => this.onChangeTarif(2)}>
-                    <div className={"subscription-plan " + (currentTarif === 2 && "active")} >
-                        <div className={"plan-name " + (currentTarif === 2 && "active")}>
-                        Профессионал
-                        </div>
-                        <div className="plan-details">
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-money"/></p>
-                            <p><span>{currentPeriodMonth ? "39$ - месяц" : "390$ - год"}</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-orders"/></p>
-                            <p><span>{currentPeriodMonth ? "До 1 500 заказов" : "До 18 000 заказов"}</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-order"/></p>
-                            <p><span>0.07$ за заказ сверх лимита</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-timer-sand"/></p>
-                            <p><span><span>30 дней бесплатно</span></span></p>
-                        </div>
-                        </div>
-                    </div>
-                    </div>              
-                </Col>
-                </Row>
-                <Row gutter={24}>
-                <Col span={12}>
-                    <div className="subscription-plans-widget"  onClick={() => this.onChangeTarif(3)}>
-                    <div className={"subscription-plan " + (currentTarif === 3 && "active")} >
-                        <div className={"plan-name " + (currentTarif === 3 && "active")}>
-                        Премиум
-                        </div>
-                        <div className="plan-details">
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-money"/></p>
-                            <p><span>{currentPeriodMonth ? "89$ - месяц" : "890$ - год"}</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-orders"/></p>
-                            <p><span>{currentPeriodMonth ? "До 4 000 заказов" : "До 48 000 заказов"}</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-order"/></p>
-                            <p><span>0.05$ за заказ сверх лимита</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-timer-sand"/></p>
-                            <p><span><span>30 дней бесплатно</span></span></p>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </Col>
-                <Col span={12}>
-                    <div className="subscription-plans-widget" onClick={() => this.onChangeTarif(4)}>
-                    <div className={"subscription-plan " + (currentTarif === 4 && "active")} >
-                        <div className={"plan-name " + (currentTarif === 4 && "active")}>
-                        Эксперт
-                        </div>
-                        <div className="plan-details">
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-money"/></p>
-                            <p><span>{currentPeriodMonth ? "169$ - месяц" : "1690$ - год"}</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-orders"/></p>
-                            <p><span>{currentPeriodMonth ? "До 10 000 заказов" : "До 120 000 заказов"}</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-order"/></p>
-                            <p><span>0.03$ за заказ сверх лимита</span></p>
-                        </div>
-                        <div className="plan-detail">
-                            <p><IconFont type="icon-timer-sand"/></p>
-                            <p><span><span>30 дней бесплатно</span></span></p>
-                        </div>
-                        </div>
-                    </div>
-                    </div>              
-                </Col>
-                </Row>
+                <TariffPlans onSelectTariff={this.handleTariff} currentTariff = {currentTariff}/>
                 <Divider />
                 <Row>
                     <Col span={12}>
                         <span>Стоимость выбранного тарифного плана</span>
                     </Col>
                     <Col span={12} style = {{ textAlign: 'right' }}>
-                        190
+                        {currentCost}{CURRENCY}
                     </Col>
                 </Row>
                 <Divider dashed />
@@ -234,7 +116,7 @@ class License extends Component {
 export default connect(
     state => ({
         optionapp: state.optionapp,
-
+        owner: state.owner,
     }),
     dispatch => ({
     })

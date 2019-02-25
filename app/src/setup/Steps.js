@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 import Cookies from 'js-cookie'
 
+import TariffPlans, { Tariffs } from '../items/TariffPlans'
 
 
 const RadioGroup = Radio.Group;
@@ -14,6 +15,8 @@ const FormItem = Form.Item;
 const Step = Steps.Step;
 const Option = Select.Option;
 const format = 'HH:mm';
+
+const CURRENCY = "$"; // валюта
 
 const timezones = [
   { name: 'Europe/Warsaw',      value: "(GMT+01:00) Варшава"},
@@ -61,8 +64,8 @@ class Setup extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentStep: 0,
-            currentTarif: 1,
+            currentStep: 2,
+            currentTarif: "1",
             currentPeriodMonth: true,
             chName: "",
             chTagline: "",
@@ -100,6 +103,12 @@ class Setup extends Component {
             });
          }
       });
+    }
+
+    handleTariff = (tariff) => {
+      this.setState({
+          currentTarif: Tariffs[Tariffs.findIndex(x => x.idTarif === tariff)].idTarif,
+      })
     }
 
     handleStep_2 = (e) => {
@@ -772,6 +781,8 @@ class Setup extends Component {
               </Col>
             </Row>
             <Divider dashed />
+            <TariffPlans onSelectTariff={this.handleTariff} currentTariff = {currentTarif}/>
+            {/*
             <Row>
               <Col>
                 <div className="period-payments">
@@ -894,6 +905,7 @@ class Setup extends Component {
                 </div>              
               </Col>
             </Row>
+            */}
             <Divider dashed />
             <FormItem>
               <Button type="primary" htmlType="submit" className="button-login" onClick={this.saveSetup}>

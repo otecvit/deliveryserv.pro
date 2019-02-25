@@ -87,7 +87,7 @@ class SiderMenu extends Component {
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["customisation"]) && <Menu.Item key="19"><Link to="customisation">Оформление</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["information"]) && <Menu.Item key="20"><Link to="information">Информация</Link></Menu.Item> }
                 </SubMenu>
-                { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["license"]) && <Menu.Item key="21"><Link to="license"><Icon type="credit-card" /><span>Оплата</span></Link></Menu.Item> }
+                { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["license"]) && <Menu.Item key="23"><Link to="license"><Icon type="credit-card" /><span>Оплата</span></Link></Menu.Item> }
                 <Menu.Item key="22"><Icon type="logout" /><span>Выход</span></Menu.Item>
             </Menu>
             </Sider>

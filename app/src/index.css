@@ -310,7 +310,18 @@ thead[class*="ant-table-thead"] th{
   -ms-flex-align: center;
   align-items: center;
   padding-bottom: 30px;
+  width: 50%;
+  float: left;
 }
+
+.subscription-plans-widget:nth-child(2n) {
+  padding-left: 7px;
+}
+
+.subscription-plans-widget:nth-child(2n+1) {
+  padding-right: 7px;
+}
+
 
 .subscription-plans-widget .subscription-plan {
   background-color: #fff;

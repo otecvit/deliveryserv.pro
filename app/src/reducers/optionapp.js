@@ -6,7 +6,7 @@ const initialState = [
         statusCloud: 0,
         serverUrl: "http://mircoffee.by/deliveryserv/app/api/admin",
         serverUrlStart: "http://mircoffee.by/deliveryserv/app",
-        scriptIconUrl: "//at.alicdn.com/t/font_888167_ne847fa1w5q.js",
+        scriptIconUrl: "//at.alicdn.com/t/font_888167_ne847fa1w5q.js", //поправить в файле TariffPlans.js
     },       
 ];
 
