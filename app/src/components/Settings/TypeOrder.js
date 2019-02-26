@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { Form, Icon, Input, Button, Popconfirm, Upload, message, Switch, Modal, Layout, Select } from 'antd';
 import { connect } from 'react-redux';
 
@@ -20,6 +20,11 @@ class TypeOrder extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
           if (!err) {
+            
+            console.log(values.iPriceOfDelivery
+                );
+            
+
             var val = {};
                 const url = this.props.optionapp[0].serverUrl + "/EditOwnerSettings.php"; // изменяем категорию
               fetch(url, {
@@ -34,13 +39,16 @@ class TypeOrder extends Component {
                   chUID: this.props.owner.chUID,
                   blPickup: this.state.blPickup ? "1" : "0",
                   blDelivery: this.state.blDelivery ? "1" : "0",
-                  
+                  iPriceOfDelivery: typeof values.iPriceOfDelivery !== "undefined" ? values.iPriceOfDelivery : "0",
+		            	iOrderFreeDelivery: typeof values.iOrderFreeDelivery !== "undefined" ? values.iOrderFreeDelivery : "0", 
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
                   idCustomer: this.props.owner.idCustomer,
                   blPickup: values.blPickup.toString(),
                   blDelivery: values.blDelivery.toString(),
+                  iPriceOfDelivery: typeof values.iPriceOfDelivery !== "undefined" ? values.iPriceOfDelivery : "0",
+		            	iOrderFreeDelivery: typeof values.iOrderFreeDelivery !== "undefined" ? values.iOrderFreeDelivery : "0", 
                 }
 
                 this.props.onEdit(val);  // вызываем action
@@ -69,6 +77,7 @@ class TypeOrder extends Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
+        const { blDelivery } = this.state;
          const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
           });
@@ -102,6 +111,47 @@ class TypeOrder extends Component {
                             <Switch onChange={this.onChangeDelivery}/>
                         )}
                     </FormItem>
+                    { blDelivery &&
+                    <Fragment>
+                      <FormItem
+                          label="Стоимость доставки"
+                          style={{ marginBottom: 10 }}
+                          hasFeedback
+                          >
+                          {getFieldDecorator('iPriceOfDelivery', {
+                              getValueFromEvent: (e) => {
+                                const convertedValue = Number(e.currentTarget.value);
+                                if (isNaN(convertedValue)) {
+                                  return Number(this.props.form.getFieldValue("iPriceOfDelivery"));
+                                } else {
+                                  return convertedValue;
+                                }
+                              },
+                              initialValue: this.props.owner.iPriceOfDelivery
+                          })(
+                              <Input prefix={<IconFont type="icon-money" style={{ color: 'rgba(0,0,0,.25)' }} />}/>
+                          )}
+                      </FormItem>
+                      <FormItem
+                          label="Сумма заказа для бесплатной доставки"
+                          style={{ marginBottom: 10 }}
+                          hasFeedback
+                          >
+                          {getFieldDecorator('iOrderFreeDelivery', {
+                              getValueFromEvent: (e) => {
+                                const convertedValue = Number(e.currentTarget.value);
+                                if (isNaN(convertedValue)) {
+                                  return Number(this.props.form.getFieldValue("iOrderFreeDelivery"));
+                                } else {
+                                  return convertedValue;
+                                }
+                              },
+                              initialValue: this.props.owner.iOrderFreeDelivery
+                          })(
+                              <Input prefix={<IconFont type="icon-money" style={{ color: 'rgba(0,0,0,.25)' }} />}/>
+                          )}
+                      </FormItem>
+                    </Fragment>}
                     <FormItem>
                     <Button type="primary" htmlType="submit">
                         <Icon type="plus"/>Сохранить

@@ -210,7 +210,7 @@ class Menus extends Component {
         return (<div>
             <Content style={{ background: '#fff'}}>
                 <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-menu" style={{ fontSize: '16px', marginRight: "10px"}}/>Меню</div>
+                <div className="title-section"><IconFont type="icon-menu" style={{ fontSize: '16px', marginRight: "10px"}}/>Варианты</div>
                 </div>
             </Content>
             <Content style={{ background: '#fff', margin: '16px 0' }}>

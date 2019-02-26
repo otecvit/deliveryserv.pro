@@ -204,7 +204,7 @@ class Locations extends Component {
         return (<div>
         <Content style={{ background: '#fff'}}>
             <div style={{ padding: 10 }}>
-            <div className="title-section"><Icon type="environment" style={{ fontSize: '20px', marginRight: "10px"}}/>Рестораны</div>
+            <div className="title-section"><Icon type="environment" style={{ fontSize: '20px', marginRight: "10px"}}/>Адреса</div>
             </div>
         </Content>
         <Content style={{ background: '#fff', margin: '16px 0' }}>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Form, Icon, Input, Button, Popconfirm, Upload, message, Switch, Modal, Layout, Select } from 'antd';
+import { Form, Icon, Input, Button, Tooltip, Upload, message, Switch, Modal, Layout, Select } from 'antd';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
@@ -70,7 +70,7 @@ class General extends Component {
                 {
                   chUID: this.props.owner.chUID,
                   chName: values.chName,
-                  chTagline: values.chTagline,
+                  chTagline: "",
                   chEmailStore: values.chEmailStore,
                   chTimeZone: values.chTimeZone,
                   chCurrency: values.chCurrency,
@@ -80,7 +80,7 @@ class General extends Component {
                   idCustomer: this.props.owner.idCustomer,
                   chUID: this.props.owner.chUID,
                   chName: values.chName,
-                  chTagline: values.chTagline,
+                  chTagline: "",
                   chEmailStore: values.chEmailStore,
                   chTimeZone: values.chTimeZone,
                   chCurrency: values.chCurrency,
@@ -115,31 +115,27 @@ class General extends Component {
                 <div style={{ padding: 10 }}>
                 <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px"}}>
                 <FormItem
-                    label="Название магазина"
+                    label={
+                        <span>
+                            Название организации&nbsp;
+                            <Tooltip title="Данное название будет учавствовать в работе всей системы.">
+                                <Icon type="question-circle-o" />
+                            </Tooltip>
+                        </span>
+                    }
                     abelCol={{ span: labelColSpan }}
                     style={{ marginBottom: 10 }}
+                    
                     hasFeedback
                     >
                     {getFieldDecorator('chName', {
-                        rules: [{ required: true, message: 'Введите название магазина' }],
+                        rules: [{ required: true, message: 'Введите название организации' }],
                         initialValue: this.props.owner.chName
                     })(
-                        <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Название магазина" />
+                        <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Название магазина" maxLength = "100"/>
                     )}
                     </FormItem>
-                    <FormItem
-                    label="Слоган"
-                    abelCol={{ span: labelColSpan }}
-                    style={{ marginBottom: 10 }}
-                    hasFeedback
-                    >
-                    {getFieldDecorator('chSlogan', {
-                        rules: [],
-                        initialValue: this.props.owner.chTagline
-                    })(
-                        <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Слоган" />
-                    )}
-                    </FormItem>
+                   
                     <FormItem
                         label="E-mail магазина"
                         abelCol={{ span: labelColSpan }}
@@ -152,7 +148,7 @@ class General extends Component {
                               }],
                             initialValue: this.props.owner.chEmailStore
                         })(
-                            <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="E-mail магазина" />
+                            <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="E-mail магазина" maxLength = "100"/>
                         )}
                     </FormItem>
                     <FormItem 

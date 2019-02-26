@@ -34,11 +34,6 @@ class Orders extends Component {
       
     getItems = () => {
         this.CalculatePlaced();
-        /*
-        fetch(this.getEndpoint('api url endpoint"))
-          .then(result => result.json())
-          .then(result => this.setState({ items: result }));
-          */
     }
 
     createDropdownMenu = (record) => {
@@ -348,7 +343,7 @@ class Orders extends Component {
                             columns={columns}
                             dataSource={dataSource}
                             size="small"  
-                            pagination={false}
+                            pagination={{ pageSize: 20 }}
                             loading={flLoading}
                             onRow={(record, index) => ({
                                 onClick: (event) => { this.onRowClick(record, index, event) } 
