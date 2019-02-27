@@ -1,14 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
+import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Select, Row, Col } from 'antd';
 
-import LocationsForm from './LocationsForm';
+import LocationsForm from './LocationsForm'
+import HeaderSection from '../../items/HeaderSection'
+import ViewDetailDescription from '../../items/ViewDetailDescription'
+
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
-const FormItem = Form.Item;
 const Option = Select.Option;
-const confirm = Modal.confirm;
 
 const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
@@ -78,9 +79,13 @@ class Locations extends Component {
 
 
 
+    // обрабатываем нажатие на суффикс "крестик"
     emitEmpty = () => {
-        this.searchStringInput.focus();
-        this.setState({ searchString: '' });
+        this.searchStringInput.focus(); //
+        this.setState({ 
+            searchString: '' , // удаляем поисковый запрос
+            filtered: false, // сброс фильтрации
+        });
     }
 
     handler = () => {
@@ -154,8 +159,6 @@ class Locations extends Component {
     }
 
     createDropdownMenu = (record) => {
-
-        //console.log(record);
         const menu = (
             <Menu onClick={e => this.handleMenuClick(e, record)}>
               <Menu.Item key="0">Редактировать</Menu.Item>
@@ -202,13 +205,9 @@ class Locations extends Component {
         const options = this.props.locations.map(item => <Option key={item.idLocations}>{item.chName}</Option>);
 
         return (<div>
-        <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-            <div className="title-section"><Icon type="environment" style={{ fontSize: '20px', marginRight: "10px"}}/>Адреса</div>
-            </div>
-        </Content>
-        <Content style={{ background: '#fff', margin: '16px 0' }}>
-            <div style={{ padding: 10 }}>
+        <HeaderSection title="Адреса" icon="icon-map-marker" />
+        <Content style={{ background: '#fff', margin: '16px 0', width: 800 }}>
+            <div style={{ padding: 20 }}>
             <Tabs 
                 onChange={this.onChange}
                 activeKey={this.state.activeKey}>
@@ -221,16 +220,37 @@ class Locations extends Component {
                         onChange={this.onChangeSearchString}
                         ref={node => this.searchStringInput = node}
                         style={{ margin: '0 0 10px 0' }}
+                        maxLength="100"
                     />    
                     <Table
                         columns={columns}
-                        expandedRowRender={record => 
-                            <div className="d-table">
-                                <div className="d-tr">
-                                    <div className="d-td title-detail">Отображаемое имя</div>
-                                    <div className="d-td content-detail">{record.chNamePrint}</div>
-                                </div>
-                            </div>
+                        expandedRowRender={({chAddress, arrPhones, arrOperationMode, blPickup}) => 
+                            <Fragment>
+                                <ViewDetailDescription title="Адрес" value={chAddress} />
+                                <ViewDetailDescription title="Телефон" value={arrPhones.map(phone => <div key={phone.iPhone}>{phone.chPhone}</div>)} />
+                                <ViewDetailDescription title="Режим работы" value={
+                                    arrOperationMode.map(OperationMode => {
+                                        return (
+                                            !OperationMode.blDayOff ? 
+                                            OperationMode.time.map((item, index) =>
+                                                <Row key={index}>
+                                                    <Col span={5}>{OperationMode.chDay}: </Col>
+                                                    <Col span={19}>{item.tStartTime} - {item.tEndTime}</Col>
+                                                </Row>)
+                                            : 
+                                                <Row key={OperationMode.chDay}>
+                                                    <Col span={5}>
+                                                        {OperationMode.chDay}:
+                                                    </Col>
+                                                    <Col span={19}>
+                                                        Выходной
+                                                    </Col>
+                                                </Row>
+                                    ) 
+                                    })} 
+                                />
+                                <ViewDetailDescription title="Доставка" value={blPickup ? "Да" : "Нет"} />
+                            </Fragment>
                         }
                         dataSource={!this.state.filtered ? this.props.locations : dataSource}
                         size="small"  

@@ -79,8 +79,6 @@ class CmsWrapper extends Component {
                 chUIDStaff: currentUser,
               })
             }).then((response) => response.json()).then((responseJsonFromServer) => {
-                console.log(responseJsonFromServer);
-                
                 if (responseJsonFromServer.owner.length) {
                     this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
                     this.timer = setInterval(()=> this.getItems(), 1000);
@@ -161,12 +159,6 @@ class CmsWrapper extends Component {
                 <SiderMenu/>
                 {this.state.loadStatus && <СheckNewOrder/>}
                 <Layout>
-                    <Header style={{ background: '#fff', padding: 0 }}>
-                    <div style={{ padding: 16 }}>
-                        <HeaderStatus />
-                    </div>
-
-                    </Header>
                     <Content>
                     
                         { (this.props.owner.blVerification === "0") && (this.props.owner.iStaffType === "0") ? <div style={{ padding: "16px 16px 0 16px" }}><Alert 

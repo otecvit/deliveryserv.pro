@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { Form, Icon, Input, Button, Tooltip, Upload, message, Switch, Modal, Layout, Select } from 'antd';
-import { connect } from 'react-redux';
-import moment from 'moment';
+import { Form, Icon, Input, Button, Tooltip, message, Layout, Select } from 'antd'
+import { connect } from 'react-redux'
+
+import HeaderSection from '../../items/HeaderSection'
 
 
 const { Content } = Layout;
@@ -100,26 +101,24 @@ class General extends Component {
         const { getFieldDecorator } = this.props.form;
         const labelColSpan = 8;
 
-        //console.log(timezones);
+        const IconFont = Icon.createFromIconfontCN({
+            scriptUrl: this.props.optionapp[0].scriptIconUrl,
+          });
         
         const options = timezones.map(item => <Option value={item.name} key={item.name}>{item.value}</Option>);
         const optionsMoney = money.map(item => <Option value={item.value} key={item.value}>{item.name} - {item.value}</Option>)
 
         return (<div>
-            <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-                <div className="title-section"><Icon type="setting" style={{ fontSize: '16px', marginRight: "10px"}}/>Общие</div>
-            </div>
-            </Content>  
-            <Content style={{ background: '#fff', margin: '16px 0' }}>
+            <HeaderSection title="Общие" icon="icon-setting"/>
+            <Content style={{ background: '#fff', margin: '16px 0', width: 800 }}>
                 <div style={{ padding: 10 }}>
-                <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px"}}>
+                <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px", padding: 10}}>
                 <FormItem
                     label={
                         <span>
                             Название организации&nbsp;
                             <Tooltip title="Данное название будет учавствовать в работе всей системы.">
-                                <Icon type="question-circle-o" />
+                                <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
                             </Tooltip>
                         </span>
                     }
@@ -137,7 +136,14 @@ class General extends Component {
                     </FormItem>
                    
                     <FormItem
-                        label="E-mail магазина"
+                        label={
+                            <span>
+                                E-mail магазинаи&nbsp;
+                                <Tooltip title='При необходимости укажите e-mail магазина. Настройка уведомлений осуществляется в разделе "Настройки" - "E-mail уведомдения"'>
+                                    <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                                </Tooltip>
+                            </span>
+                        }
                         abelCol={{ span: labelColSpan }}
                         style={{ marginBottom: 10 }}
                         hasFeedback
@@ -148,7 +154,7 @@ class General extends Component {
                               }],
                             initialValue: this.props.owner.chEmailStore
                         })(
-                            <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="E-mail магазина" maxLength = "100"/>
+                            <Input prefix={<IconFont type="icon-emailicon" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="E-mail магазина" maxLength = "100"/>
                         )}
                     </FormItem>
                     <FormItem 

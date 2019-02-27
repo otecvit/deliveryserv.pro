@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { Form, Icon, Input, Button, Popconfirm, Upload, message, Switch, Modal, Layout, Select } from 'antd';
-import { connect } from 'react-redux';
+import { Form, Icon, Input, Button, message, Switch, Layout, Tooltip } from 'antd'
+import { connect } from 'react-redux'
+
+import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 class Times extends Component {
 
@@ -68,16 +69,19 @@ class Times extends Component {
         const labelColSpan = 8;
 
         return (<div>
-            <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-                <div className="title-section"><Icon type="clock-circle" style={{ fontSize: '16px', marginRight: "10px"}}/>Время</div>
-            </div>
-            </Content>  
-            <Content style={{ background: '#fff', margin: '16px 0' }}>
+            <HeaderSection title="Время" icon="icon-time" />
+            <Content style={{ background: '#fff', margin: '16px 0', width: 800 }}>
                 <div style={{ padding: 10 }}>
-                <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px"}}>
+                <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px", padding: 10}}>
                 <FormItem
-                    label="Разрешить заказ на потом"
+                    label={
+                        <span>
+                            Разрешить заказ на потом&nbsp;
+                            <Tooltip title="В приложении будет разрешена отправка заказа в нерабочее время и на другой день">
+                                <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                            </Tooltip>
+                        </span>
+                    }
                     >
                     {getFieldDecorator('blLater', { 
                         initialValue: this.props.owner.blLater === "true",
@@ -89,42 +93,84 @@ class Times extends Component {
                 { blLater ?
                 <div>
                     <FormItem
-                        label="Максимальное количество дней вперед"
+                        label={
+                            <span>
+                                Максимальное количество дней вперед&nbsp;
+                                <Tooltip title="На сколько дней вперед будет разрешено оформление заказа">
+                                    <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                                </Tooltip>
+                            </span>
+                        }
                         abelCol={{ span: labelColSpan }}
                         style={{ marginBottom: 10 }}
                         hasFeedback
                         >
                         {getFieldDecorator('iDaysAhead', {
-                            rules: [],
+                            getValueFromEvent: (e) => {
+                                const convertedValue = Number(e.currentTarget.value);
+                                if (isNaN(convertedValue)) {
+                                  return Number(this.props.form.getFieldValue("iDaysAhead"));
+                                } else {
+                                  return convertedValue;
+                                }
+                            },
                             initialValue: this.props.owner.iDaysAhead
                         })(
-                            <Input prefix={<Icon type="calendar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="7" />
+                            <Input prefix={<Icon type="calendar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="7" maxLength="2" />
                         )}
                         </FormItem>
                         <FormItem
-                        label="Первый заказ (минуты)"
-                        abelCol={{ span: labelColSpan }}
-                        style={{ marginBottom: 10 }}
-                        hasFeedback
+                            label={
+                                <span>
+                                    Первый заказ (минуты)&nbsp;
+                                    <Tooltip title="За сколько минут до открытия будет разрешено оформление заказа">
+                                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                                    </Tooltip>
+                                </span>
+                            }
+                            abelCol={{ span: labelColSpan }}
+                            style={{ marginBottom: 10 }}
+                            hasFeedback
                         >
-                        {getFieldDecorator('iFirstOrder', {
-                            rules: [],
-                            initialValue: this.props.owner.iFirstOrder
-                        })(
-                            <Input prefix={<Icon type="clock-circle" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="30" />
-                        )}
+                            {getFieldDecorator('iFirstOrder', {
+                                getValueFromEvent: (e) => {
+                                    const convertedValue = Number(e.currentTarget.value);
+                                    if (isNaN(convertedValue)) {
+                                      return Number(this.props.form.getFieldValue("iFirstOrder"));
+                                    } else {
+                                      return convertedValue;
+                                    }
+                                },
+                                initialValue: this.props.owner.iFirstOrder
+                            })(
+                                <Input prefix={<Icon type="clock-circle" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="30" maxLength="2"/>
+                            )}
                         </FormItem>
                         <FormItem
-                            label="Последний заказ (минуты)"
+                            label={
+                                <span>
+                                    Последний заказ (минуты)&nbsp;
+                                    <Tooltip title="За сколько минут до закрытия будет запрещено оформление заказа">
+                                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                                    </Tooltip>
+                                </span>
+                            }
                             abelCol={{ span: labelColSpan }}
                             style={{ marginBottom: 10 }}
                             hasFeedback
                             >
                             {getFieldDecorator('iLastOrder', {
-                                rules: [],
+                                getValueFromEvent: (e) => {
+                                    const convertedValue = Number(e.currentTarget.value);
+                                    if (isNaN(convertedValue)) {
+                                      return Number(this.props.form.getFieldValue("iLastOrder"));
+                                    } else {
+                                      return convertedValue;
+                                    }
+                                },
                                 initialValue: this.props.owner.iLastOrder
                             })(
-                                <Input prefix={<Icon type="clock-circle" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="30" />
+                                <Input prefix={<Icon type="clock-circle" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="30" maxLength="2"/>
                             )}
                         </FormItem>
                     </div>

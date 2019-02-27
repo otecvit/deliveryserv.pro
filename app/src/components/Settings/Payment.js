@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { Form, Icon, Input, Button, Popconfirm, Upload, message, Switch, Modal, Layout, Select } from 'antd';
-import { connect } from 'react-redux';
+import { Form, Icon, Button, message, Switch, Layout, Tooltip } from 'antd'
+import { connect } from 'react-redux'
+
+import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
 const FormItem = Form.Item;
-const Option = Select.Option;
+
 
 class Payment extends Component {
 
@@ -91,14 +93,10 @@ class Payment extends Component {
           });
 
         return (<div>
-            <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-orders" style={{ fontSize: '16px', marginRight: "10px"}}/>Оплата</div>
-            </div>
-            </Content>  
-            <Content style={{ background: '#fff', margin: '16px 0' }}>
+            <HeaderSection title="Оплата" icon="icon-svgmoneybag"/>
+            <Content style={{ background: '#fff', margin: '16px 0', width: 800 }}>
                 <div style={{ padding: 10 }}>
-                <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px"}}>
+                <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px", padding: 10}}>
                     <FormItem
                         label="Оплата наличными курьеру"
                         >

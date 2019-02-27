@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Popconfirm, Divider, message, Switch, Modal, Col, Row, TimePicker} from 'antd';
+import { Form, Icon, Input, Button, Popconfirm, Divider, message, Switch, Tooltip, Col, Row, TimePicker} from 'antd';
 import { connect } from 'react-redux';
 import moment from 'moment'
+
+
 
 const FormItem = Form.Item;
 const generateKey = (pre) => {
@@ -321,7 +323,7 @@ class LocationsForm extends React.Component {
                 {getFieldDecorator('chPhone' + index, {
                   initialValue: item.chPhone
                 })(
-                  <Input prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="" />
+                  <Input prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Телефон" />
                 )}              
               </FormItem>
               </Col>
@@ -338,28 +340,30 @@ class LocationsForm extends React.Component {
               if (arr.length - 1 === indexTime) 
                 return (
                   <Row gutter={4} key={indexTime} style={{ marginBottom: 0  }} >
-                    <Col span={3} style={{ marginTop: 6  }}>{item.chDay}:</Col>
-                    <Col span={3}> 
+                    <Col span={4} style={{ marginTop: 6  }}>{item.chDay}:</Col>
+                    <Col span={5}> 
                       <FormItem
                          style={{ marginBottom: 0 }}
                       >
                         <span style={{ marginRight: 5 }}>с</span>
                         {getFieldDecorator('tStartTime' + index + indexTime, {
+                          rules: [{ required: true, message: 'Обязательное поле' }],
                           initialValue: moment(a.tStartTime, format)
                         })(
                           <TimePicker format={format} className="time-picker-width"/>
                         )}   
                       </FormItem>         
                     </Col>
-                    <Col span={3}>
+                    <Col span={5}>
                       <FormItem
                         style={{ marginBottom: 0 }}
                       >
                         <span style={{ marginRight: 5 }}>по</span>
                         {getFieldDecorator('tEndTime' + index + indexTime, {
+                          rules: [{ required: true, message: 'Обязательное поле' }],
                           initialValue: moment(a.tEndTime, format)
                         })(
-                          <TimePicker format={format} className="time-picker-width"/>
+                          <TimePicker format={format} className="time-picker-width" />
                         )}   
                       </FormItem>         
                     </Col>
@@ -432,7 +436,14 @@ class LocationsForm extends React.Component {
             }
             <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px"}}>
             <FormItem
-              label="Активность"
+              label={
+                <span>
+                    Активность&nbsp;
+                    <Tooltip title="Адрес будет отображаться в приложении и учавствует в работе системы">
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }
             >
               {getFieldDecorator('enShow', { 
                 initialValue: this.props.param  ? (this.props.locations.find(x => x.idLocations ===  this.props.param).blShow === "true" ) : true,
@@ -442,20 +453,34 @@ class LocationsForm extends React.Component {
               )}
             </FormItem>
             <FormItem
-              label="Имя"
+              label={
+                <span>
+                    Имя&nbsp;
+                    <Tooltip title="Укажите название. Эта информация не доступна в приложении. Резрешено продублировать адрес">
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }
               abelCol={{ span: labelColSpan }}
               style={{ marginBottom: 10 }}
               hasFeedback
             >
               {getFieldDecorator('chName', {
-                rules: [{ required: true, message: 'Введите название' }],
+                rules: [{ required: true, message: 'Введите имя' }],
                 initialValue: this.props.param ? this.props.locations.find(x => x.idLocations ===  this.props.param).chName : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Название ресторана" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя" maxLength="100"/>
               )}
             </FormItem>
             <FormItem
-              label="Адрес"  
+              label={
+                <span>
+                    Адрес&nbsp;
+                    <Tooltip title="Укажите адрес. Эта информация доступна в приложении">
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }  
               className="content-form"
               hasFeedback
             >
@@ -463,11 +488,17 @@ class LocationsForm extends React.Component {
                 rules: [{required: true, message: 'Заполните это поле'}],
                 initialValue: this.props.param ? this.props.locations.find(x => x.idLocations ===  this.props.param).chAddress : ""
               })(
-                <Input prefix={<IconFont type="icon-map-marker" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+              <Input prefix={<IconFont type="icon-map-marker" style={{ color: 'rgba(0,0,0,.25)' }}/>}  placeholder="Адрес"  maxLength="100" />
               )}
             </FormItem>
             <Divider dashed />
-            <div className="ant-form-item-label"><label>Номер телефона</label></div>
+            <div className="ant-form-item-label">
+              <label>
+                    Номер телефона&nbsp;
+                    <Tooltip title="Укажите необходимое количество телефонных номеров">
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+              </label></div>
             {phonesLocation}
             <Divider dashed />
             <div className="ant-form-item-label"><label>Режим работы</label></div>

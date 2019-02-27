@@ -6,7 +6,8 @@ import {createStore, applyMiddleware, compose  } from 'redux';
 import thunk from 'redux-thunk';
 import registerServiceWorker from './registerServiceWorker';
 
-import { Layout } from 'antd';
+import { Layout, LocaleProvider } from 'antd';
+import ruRU from 'antd/lib/locale-provider/ru_RU';
 
 import createHistory from 'history/createBrowserHistory';
 import { Route, Redirect } from 'react-router';
@@ -35,8 +36,6 @@ import TypeOrder from './components/Settings/TypeOrder';
 import Login from './authentication/Login';
 import Registration from './authentication/Registration';
 
-import СheckNewOrder from './components/СheckNewOrder';
-
 import ApplicationContainer from './containers/ApplicationContainer';
 
 
@@ -52,7 +51,9 @@ const Application = connect(state => ({
 ReactDOM.render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
-            <Application/>
+            <LocaleProvider locale={ruRU}>
+                <Application/>
+            </LocaleProvider>
         </ConnectedRouter>
     </Provider>,
   document.getElementById('root'),

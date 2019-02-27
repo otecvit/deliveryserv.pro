@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
 import Sound from 'react-sound';
 
@@ -53,7 +53,7 @@ class test extends Component {
     render() {
 
         return (
-            <div>
+            <Fragment>
                 
                { this.state.playSound ? <Sound
                 url="http://mircoffee.by/deliveryserv/app/sound/new_order.mp3"
@@ -61,7 +61,7 @@ class test extends Component {
                 
                  /> : null
                }
-            </div>
+            </Fragment>
             );        
     }
 }

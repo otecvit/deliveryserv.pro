@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react'
-import { Form, Icon, Input, Button, Popconfirm, Upload, message, Switch, Modal, Layout, Select } from 'antd';
+import { Form, Icon, Input, Button, Popconfirm, Tooltip, message, Switch, Modal, Layout, Select } from 'antd';
 import { connect } from 'react-redux';
+
+import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
 const FormItem = Form.Item;
@@ -20,11 +22,6 @@ class TypeOrder extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
           if (!err) {
-            
-            console.log(values.iPriceOfDelivery
-                );
-            
-
             var val = {};
                 const url = this.props.optionapp[0].serverUrl + "/EditOwnerSettings.php"; // изменяем категорию
               fetch(url, {
@@ -78,21 +75,25 @@ class TypeOrder extends Component {
     render() {
         const { getFieldDecorator } = this.props.form;
         const { blDelivery } = this.state;
-         const IconFont = Icon.createFromIconfontCN({
+        
+        const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
           });
 
         return (<div>
-            <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-orders" style={{ fontSize: '16px', marginRight: "10px"}}/>Типы заказов</div>
-            </div>
-            </Content>  
-            <Content style={{ background: '#fff', margin: '16px 0' }}>
+            <HeaderSection title="Типы заказов" icon="icon-orders"/>
+            <Content style={{ background: '#fff', margin: '16px 0', width: 800 }}>
                 <div style={{ padding: 10 }}>
-                <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px"}}>
+                <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px", padding: 10 }}>
                     <FormItem
-                        label="Самовывоз"
+                        label={
+                          <span>
+                              Самовывоз&nbsp;
+                              <Tooltip title="Предоставляется возможность самовывоза заказа с выбранного адреса. В приложении будет активирован соответствующий режим">
+                                  <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                              </Tooltip>
+                          </span>
+                        }
                         >
                         {getFieldDecorator('blPickup', { 
                             initialValue: this.props.owner.blPickup === "true",
@@ -102,7 +103,14 @@ class TypeOrder extends Component {
                         )}
                     </FormItem>
                     <FormItem
-                        label="Доставка"
+                        label={
+                          <span>
+                              Доставка&nbsp;
+                              <Tooltip title="Предоставляется возможность доставки заказов клиенту. В приложении будет активирован соответствующий режим">
+                                  <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                              </Tooltip>
+                          </span>
+                        }
                         >
                         {getFieldDecorator('blDelivery', { 
                             initialValue: this.props.owner.blDelivery === "true",
@@ -114,7 +122,14 @@ class TypeOrder extends Component {
                     { blDelivery &&
                     <Fragment>
                       <FormItem
-                          label="Стоимость доставки"
+                          label={
+                            <span>
+                                Стоимость доставки&nbsp;
+                                <Tooltip title="Стоимость доставки заказа. Если доставка всегда бесплатная, то укажите 0">
+                                    <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                                </Tooltip>
+                            </span>
+                          }
                           style={{ marginBottom: 10 }}
                           hasFeedback
                           >
@@ -129,11 +144,18 @@ class TypeOrder extends Component {
                               },
                               initialValue: this.props.owner.iPriceOfDelivery
                           })(
-                              <Input prefix={<IconFont type="icon-money" style={{ color: 'rgba(0,0,0,.25)' }} />}/>
+                              <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} maxLength = "10" />
                           )}
                       </FormItem>
                       <FormItem
-                          label="Сумма заказа для бесплатной доставки"
+                          label={
+                            <span>
+                                Сумма заказа для бесплатной доставки&nbsp;
+                                <Tooltip title="Сумма заказа после которой доставка осуществляется бесплатно. Если доставка только платная, то укажите максимальную сумму заказака">
+                                    <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                                </Tooltip>
+                            </span>
+                        }
                           style={{ marginBottom: 10 }}
                           hasFeedback
                           >
@@ -148,7 +170,7 @@ class TypeOrder extends Component {
                               },
                               initialValue: this.props.owner.iOrderFreeDelivery
                           })(
-                              <Input prefix={<IconFont type="icon-money" style={{ color: 'rgba(0,0,0,.25)' }} />}/>
+                              <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} maxLength = "10"/>}/>
                           )}
                       </FormItem>
                     </Fragment>}

@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Layout, Divider, Avatar, Icon, Table, Menu, Radio, Row, Col, Select, message, Popconfirm, Modal, Alert, Button  } from 'antd';
-import moment from 'moment';
-import 'moment/locale/ru';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { Layout, Divider, Icon, Radio, Row, Col, Button  } from 'antd'
+import moment from 'moment'
+import 'moment/locale/ru'
+
+import HeaderSection from '../items/HeaderSection'
 
 const ButtonGroup = Button.Group;
 
@@ -164,9 +166,9 @@ class Dashboard extends Component {
 
     return (
     <div>
-      <Content style={{ background: '#fff'}}>
+      <HeaderSection title="Рабочий стол" icon="icon-home" />
+      <Content style={{ background: '#fff', width: 800, marginTop: -25}}>
         <div style={{ padding: 10 }}>
-            <div className="title-section"><Icon type="home" style={{ fontSize: '20px', marginRight: "10px"}}/>Рабочий стол</div>
             <Divider />
             <Row type="flex" justify="space-around" align="middle">
                 <Col span={12}>
