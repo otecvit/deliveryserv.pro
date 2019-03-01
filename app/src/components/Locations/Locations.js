@@ -23,7 +23,8 @@ class Locations extends Component {
         this.state = {
           searchString: '',
           activeKey: "1",
-          currentEditCat: "0",
+          statusJobRecord: "0", // 0 - создание, 1 - редактирование, 2 - копирование
+          currentEditRecord: {},
           filtered: false,
           dataSource: {},
           flLoading: true, // спиннер загрузки
@@ -32,22 +33,36 @@ class Locations extends Component {
 
     handleMenuClick = (e, record) => {
         switch (e.key) {
-            case "0": this.editCategory(record); break; //Редактировать
-            case "1": this.setState({activeKey: "2"}); break; //Копировать
-            case "2": this.DeleteCategory(record); break; 
-            default: this.setState({activeKey: "1"});    
+            case "0": this.edit(record); break; //Редактировать
+            case "1": this.copy(record); break; //Копировать
+            case "2": this.delete(record); break; 
+            default: this.setState({
+                activeKey: "1",
+                statusJobRecord: "0"
+            });    
         }        
       }
 
-    editCategory = (e) => {
+    edit = ({record}) => {
         this.setState({
             activeKey: "3",
-            currentEditCat: e.record.idCategories,
+            statusJobRecord: "1",
+            currentEditRecord: record,
+        });
+ 
+    }
+
+    copy = ({record}) => {
+        // открываем вкладку копирования
+        this.setState({
+            activeKey: "2",
+            statusJobRecord: "2",
+            currentEditRecord: record,
         });
     }
 
-    DeleteCategory = (e) => {
-        const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
+    delete = ({record: {idLocations}}) => {
+        const url = this.props.optionapp[0].serverUrl + "/DeleteLocations.php"; // удаление
         fetch(url,
           {
               method: 'POST',
@@ -58,12 +73,12 @@ class Locations extends Component {
               },
               body: JSON.stringify(
               {
-                idCategories: e.record.idCategories
+                idLocations: idLocations
              })
           }).then((response) => response.json()).then((responseJsonFromServer) =>
           {
               var val = {
-                  idCategories: e.record.idCategories,
+                idLocations: idLocations
               }
               this.props.onDelete(val);  // вызываем action
           }).catch((error) =>
@@ -72,12 +87,9 @@ class Locations extends Component {
           });
     }
 
-
     componentDidMount() {
         this.loadingData();
     }
-
-
 
     // обрабатываем нажатие на суффикс "крестик"
     emitEmpty = () => {
@@ -89,8 +101,10 @@ class Locations extends Component {
     }
 
     handler = () => {
+        
         this.setState({
-            currentEditCat: "0",
+            currentEditRecord: {},
+            statusJobRecord: "0",
         });
       }
 
@@ -156,6 +170,10 @@ class Locations extends Component {
 
     onChange = (activeKey) => {
         this.setState({ activeKey });
+        this.setState({
+            currentEditRecord: "0",
+            statusJobRecord: "0",
+        }); 
     }
 
     createDropdownMenu = (record) => {
@@ -171,15 +189,15 @@ class Locations extends Component {
     }
 
     onChangeCategory = (e) => {
-        //console.log(e);
         this.setState ({ 
-            currentEditCat: e.key
+            currentEditRecord: this.props.locations.find(x => x.idLocations === e.key),
+            statusJobRecord: "1",
         });
     }
 
     render() {
 
-        const { searchString, currentEditCat, dataSource, flLoading } = this.state;
+        const { searchString, currentEditRecord, dataSource, flLoading, statusJobRecord } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
@@ -203,6 +221,9 @@ class Locations extends Component {
           });             
           
         const options = this.props.locations.map(item => <Option key={item.idLocations}>{item.chName}</Option>);
+
+        ///currentEditRecord.idLocations);
+        
 
         return (<div>
         <HeaderSection title="Адреса" icon="icon-map-marker" />
@@ -261,7 +282,7 @@ class Locations extends Component {
                     />,            
                 </TabPane>
                 <TabPane tab="Создать" key="2">
-                    <LocationsForm/>
+                    <LocationsForm  handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/>
                 </TabPane>
                 <TabPane tab="Редактировать" key="3">
                     <Select
@@ -270,12 +291,12 @@ class Locations extends Component {
                     onChange={this.onChangeCategory}
                     style={{ width: "100%" }}
                     labelInValue 
-                    value={{ key: currentEditCat }}
-                    >
-                    <Option key="0">Выберите ресторан для редактирования</Option>
+                    value={{ key: typeof currentEditRecord.idLocations !== "undefined" ? currentEditRecord.idLocations : "0" }}
+                    > 
+                    <Option key="0">Выберите адрес для редактирования</Option>
                     {options}
                 </Select>
-                { currentEditCat === "0" ? null : <LocationsForm handler = {this.handler} param={currentEditCat}/> }
+                { statusJobRecord === "1" ? <LocationsForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/> : null }
                 </TabPane>
             </Tabs>
             </div>

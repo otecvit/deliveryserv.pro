@@ -157,7 +157,7 @@ class CmsWrapper extends Component {
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <SiderMenu/>
-                {this.state.loadStatus && <СheckNewOrder/>}
+                {/*this.state.loadStatus && <СheckNewOrder/>*/}
                 <Layout>
                     <Content>
                     
