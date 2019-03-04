@@ -76,7 +76,7 @@ class PhonesLocation extends Component {
         const phonesLocation = chPhoneLocation.map( (item, index, arr) => {
             return (
               <Row gutter={4} key={item.iPhone} style={{ marginBottom: 8  }}>
-                <Col span={7} >
+                <Col span={23} >
                   <Input value={item.chPhone} prefix={<IconFont type="icon-phone" style={{ color: 'rgba(0,0,0,.25)' }}/>} data-item={item.iPhone} onChange={this.handleChange}/>
                 </Col>
                 <Col span={1} style={{ marginTop: 4  }}>

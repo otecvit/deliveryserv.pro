@@ -4,6 +4,8 @@ import { Layout, Tabs, Avatar, Icon, Table, Menu, Dropdown, Row, Col, Select, me
 import moment from 'moment';
 
 import OrdersForm from './OrdersForm';
+import HeaderSection from '../../items/HeaderSection'
+import ViewDetailDescription from '../../items/ViewDetailDescription'
 
 const { Content } = Layout;
 
@@ -237,7 +239,6 @@ class Orders extends Component {
                 title: 'Ко времени', 
                 dataIndex: 'chDue', 
                 render: (record) => {
-                    //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
                     <div style={{ textAlign: 'center' }}>
                         {moment(record, "DD.MM.YYYY HH:mm", true).isValid() ? 
@@ -252,7 +253,6 @@ class Orders extends Component {
                 title: 'Время заказа', 
                 dataIndex: 'chCalcPlaced', 
                 render: (record) => {
-                    //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
                     <div style={{ textAlign: 'center' }}>
                         {moment(record, "DD.MM.YYYY HH:mm:ss", true).isValid() ? 
@@ -267,7 +267,6 @@ class Orders extends Component {
                 title: 'Сумма заказа', 
                 dataIndex: 'chOrderPrice', 
                 render: (record) => {
-                    //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
                     <div style={{ textAlign: 'center', fontSize: '15px', fontWeight: 'bold' }}>
                            {Number(record).toFixed(2)} {this.props.owner.chCurrency} 
@@ -322,12 +321,7 @@ class Orders extends Component {
         //const options = this.props.dishes.map(item => <Option key={item.idDishes}>{item.chName}</Option>);
 
         return (<div>
-            <Content style={{ background: '#fff'}}>
-                <div style={{ padding: 10 }}>
-                    <div className="title-section"><IconFont type="icon-orders" style={{ fontSize: '20px', marginRight: "10px"}}/>Заказы</div>
-                </div>
-            </Content>
-            
+            <HeaderSection title="Заказы" icon="icon-orders" />
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
                 

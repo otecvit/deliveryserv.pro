@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
 
 import StaffForm from './StaffForm';
+import HeaderSection from '../../items/HeaderSection'
+import ViewDetailDescription from '../../items/ViewDetailDescription'
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -87,9 +89,13 @@ class Staff extends Component {
         this.loadingData();
     }
 
+    // обрабатываем нажатие на суффикс "крестик"
     emitEmpty = () => {
-        this.searchStringInput.focus();
-        this.setState({ searchString: '' });
+        this.searchStringInput.focus(); //
+        this.setState({ 
+            searchString: '' , // удаляем поисковый запрос
+            filtered: false, // сброс фильтрации
+        });
     }
 
     handler = () => {
@@ -135,7 +141,7 @@ class Staff extends Component {
         this.setState({ 
             searchString: e.target.value,
             filtered: !!e.target.value,
-            dataSource: this.props.categories.map((record) => {
+            dataSource: this.props.staff.map((record) => {
                 if (record.chName.length)
                 { 
                 const match = record.chName.match(reg);
@@ -207,64 +213,60 @@ class Staff extends Component {
         const options = this.props.staff.map(item => <Option key={item.idStaff}>{item.chName}</Option>);
 
         return (<div>
-        <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-menu" style={{ fontSize: '16px', marginRight: "10px"}}/>Категории</div>
-            </div>
-        </Content>
-        <Content style={{ background: '#fff', margin: '16px 0' }}>
-            <div style={{ padding: 10 }}>
-            <Tabs 
-                onChange={this.onChange}
-                activeKey={this.state.activeKey}>
-                <TabPane tab="Обзор" key="1">
-                    <Input
-                        placeholder="Поиск"
-                        prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        suffix={suffix}
-                        value={searchString}
-                        onChange={this.onChangeSearchString}
-                        ref={node => this.searchStringInput = node}
-                        style={{ margin: '0 0 10px 0' }}
-                    />    
-                    <Table
-                        columns={columns}
-                        expandedRowRender={record => 
-                            <div className="d-table">
-                                <div className="d-tr">
-                                    <div className="d-td title-detail">Отображаемое имя</div>
-                                    <div className="d-td content-detail">{record.chNamePrint}</div>
+            <HeaderSection title="Сотрудники" icon="icon-employees_icon" />
+            <Content style={{ background: '#fff', margin: '16px 0' }}>
+                <div style={{ padding: 10 }}>
+                <Tabs 
+                    onChange={this.onChange}
+                    activeKey={this.state.activeKey}>
+                    <TabPane tab="Обзор" key="1">
+                        <Input
+                            placeholder="Поиск"
+                            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            suffix={suffix}
+                            value={searchString}
+                            onChange={this.onChangeSearchString}
+                            ref={node => this.searchStringInput = node}
+                            style={{ margin: '0 0 10px 0' }}
+                        />    
+                        <Table
+                            columns={columns}
+                            expandedRowRender={record => 
+                                <div className="d-table">
+                                    <div className="d-tr">
+                                        <div className="d-td title-detail">Отображаемое имя</div>
+                                        <div className="d-td content-detail">{record.chNamePrint}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        }
-                        dataSource={!this.state.filtered ? this.props.staff : dataSource}
-                        size="small"  
-                        pagination={false}
-                        loading={flLoading}
-                        locale={{emptyText: 'Нет данных'}}
+                            }
+                            dataSource={!this.state.filtered ? this.props.staff : dataSource}
+                            size="small"  
+                            pagination={false}
+                            loading={flLoading}
+                            locale={{emptyText: 'Нет данных'}}
 
-                    />,            
-                </TabPane>
-                <TabPane tab="Создать" key="2">
-                    <StaffForm copyrecord={this.state.currentRecord}/>
-                </TabPane>
-                <TabPane tab="Редактировать" key="3">
-                    <Select
-                    showSearch
-                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    onChange={this.onChangeCategory}
-                    style={{ width: "100%" }}
-                    labelInValue 
-                    value={{ key: currentEditCat }}
-                    >
-                    <Option key="0">Выберите категорию для редактирования</Option>
-                    {options}
-                </Select>
-                { currentEditCat === "0" ? null : <StaffForm handler = {this.handler} param={currentEditCat}/> }
-                </TabPane>
-            </Tabs>
-            </div>
-        </Content>
+                        />,            
+                    </TabPane>
+                    <TabPane tab="Создать" key="2">
+                        <StaffForm copyrecord={this.state.currentRecord}/>
+                    </TabPane>
+                    <TabPane tab="Редактировать" key="3">
+                        <Select
+                        showSearch
+                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                        onChange={this.onChangeCategory}
+                        style={{ width: "100%" }}
+                        labelInValue 
+                        value={{ key: currentEditCat }}
+                        >
+                        <Option key="0">Выберите категорию для редактирования</Option>
+                        {options}
+                    </Select>
+                    { currentEditCat === "0" ? null : <StaffForm handler = {this.handler} param={currentEditCat}/> }
+                    </TabPane>
+                </Tabs>
+                </div>
+            </Content>
         </div>);
     }
 }

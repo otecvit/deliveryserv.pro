@@ -66,7 +66,7 @@ const AMOUNT_TARIFF = 4; // количество тарифов для отоб�
 const CURRENCY = "$"; // валюта
 
 const IconFont = Icon.createFromIconfontCN({
-    scriptUrl: "//at.alicdn.com/t/font_888167_3jquks63an9.js",
+    scriptUrl: "//at.alicdn.com/t/font_888167_tnypu9lcjqk.js",
   });
 
 const TemplateTariff = ({ tarif, active, onClick }) => (

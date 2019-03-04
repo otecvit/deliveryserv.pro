@@ -72,7 +72,7 @@ class SiderMenu extends Component {
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["option-sets"]) && <Menu.Item key="8"><Link to="option-sets">Наборы</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["sorting"]) && <Menu.Item key="10"><Link to="sorting">Сортировка</Link></Menu.Item> }
                 </SubMenu>
-                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["staff"]) && <Menu.Item key="11"><Link to="staff"><Icon type="idcard" /><span>Сотрудники</span></Link></Menu.Item> }
+                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["staff"]) && <Menu.Item key="11"><Link to="staff"><IconFont type="icon-employees_icon" /><span>Сотрудники</span></Link></Menu.Item> }
                 <SubMenu key="sub2" title={<span><IconFont type="icon-marketing"></IconFont><span>Маркетинг</span></span>}>    
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["stock"]) && <Menu.Item key="12"><Link to="stock"><span>Акции</span></Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["push"]) && <Menu.Item key="21"><Link to="push"><span>Push-уведомления</span></Link></Menu.Item> }

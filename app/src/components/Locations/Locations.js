@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Select, Row, Col } from 'antd';
+import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Select, Row, Col, Modal } from 'antd';
 
 import LocationsForm from './LocationsForm'
 import HeaderSection from '../../items/HeaderSection'
@@ -10,10 +10,13 @@ import ViewDetailDescription from '../../items/ViewDetailDescription'
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
 const Option = Select.Option;
+const confirm = Modal.confirm;
 
 const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
   }
+
+
 
 class Locations extends Component {
     constructor(props) {
@@ -32,10 +35,11 @@ class Locations extends Component {
     }
 
     handleMenuClick = (e, record) => {
+        var _this = this; // делаем ссылку на объект
         switch (e.key) {
             case "0": this.edit(record); break; //Редактировать
             case "1": this.copy(record); break; //Копировать
-            case "2": this.delete(record); break; 
+            case "2": this.delete(record, this.props.optionapp[0].serverUrl, _this); break;  // передаеи путь на сервере и ссылку на объект
             default: this.setState({
                 activeKey: "1",
                 statusJobRecord: "0"
@@ -61,29 +65,37 @@ class Locations extends Component {
         });
     }
 
-    delete = ({record: {idLocations}}) => {
-        const url = this.props.optionapp[0].serverUrl + "/DeleteLocations.php"; // удаление
-        fetch(url,
-          {
-              method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(
-              {
-                idLocations: idLocations
-             })
-          }).then((response) => response.json()).then((responseJsonFromServer) =>
-          {
-              var val = {
-                idLocations: idLocations
-              }
-              this.props.onDelete(val);  // вызываем action
-          }).catch((error) =>
-          {
-              console.error(error);
+    delete = ({record: {idLocations}}, path, _this) => {
+        confirm({
+            title: 'Вы действительно хотите удалить адрес?',
+            okText: 'Да',
+            okType: 'danger',
+            cancelText: 'Нет',
+            onOk() {
+                const url = path + "/DeleteLocations.php"; // удаление
+                fetch(url,
+                {
+                    method: 'POST',
+                    headers: 
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                    {
+                        idLocations: idLocations
+                    })
+                }).then((response) => response.json()).then((responseJsonFromServer) =>
+                {
+                    var val = {
+                        idLocations: idLocations
+                    }
+                    _this.props.onDelete(val);  // вызываем action
+                }).catch((error) =>
+                {
+                    console.error(error);
+                });
+            },
           });
     }
 
@@ -109,7 +121,6 @@ class Locations extends Component {
       }
 
       loadingData = () => {
-
         const url = this.props.optionapp[0].serverUrl + "/SelectLocations.php";
         this.setState({
             flLoading: true,
@@ -171,7 +182,7 @@ class Locations extends Component {
     onChange = (activeKey) => {
         this.setState({ activeKey });
         this.setState({
-            currentEditRecord: "0",
+            currentEditRecord: {},
             statusJobRecord: "0",
         }); 
     }
@@ -222,12 +233,9 @@ class Locations extends Component {
           
         const options = this.props.locations.map(item => <Option key={item.idLocations}>{item.chName}</Option>);
 
-        ///currentEditRecord.idLocations);
-        
-
-        return (<div>
+        return (<Fragment>
         <HeaderSection title="Адреса" icon="icon-map-marker" />
-        <Content style={{ background: '#fff', margin: '16px 0', width: 800 }}>
+        <Content style={{ background: '#fff', margin: '16px 0' }}>
             <div style={{ padding: 20 }}>
             <Tabs 
                 onChange={this.onChange}
@@ -245,8 +253,9 @@ class Locations extends Component {
                     />    
                     <Table
                         columns={columns}
-                        expandedRowRender={({chAddress, arrPhones, arrOperationMode, blPickup}) => 
+                        expandedRowRender={({blShow, chAddress, arrPhones, arrOperationMode, blPickup}) => 
                             <Fragment>
+                                <ViewDetailDescription title="Активность" value={blShow === 'true' ? "Да" : "Нет"} />
                                 <ViewDetailDescription title="Адрес" value={chAddress} />
                                 <ViewDetailDescription title="Телефон" value={arrPhones.map(phone => <div key={phone.iPhone}>{phone.chPhone}</div>)} />
                                 <ViewDetailDescription title="Режим работы" value={
@@ -270,7 +279,7 @@ class Locations extends Component {
                                     ) 
                                     })} 
                                 />
-                                <ViewDetailDescription title="Доставка" value={blPickup ? "Да" : "Нет"} />
+                                <ViewDetailDescription title="Доставка" value={blPickup === 'true' ? "Да" : "Нет"} />
                             </Fragment>
                         }
                         dataSource={!this.state.filtered ? this.props.locations : dataSource}
@@ -282,7 +291,7 @@ class Locations extends Component {
                     />,            
                 </TabPane>
                 <TabPane tab="Создать" key="2">
-                    <LocationsForm  handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/>
+                    <LocationsForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/>
                 </TabPane>
                 <TabPane tab="Редактировать" key="3">
                     <Select
@@ -301,7 +310,7 @@ class Locations extends Component {
             </Tabs>
             </div>
         </Content>
-        </div>);
+        </Fragment>);
     }
 }
 

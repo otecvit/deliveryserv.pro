@@ -13,7 +13,7 @@ class HeaderSection extends Component {
         });
 
         return (
-            <Content style={{ background: '#fff', width: 800, padding: '12px 20px'}}>
+            <Content style={{ background: '#fff', padding: '12px 20px'}}>
             <Row>
                 <Col span={22} style={{ marginTop: 5 }}>
                     <div className="title-section"><IconFont type={this.props.icon} style={{ fontSize: '16px', marginRight: "10px"}}/>{this.props.title}</div>

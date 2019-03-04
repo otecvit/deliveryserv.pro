@@ -167,7 +167,7 @@ class Dashboard extends Component {
     return (
     <div>
       <HeaderSection title="Рабочий стол" icon="icon-home" />
-      <Content style={{ background: '#fff', width: 800, marginTop: -25}}>
+      <Content style={{ background: '#fff', marginTop: -25}}>
         <div style={{ padding: 10 }}>
             <Divider />
             <Row type="flex" justify="space-around" align="middle">
@@ -186,7 +186,7 @@ class Dashboard extends Component {
             </Row>
         </div>
       </Content>
-      <Content style={{ background: '#fff', margin: '16px 0', width: 800 }}>
+      <Content style={{ background: '#fff', margin: '16px 0' }}>
       <div style={{ padding: 20 }}>
       <Row type="flex" justify="space-around" align="middle" style={{ margin: '5px 0 20px 0' }}>
           <Col span={12}>

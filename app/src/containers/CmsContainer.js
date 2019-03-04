@@ -157,9 +157,9 @@ class CmsWrapper extends Component {
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <SiderMenu/>
-                {/*this.state.loadStatus && <СheckNewOrder/>*/}
+                {this.state.loadStatus && <СheckNewOrder/>}
                 <Layout>
-                    <Content>
+                    <Content style={{ width: 840 }}>
                     
                         { (this.props.owner.blVerification === "0") && (this.props.owner.iStaffType === "0") ? <div style={{ padding: "16px 16px 0 16px" }}><Alert 
                                     message="E-mail не подтверждён." 

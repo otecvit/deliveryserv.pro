@@ -3,7 +3,6 @@ import { Row, Col, Button, TimePicker } from 'antd'
 import moment from 'moment'
 
 const format = 'HH:mm';
-
 const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
   }
@@ -14,20 +13,15 @@ class OperationMode extends Component {
         arrOperationMode: this.props.arrOperationMode,
     }
 
-    /*
-    timeRefStart = this.props.arrOperationMode.map( item => {
-        if (!item.blDayOff)
-            item.time.map(React.createRef());
-        }
-    );
-
-    timeRefEnd = this.props.arrOperationMode.map( item => {
-        if (!item.blDayOff)
-            item.time.map(React.createRef());
-        }
-    );
-    */
-
+    componentWillReceiveProps(nextProps) {
+      if(nextProps.arrOperationMode !== this.props.arrOperationMode) {
+        // Изменение массива при выборе иного адреса
+        this.setState({
+          arrOperationMode: nextProps.arrOperationMode
+        });
+      } 
+    }
+  
     AddTimePeriod =(e) => {
         const { arrOperationMode } = this.state;
   
@@ -104,30 +98,41 @@ class OperationMode extends Component {
         }, this.updateParrent(updatedArrOperationMode));       
     }
 
-    // Обработка ввода номера и добавление в state
-    handleChange = (time, timeString, a, b) => {
-        console.log(timeString);
-        console.log('--->>', a);
-        console.log('+++>>', b);
-        
-        /*
-        const { chPhoneLocation } = this.state;
-        const iPhone = target.getAttribute('data-item');
-        const arrPhone = { 
-          iPhone: iPhone, 
-          chPhone: target.value 
-        };
-        const updatedArrPhone = chPhoneLocation.map(item => item.iPhone === iPhone ?  arrPhone : item);
-  
-        this.setState({
-          chPhoneLocation: updatedArrPhone
-        }, this.updateParrent(updatedArrPhone))
-        */
+    // Обработка ввода времени и добавление в state
+    handleChange = (timeString, indexDay, indexTime, isStartTime) => {
+       const { arrOperationMode } = this.state;
+
+       const updatedArrOperationMode = arrOperationMode.map(item => {
+        if(item.iDay === indexDay){
+          const newdata = {
+            iDay: item.iDay, 
+            chDay: item.chDay, 
+            blDayOff: false, 
+            time: item.time.map(a => a.iTime === String(indexTime) ? 
+              {
+                iTime: a.iTime, 
+                tStartTime: isStartTime ? this.timeValid(timeString) ? timeString : "10:00" : a.tStartTime, 
+                tEndTime: !isStartTime ? this.timeValid(timeString) ? timeString : "20:00" : a.tEndTime
+              } : a )
+          };
+          return newdata;
+        }
+        return item;
+      });
+
+      this.setState({
+        arrOperationMode: updatedArrOperationMode
+      }, this.updateParrent(updatedArrOperationMode))
     }
 
+    // Проверка времени на валидность
+    timeValid = (timeString) => {
+      return moment(timeString, format, true).isValid()
+    } 
+
     // Вызываем callback функцию родителя
-    updateParrent = (updatedArrPhone) => {
-        this.props.updateData(updatedArrPhone)
+    updateParrent = (updatedArrOperationMode) => {
+        this.props.updateData(updatedArrOperationMode)
     }
 
     render() {
@@ -138,15 +143,24 @@ class OperationMode extends Component {
                 return item.time.map( (a, indexTime, arr) => {
                 if (arr.length - 1 === indexTime) 
                     return (
-                    <Row gutter={4} key={indexTime} style={{ marginBottom: 0  }} >
+                    <Row gutter={4} key={indexTime} style={{ marginBottom: 8 }} >
                         <Col span={4} style={{ marginTop: 6  }}>{item.chDay}:</Col>
                         <Col span={1} style={{ textAlign: 'right', marginTop: 6  }}><span>с</span></Col>
                         <Col span={5}> 
-                             <TimePicker value = {moment(a.tStartTime, format)} format={format} className="time-picker-width" onChange={(time, timeString) => this.handleChange(time, timeString, index, indexTime)}/>
+                             <TimePicker 
+                                value = {moment(a.tStartTime, format)} 
+                                format={format} 
+                                className="time-picker-width" 
+                                onChange={(time, timeString) => this.handleChange(timeString, item.iDay, a.iTime, true)}
+                                />
                         </Col>
                         <Col span={1} style={{ textAlign: 'right', marginTop: 6  }}><span>по</span></Col>
                         <Col span={5}>
-                             <TimePicker value={moment(a.tEndTime, format)} format={format} className="time-picker-width"  onChange={this.handleChange}/>
+                             <TimePicker 
+                                value={moment(a.tEndTime, format)} 
+                                format={format} className="time-picker-width"  
+                                onChange={(time, timeString) => this.handleChange(timeString, item.iDay, a.iTime, false)}
+                                />
                         </Col>
                         <Col span={1} style={{ marginTop: 4  }}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
                         <Col span={2}><Button type="default" onClick = {() => this.onDayOff(item)}>Выходной</Button></Col>
@@ -154,15 +168,24 @@ class OperationMode extends Component {
                     ); 
                 else
                     return (
-                    <Row gutter={4} key={indexTime} style={{ marginBottom: 0  }} >
+                    <Row gutter={4} key={indexTime} style={{ marginBottom: 8 }} >
                         <Col span={4} style={{ marginTop: 6  }}>{item.chDay}:</Col>
                         <Col span={1} style={{ textAlign: 'right', marginTop: 6  }}><span>с</span></Col>
                         <Col span={5}> 
-                            <TimePicker value={moment(a.tStartTime, format)} format={format} className="time-picker-width" onChange={this.handleChange}/>
+                            <TimePicker 
+                                value={moment(a.tStartTime, format)} 
+                                format={format} 
+                                className="time-picker-width" 
+                                onChange={(time, timeString) => this.handleChange(timeString, item.iDay, a.iTime, true)}
+                                />
                         </Col>
                         <Col span={1} style={{ textAlign: 'right', marginTop: 6  }}><span>по</span></Col>
                         <Col span={5}>
-                           <TimePicker value={moment(a.tEndTime, format)} format={format} className="time-picker-width" onChange={this.handleChange}/>
+                           <TimePicker 
+                              value={moment(a.tEndTime, format)} 
+                              format={format} className="time-picker-width" 
+                              onChange={(time, timeString) => this.handleChange(timeString, item.iDay, a.iTime, false)}
+                              />
                         </Col>
                         <Col span={1} style={{ marginTop: 4  }}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
                         <Col span={2}></Col>
