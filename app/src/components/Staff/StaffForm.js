@@ -128,7 +128,7 @@ class StaffForm extends React.Component {
         });
       }
 
-    DeleteCategory = () => {
+    delete = () => {
       const url = this.props.optionapp[0].serverUrl + "/DeleteStaff.php"; // удаление
       
       fetch(url,
@@ -212,7 +212,7 @@ class StaffForm extends React.Component {
               borderBottomColor: "#cecece",
                }}>
                <h4>Удалить сотрудника</h4>
-               <Popconfirm title="Удалить сотрудника?" onConfirm={() => this.DeleteCategory()} okText="Да" cancelText="Нет">
+               <Popconfirm title="Удалить сотрудника?" onConfirm={() => this.delete()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>
@@ -230,7 +230,7 @@ class StaffForm extends React.Component {
                 rules: [{ required: true, message: 'Введите имя пользователя' }],
                 initialValue: this.props.type !== "0" ? this.props.param.chName + `${this.props.type === "2" ? " - Копия" : "" }` : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} disabled = {(this.props.type !== "0" && this.props.type !== "2") ? true : false} placeholder="Имя пользователя" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} disabled = {(this.props.type !== "0" && this.props.type !== "2") ? true : false} placeholder="Имя пользователя" maxLength="100"/>
               )}
             </FormItem>
             <FormItem
@@ -243,16 +243,14 @@ class StaffForm extends React.Component {
                 rules: [{ required: this.props.param ? false : true, message: 'Введите пароль' }],
                 initialValue: ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Пароль" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Пароль" maxLength="100"/>
               )}
             </FormItem>
             <div style={{ marginBottom: 20 }}>
                 <span style={{ lineHeight: 2, fontWeight: 500 }}>Доступ к разделам</span>
               {AccessPages}
             </div>
-           
-            <FormItem
-            >
+            <FormItem>
               <Button type="primary" htmlType="submit">
                 <Icon type="plus"/>Сохранить
               </Button>

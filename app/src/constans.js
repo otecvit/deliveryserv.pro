@@ -4,7 +4,7 @@ export const arrPageAccess = [
     { keyName: "orders",            name: 'Заказы',                   value: true},
     { keyName: "customers",         name: 'Клиенты',                  value: true},
     { keyName: "locations",         name: 'Рестораны',                value: true},
-    { keyName: "menus",             name: 'Меню - Меню',              value: true},
+    { keyName: "variants",          name: 'Меню - Варианты',          value: true},
     { keyName: "categories",        name: 'Меню - Категории',         value: true},
     { keyName: "dishes",            name: 'Меню - Товары',            value: true},
     { keyName: "option-sets",       name: 'Меню - Наборы',            value: true},

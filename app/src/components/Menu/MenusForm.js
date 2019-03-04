@@ -1,176 +1,19 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Form, Icon, Input, Button, Popconfirm, TimePicker , message, Switch, Select, Radio, Checkbox, Row, Col } from 'antd';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 const RadioGroup = Radio.Group;
 
+class MenusForm extends Component {
 
-const generateKey = (pre) => {
-  return `${ new Date().getTime() }`;
-}
-
-
-const EditableContext = React.createContext();
-
-const EditableRow = ({ form, index, ...props }) => (
-  <EditableContext.Provider value={form}>
-    <tr {...props} />
-  </EditableContext.Provider>
-);
-
-const EditableFormRow = Form.create()(EditableRow);
-
-class EditableCell extends Component {
-  state = {
-    editing: false,
-  }
-
-  componentDidMount() {
-    if (this.props.editable) {
-      document.addEventListener('click', this.handleClickOutside, true);
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.props.editable) {
-      document.removeEventListener('click', this.handleClickOutside, true);
-    }
-  }
-
-  toggleEdit = () => {
-    const editing = !this.state.editing;
-    this.setState({ editing }, () => {
-      if (editing) {
-        this.input.focus();
-      }
-    });
-  }
-
-  handleClickOutside = (e) => {
-    const { editing } = this.state;
-    if (editing && this.cell !== e.target && !this.cell.contains(e.target)) {
-      this.save();
-    }
-  }
-
-  save = () => {
-    const { record, handleSave } = this.props;
-    this.form.validateFields((error, values) => {
-      if (error) {
-        return;
-      }
-      this.toggleEdit();
-      handleSave({ ...record, ...values });
-    });
-  }
-
-  render() {
-    const { editing } = this.state;
-    const {
-      editable,
-      dataIndex,
-      title,
-      record,
-      index,
-      handleSave,
-      ...restProps
-    } = this.props;
-    return (
-      <td ref={node => (this.cell = node)} {...restProps}>
-        {editable ? (
-          <EditableContext.Consumer>
-            {(form) => {
-              this.form = form;
-              return (
-                editing ? (
-                  <FormItem style={{ margin: 0 }}>
-                    {form.getFieldDecorator(dataIndex, {
-                      rules: [{
-                        required: true,
-                        message: `${title} обязательно.`,
-                      }],
-                      initialValue: record[dataIndex],
-                    })(
-                      <Input
-                        ref={node => (this.input = node)}
-                        onPressEnter={this.save}
-                      />
-                    )}
-                  </FormItem>
-                ) : (
-                  <div
-                    className="editable-cell-value-wrap"
-                    style={{ paddingRight: 24 }}
-                    onClick={this.toggleEdit}
-                  >
-                    {restProps.children}
-                  </div>
-                )
-              );
-            }}
-          </EditableContext.Consumer>
-        ) : restProps.children}
-      </td>
-    );
-  }
-}
-
-
-
-class MenusForm extends React.Component {
-
-    constructor(props) {
-        super(props);
-        
-    
-        this.state = {
-          arrCategories: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).arrCategories : [],
-          arrDays: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).arrDays : [],
-          blDays: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).blDays === "true" : true,
-          blTimes: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).blTimes === "true" : true,
-        };
-      }
-
-      searchSelectedRow = (param) => { // возвращает значение key для множественного выбора
-        if (this.props.optionSets.find(x => x.idOptionSets ===  param).blNecessarily === "true")
-          return this.props.optionSets.find(x => x.idOptionSets ===  param).options.find(y => y.blDefault === "true").key;
-        else
-          return "0";
-      }
-
-      handleDelete = (key) => {
-        const dataSource = [...this.state.dataSource];
-        this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
-      }
-    
-      handleAdd = () => {
-        const { count, dataSource } = this.state;
-        const newData = {
-          key: count.toString(),
-          chName: 'Введите наименование',
-          iSort: '100',
-        };
-        this.setState({
-          dataSource: [...dataSource, newData],
-          count: count + 1,
-        });
-      }
-    
-      handleSave = (row) => {
-        const newData = [...this.state.dataSource];
-        const index = newData.findIndex(item => row.key === item.key);
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        this.setState({ dataSource: newData });
-      }
-    
-
+      state = {
+          arrCategories: this.props.type !== "0" ? this.props.param.arrCategories : [],
+          arrDays: this.props.type !== "0" ? this.props.param.arrDays : [],
+          blDays: this.props.type !== "0" ? this.props.param.blDays === "true" : true,
+          blTimes: this.props.type !== "0" ? this.props.param.blTimes === "true" : true,
+      };
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -178,7 +21,7 @@ class MenusForm extends React.Component {
 
           if (!err) {
             var val = {};
-            if (this.props.param) {
+            if (this.props.type === '1') {
 
               const url = this.props.optionapp[0].serverUrl + "/EditMenus.php"; // изменяем категорию
               fetch(url, {
@@ -190,7 +33,7 @@ class MenusForm extends React.Component {
                 },
                 body: JSON.stringify(
                 {
-                  idMenus: this.props.param,
+                  idMenus: this.props.param.idMenus,
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
@@ -206,8 +49,8 @@ class MenusForm extends React.Component {
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
                   dataload: { 
-                    key: this.props.param,
-                    idMenus: this.props.param,
+                    key: this.props.param.idMenus,
+                    idMenus: this.props.param.idMenus,
                     enShow: values.enShow.toString(),
                     chName: values.chName,
                     chNamePrint: values.chNamePrint,
@@ -283,14 +126,14 @@ class MenusForm extends React.Component {
               }).catch((error) => {
                   console.error(error);
               });
-
-
             }
           }
         });
       }
 
-      DeleteDishes = () => {
+
+
+      delete = () => {
         const url = this.props.optionapp[0].serverUrl + "/DeleteMenus.php"; // удаление
         fetch(url,
           {
@@ -302,12 +145,12 @@ class MenusForm extends React.Component {
               },
               body: JSON.stringify(
               {
-                idMenus: this.props.param,
+                idMenus: this.props.param.idMenus,
              })
           }).then((response) => response.json()).then((responseJsonFromServer) =>
           {
               var val = {
-                idMenus: this.props.param,
+                idMenus: this.props.param.idMenus,
               }
               this.props.onDelete(val);  // вызываем action
           }).catch((error) =>
@@ -318,22 +161,8 @@ class MenusForm extends React.Component {
           message.success('Меню удалено'); 
     }
 
-
-    onChangeCategories = (value) => {
-      this.setState({
-        iCategories: value,
-      })
-    }
-
-    onChangeOptionSets = (value) => {
-      this.setState({
-        chOptionSets: value,
-      })
-    }
-
     onChangeBlDays = (e) => {
         this.setState({
-            /*blDay: this.props.optionSets.find(x => x.idOptionSets ===  param).blNecessarily === "true",*/
             blDays: !this.state.blDays,
         })
     }
@@ -357,19 +186,10 @@ class MenusForm extends React.Component {
         })
     }
 
-    onSelectChange = (selectedRowKeys) => {
-      this.setState({ 
-        selectedRowKeys,
-        dataSource: this.state.dataSource.map(item => {
-          selectedRowKeys[0] === item.key ? item.blDefault = "true" : item.blDefault = "false"
-          return item;
-        })
-      });
-      
-    }
 
     componentWillReceiveProps(nextProps) {
       if(nextProps.param !== this.props.param) {
+        /*
         this.props.form.setFieldsValue({
           'enShow': this.props.menus.find(x => x.idMenus ===  nextProps.param).enShow === "true",
           'blDays': this.props.menus.find(x => x.idMenus ===  nextProps.param).blDays,
@@ -382,19 +202,20 @@ class MenusForm extends React.Component {
             arrDays: this.props.menus.find(x => x.idMenus ===  nextProps.param).arrDays,
             blTimes: this.props.menus.find(x => x.idMenus ===  nextProps.param).blTimes === "true",
         });
-
+        */
       }
     }
 
     render() {
         const { getFieldDecorator } = this.props.form;
         const labelColSpan = 8;
-        const { arrCategories, blDays, arrDays, blTimes, chTags } = this.state;
+        const { arrCategories, blDays, arrDays, blTimes } = this.state;
         const format = 'HH:mm';
 
         const listCategories = this.props.categories.map(d => <Col span={24} key={d.idCategories}><Checkbox key={d.idCategories} value={d.idCategories}>{d.chName}</Checkbox></Col>)
+        
         return (
-          <div>
+          <Fragment>
             { this.props.param ? (       
             <div style={{ 
               margin: "15px 0", 
@@ -407,7 +228,7 @@ class MenusForm extends React.Component {
               borderBottomColor: "#cecece",
                }}>
                <h4>Удалить меню</h4>
-               <Popconfirm title="Удалить меню?" onConfirm={() => this.DeleteDishes()} okText="Да" cancelText="Нет">
+               <Popconfirm title="Удалить меню?" onConfirm={() => this.delete()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>
@@ -419,7 +240,7 @@ class MenusForm extends React.Component {
               label="Активность"
             >
               {getFieldDecorator('enShow', { 
-                initialValue: this.props.param ? (this.props.menus.find(x => x.idMenus ===  this.props.param).enShow === "true" ) : true,
+                initialValue: this.props.type !== "0" ? this.props.param.enShow === "true" : true,
                 valuePropName: 'checked'
               })(
                 <Switch/>
@@ -433,7 +254,7 @@ class MenusForm extends React.Component {
             >
               {getFieldDecorator('chName', {
                 rules: [{ required: true, message: 'Введите наименование меню' }],
-                initialValue: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).chName : ""
+                initialValue: this.props.type !== "0" ? this.props.param.chName : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Наименование меню" />
               )}
@@ -446,7 +267,7 @@ class MenusForm extends React.Component {
             >
               {getFieldDecorator('chNamePrint', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).chNamePrint : ""
+                initialValue: this.props.type !== "0" ? this.props.param.chNamePrint : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
               )}
@@ -459,7 +280,7 @@ class MenusForm extends React.Component {
             >
               {getFieldDecorator('chDescription', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.menus.find(x => x.idMenus ===  this.props.param).chDescription : ""
+                initialValue: this.props.type !== "0" ? this.props.param.chDescription : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Описание" />
               )}
@@ -539,7 +360,7 @@ class MenusForm extends React.Component {
                     style={{ marginBottom: 10 }}
                     >
                     {getFieldDecorator('chStartInterval', {
-                        initialValue: this.props.param ? moment(this.props.menus.find(x => x.idMenus ===  this.props.param).chStartInterval, format) : moment('0:00:00', format)
+                        initialValue: this.props.type !== "0" ? moment(this.props.param.chStartInterval, format) : moment('0:00:00', format)
                     })(
                         <TimePicker format={format} />
                     )}
@@ -550,7 +371,7 @@ class MenusForm extends React.Component {
                     style={{ marginBottom: 10 }}
                     >
                     {getFieldDecorator('chEndInterval', {
-                        initialValue: this.props.param ? moment(this.props.menus.find(x => x.idMenus ===  this.props.param).chEndInterval, format) : moment('23:59:59', format)
+                        initialValue: this.props.type !== "0" ? moment(this.props.param.chEndInterval, format) : moment('23:59:59', format)
                     })(
                         <TimePicker format={format} />
                     )}
@@ -563,7 +384,7 @@ class MenusForm extends React.Component {
               </Button>
             </FormItem>
           </Form>
-        </div>
+        </Fragment>
         );
     }
 }

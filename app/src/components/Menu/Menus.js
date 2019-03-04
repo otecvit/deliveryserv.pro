@@ -1,8 +1,10 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
 
 import MenusForm from './MenusForm';
+import HeaderSection from '../../items/HeaderSection'
+import ViewDetailDescription from '../../items/ViewDetailDescription'
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -15,14 +17,15 @@ const generateKey = (pre) => {
 
 class Menus extends Component {
     
-    constructor(props) {
+    constructor(props) { 
         super(props);
         this.handler = this.handler.bind(this)
 
         this.state = {
           searchString: '',
-          activeKey: "1",
-          currentEditOptionSets: "0",
+          activeKey: "1", 
+          statusJobRecord: "0", // 0 - создание, 1 - редактирование, 2 - копирование
+          currentEditRecord: {},
           filtered: false,
           dataSource: [],
           flLoading: true, // спиннер загрузки
@@ -31,16 +34,25 @@ class Menus extends Component {
 
     componentDidMount() {
         this.loadingData();
-        
     }
 
     loadingData = () => {
-
         const url = this.props.optionapp[0].serverUrl + "/SelectMenus.php";
         this.setState({
             flLoading: true,
         })
-        fetch(url)
+        fetch(url, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
         .then((response) => response.json())
         .then((responseJson) => {
             this.props.onAdd(responseJson.menus);
@@ -57,7 +69,18 @@ class Menus extends Component {
         this.setState({
             flLoading: true,
         })
-        fetch(urlCategories)
+        fetch(urlCategories, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
         .then((response) => response.json())
         .then((responseJson) => {
             this.props.onAddCategories(responseJson.categories);
@@ -72,38 +95,84 @@ class Menus extends Component {
     }
 
     handleMenuClick = (e, record) => {
+        var _this = this; // делаем ссылку на объект
         switch (e.key) {
-            case "0": this.editCategory(record); break; //Редактировать
-            case "1": this.setState({activeKey: "2"}); break; //Копировать
-            case "2": this.DeleteCategory(record); break; 
-            default: this.setState({activeKey: "1"});    
+            case "0": this.edit(record); break; //Редактировать
+            case "1": this.copy(record); break; //Копировать
+            case "2": this.delete(record, this.props.optionapp[0].serverUrl, _this); break;  // передаеи путь на сервере и ссылку на объект
+            default: this.setState({
+                activeKey: "1",
+                statusJobRecord: "0"
+            });    
         }        
       }
 
-    editCategory = (e) => {
+    // Редактирование
+    edit = ({record}) => {
         this.setState({
             activeKey: "3",
-            currentEditOptionSets: e.record.idDishes,
+            statusJobRecord: "1",
+            currentEditRecord: record,
         });
-
     }
 
-    DeleteCategory = (e) => {
-        var val = {
-            idDishes: e.record.idDishes,
-        }
-        this.props.onDeleteCategory(val);  // вызываем action
-               
+    copy = ({record}) => {
+        // открываем вкладку копирования
+        this.setState({
+            activeKey: "2",
+            statusJobRecord: "2",
+            currentEditRecord: record,
+        });
     }
 
+    delete = ({record: {idMenus}}, path, _this) => {
+        confirm({
+            title: 'Вы действительно хотите удалить вариант?',
+            okText: 'Да',
+            okType: 'danger',
+            cancelText: 'Нет',
+            onOk() {
+                const url = path + "/DeleteMenus.php"; // удаление
+                fetch(url,
+                {
+                    method: 'POST',
+                    headers: 
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                    {
+                        idMenus: idMenus
+                    })
+                }).then((response) => response.json()).then((responseJsonFromServer) =>
+                {
+                    var val = {
+                        idMenus: idMenus
+                    }
+                    _this.props.onDelete(val);  // вызываем action
+                }).catch((error) =>
+                {
+                    console.error(error);
+                });
+            },
+          });
+    }
+
+       // обрабатываем нажатие на суффикс "крестик"
     emitEmpty = () => {
-        this.searchStringInput.focus();
-        this.setState({ searchString: '' });
+        this.searchStringInput.focus(); //
+        this.setState({ 
+            searchString: '' , // удаляем поисковый запрос
+            filtered: false, // сброс фильтрации
+        });
     }
+
 
     handler = () => {
         this.setState({
-            currentEditOptionSets: "0",
+            currentEditRecord: {},
+            statusJobRecord: "0",
         });
         
       }
@@ -139,11 +208,13 @@ class Menus extends Component {
 
     onChange = (activeKey) => {
         this.setState({ activeKey });
+        this.setState({
+            currentEditRecord: {},
+            statusJobRecord: "0",
+        }); 
     }
 
     createDropdownMenu = (record) => {
-
-        //console.log(record);
         const menu = (
             <Menu onClick={e => this.handleMenuClick(e, record)}>
               <Menu.Item key="0">Редактировать</Menu.Item>
@@ -157,7 +228,8 @@ class Menus extends Component {
 
     onChangeDishes = (e) => {
         this.setState ({ 
-            currentEditOptionSets: e.key
+            currentEditRecord: this.props.menus.find(x => x.idMenus === e.key),
+            statusJobRecord: "1",
         });
     }
 
@@ -167,7 +239,7 @@ class Menus extends Component {
     
     render() {
 
-        const { searchString, currentEditOptionSets, dataSource, flLoading } = this.state;
+        const { searchString, currentEditRecord, statusJobRecord, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         
         const columns = [{ 
@@ -207,12 +279,8 @@ class Menus extends Component {
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
           });
 
-        return (<div>
-            <Content style={{ background: '#fff'}}>
-                <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-menu" style={{ fontSize: '16px', marginRight: "10px"}}/>Варианты</div>
-                </div>
-            </Content>
+        return (<Fragment>
+            <HeaderSection title="Варианты" icon="icon-menu" />
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
                 <Tabs 
@@ -230,34 +298,38 @@ class Menus extends Component {
                         />    
                         <Table
                             columns={columns}
-                            expandedRowRender={record => 
-                                <div className="d-table">
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Активность</div>
-                                        <div className="d-td content-detail">{record.enShow === "true" ? "Да" : "Нет"}</div>
-                                    </div>                                    
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Имя</div>
-                                        <div className="d-td content-detail">{record.chName}</div>
-                                    </div>
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Описание</div>
-                                        <div className="d-td content-detail">{record.chDescription}</div>
-                                    </div>
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Категории</div>
-                                        <div className="d-td content-detail">{ record.arrCategories.map((item, index) => <div key={index}>{this.props.categories.find(x => x.idCategories ===  item).chName}</div>)}</div>
-                                    </div>                                    
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Дни недели</div>
-                                        <div className="d-td content-detail">{record.blDays === "true" ? "Ежедневно" : record.arrDays.map((item, index) => <div key={index}>{this.dayOfWeekAsString(item)}</div>)}</div>
-                                    </div>
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Время действич</div>
-                                        <div className="d-td content-detail">{record.blTimes === "true" ? "Постоянно" : `С ${record.chStartInterval} по ${record.chEndInterval}`} </div>
-                                    </div>
-                                </div>
-                                }
+                            expandedRowRender={({enShow, chNamePrint, chDescription, blDays, arrDays, blTimes, chStartInterval, chEndInterval, arrCategories}) => 
+                            <Fragment>
+                                <ViewDetailDescription title="Активность" value={enShow === 'true' ? "Да" : "Нет"} />
+                                <ViewDetailDescription title="Отображаемое имя" value={chNamePrint} />
+                                <ViewDetailDescription title="Описание" value={chDescription} />
+                                
+                                
+                                {/*<ViewDetailDescription title="Телефон" value={arrPhones.map(phone => <div key={phone.iPhone}>{phone.chPhone}</div>)} />
+                                <ViewDetailDescription title="Режим работы" value={
+                                    arrOperationMode.map(OperationMode => {
+                                        return (
+                                            !OperationMode.blDayOff ? 
+                                            OperationMode.time.map((item, index) =>
+                                                <Row key={index}>
+                                                    <Col span={5}>{OperationMode.chDay}: </Col>
+                                                    <Col span={19}>{item.tStartTime} - {item.tEndTime}</Col>
+                                                </Row>)
+                                            : 
+                                                <Row key={OperationMode.chDay}>
+                                                    <Col span={5}>
+                                                        {OperationMode.chDay}:
+                                                    </Col>
+                                                    <Col span={19}>
+                                                        Выходной
+                                                    </Col>
+                                                </Row>
+                                    ) 
+                                    })} 
+                                />*/}
+                               
+                            </Fragment>
+                            }
                             dataSource={!this.state.filtered ? this.props.menus : dataSource}
                             size="small"  
                             pagination={false}
@@ -268,7 +340,7 @@ class Menus extends Component {
                         />,            
                     </TabPane>
                     <TabPane tab="Создать" key="2">
-                        <MenusForm/>
+                        <MenusForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/>
                     </TabPane>
                     <TabPane tab="Редактировать" key="3">
                         <Select
@@ -277,17 +349,17 @@ class Menus extends Component {
                         onChange={this.onChangeDishes}
                         style={{ width: "100%" }}
                         labelInValue 
-                        value={{ key: currentEditOptionSets }}
+                        value={{ key: typeof currentEditRecord.idMenus !== "undefined" ? currentEditRecord.idMenus : "0" }}
                         >
-                        <Option key="0">Выберите блюдо для редактирования</Option>
+                        <Option key="0">Выберите вариант для редактирования</Option>
                         {options}
                     </Select>
-                    { currentEditOptionSets === "0" ? null : <MenusForm handler = {this.handler} param={currentEditOptionSets} /> }
+                    { statusJobRecord === "1"  ? <MenusForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/> : null }
                     </TabPane>
                 </Tabs>
                 </div>
             </Content>
-            </div>);        
+            </Fragment>);        
     }
 }
 
@@ -295,7 +367,7 @@ export default connect (
     state => ({
         menus: state.menus,
         optionapp: state.optionapp,
-        categories: state.categories
+        owner: state.owner,
     }),
     dispatch => ({
         onAdd: (data) => {
@@ -303,6 +375,9 @@ export default connect (
           },
         onAddCategories: (data) => {
             dispatch({ type: 'LOAD_CATEGORIES_ALL', payload: data});
+          },
+        onDelete: (data) => {
+            dispatch({ type: 'DELETE_MENUS', payload: data});
           },
     })
   )(Menus);

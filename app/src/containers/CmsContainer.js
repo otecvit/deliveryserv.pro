@@ -176,7 +176,7 @@ class CmsWrapper extends Component {
                         <Route exact path="/categories" component={Categories}/>
                         <Route exact path="/option-sets" component={OptionSets}/>
                         <Route exact path="/dishes" component={Dishes}/>
-                        <Route exact path="/menus" component={Menus}/>
+                        <Route exact path="/variants" component={Menus}/>
                         <Route exact path="/orders" component={Orders}/>
                         <Route exact path="/customers" component={Clients}/>
                         <Route exact path="/locations" component={Locations}/>

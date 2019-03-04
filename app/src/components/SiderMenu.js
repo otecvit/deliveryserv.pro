@@ -66,7 +66,7 @@ class SiderMenu extends Component {
                 { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["customers"]) && <Menu.Item key="3"><Link to="customers"><Icon type="team" /><span>Клиенты</span></Link></Menu.Item> }
                 { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["locations"]) && <Menu.Item key="4"><Link to="locations"><Icon type="environment" /><span>Адреса</span></Link></Menu.Item> }
                 <SubMenu key="sub1" title={<span><IconFont type="icon-cutlery"/><span>Ассортимент</span></span>}>
-                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["menus"]) && <Menu.Item key="5"><Link to="menus">Варианты</Link></Menu.Item> }
+                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["variants"]) && <Menu.Item key="5"><Link to="variants">Варианты</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["categories"]) && <Menu.Item key="6"><Link to="categories">Категории</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["dishes"]) && <Menu.Item key="7"><Link to="dishes">Товары</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["option-sets"]) && <Menu.Item key="8"><Link to="option-sets">Наборы</Link></Menu.Item> }
