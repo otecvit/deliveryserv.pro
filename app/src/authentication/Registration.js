@@ -5,32 +5,11 @@ import { Route, Redirect } from 'react-router'
 import { connect } from 'react-redux'
 import Cookies from 'js-cookie'
 
+import { arrPageAccess } from '../constans'
+
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const FormItem = Form.Item;
-
-const arrAccess = [
-  { keyName: "dashboard",         name: 'Рабочий стол',             value: true},
-  { keyName: "orders",            name: 'Заказы',                   value: true},
-  { keyName: "customers",         name: 'Клиенты',                  value: true},
-  { keyName: "locations",         name: 'Рестораны',                value: true},
-  { keyName: "menus",             name: 'Меню - Меню',              value: true},
-  { keyName: "categories",        name: 'Меню - Категории',         value: true},
-  { keyName: "dishes",            name: 'Меню - Товары',            value: true},
-  { keyName: "option-sets",       name: 'Меню - Наборы',            value: true},
-  { keyName: "sorting",           name: 'Меню - Сортировка',        value: true},
-  { keyName: "staff",             name: 'Сотрудники',               value: true},
-  { keyName: "stock",             name: 'Акции',                    value: true},
-  { keyName: "general-settings",  name: 'Настройки - Общие',        value: true},
-  { keyName: "type-order",        name: 'Настройки - Типы заказов', value: true},
-  { keyName: "times",             name: 'Настройки - Время',        value: true},
-  { keyName: "payment",           name: 'Настройки - Оплата',       value: true},
-  { keyName: "email-notifications",name: 'Настройки - E-mail уведомления', value: true},
-  { keyName: "customisation",     name: 'Настройки - Оформление',   value: true},
-  { keyName: "information",       name: 'Настройки - Информация',   value: true},
-  { keyName: "180",               name: 'Оплата',                   value: true},
-];
-
 
 class Registration extends Component {
 
@@ -85,7 +64,7 @@ class Registration extends Component {
               {
                   chEmailOwner: values.chEmailOwner,
                   chHashPassword: values.password,
-                  arrAccess: arrAccess,
+                  arrAccess: arrPageAccess,
               })
 
             }).then((response) => response.json()).then((responseServer) => {
@@ -93,7 +72,7 @@ class Registration extends Component {
                 const val = {
                   chUID: responseServer.chUID,
                   chUIDStaff: responseServer.chUIDStaff,
-                  arrAccess: arrAccess,
+                  arrAccess: arrPageAccess,
                   iStaffType: "0",
 
                 }

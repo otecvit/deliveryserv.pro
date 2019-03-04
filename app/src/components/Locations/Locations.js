@@ -199,7 +199,7 @@ class Locations extends Component {
         return menu;
     }
 
-    onChangeCategory = (e) => {
+    onChangeEditRecord = (e) => {
         this.setState ({ 
             currentEditRecord: this.props.locations.find(x => x.idLocations === e.key),
             statusJobRecord: "1",
@@ -297,7 +297,7 @@ class Locations extends Component {
                     <Select
                     showSearch
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    onChange={this.onChangeCategory}
+                    onChange={this.onChangeEditRecord}
                     style={{ width: "100%" }}
                     labelInValue 
                     value={{ key: typeof currentEditRecord.idLocations !== "undefined" ? currentEditRecord.idLocations : "0" }}

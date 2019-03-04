@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
+import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, Row, Col, Modal } from 'antd';
 
 import StaffForm from './StaffForm';
 import HeaderSection from '../../items/HeaderSection'
 import ViewDetailDescription from '../../items/ViewDetailDescription'
+import { arrPageAccess } from '../../constans'
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -15,7 +16,6 @@ const confirm = Modal.confirm;
 const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
   }
-
   
 
 class Staff extends Component {
@@ -26,8 +26,8 @@ class Staff extends Component {
         this.state = {
           searchString: '',
           activeKey: "1",
-          currentEditCat: "0",
-          currentRecord: [],
+          currentEditRecord: {},
+          statusJobRecord: "0", // 0 - создание, 1 - редактирование, 2 - копирование
           filtered: false,
           dataSource: {},
           flLoading: true, // спиннер загрузки
@@ -35,52 +35,68 @@ class Staff extends Component {
     }
 
     handleMenuClick = (e, record) => {
+        var _this = this; // делаем ссылку на объект
         switch (e.key) {
             case "0": this.edit(record); break; //Редактировать
             case "1": this.copy(record); break; //Копировать
-            case "2": this.delete(record); break; 
-            default: this.setState({activeKey: "1"});    
+            case "2": this.delete(record, this.props.optionapp[0].serverUrl, _this); break;  // передаеи путь на сервере и ссылку на объект
+            default: this.setState({
+                activeKey: "1",
+                statusJobRecord: "0"
+            });
         }        
       }
 
-      edit = (e) => {
+    edit = ({record}) => {
         this.setState({
             activeKey: "3",
-            currentEditCat: e.record.idCategories,
+            statusJobRecord: "1",
+            currentEditRecord: record,
         });
     }
 
-    copy = (e) => {
+    copy = ({record}) => {
         // открываем вкладку копирования
         this.setState({
             activeKey: "2",
-            currentRecord: e.record,
+            statusJobRecord: "2",
+            currentEditRecord: record,
         });
     }
 
-    delete = (e) => {
-        const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
-        fetch(url,
-          {
-              method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(
-              {
-                idCategories: e.record.idCategories,
-             })
-          }).then((response) => response.json()).then((responseJsonFromServer) =>
-          {
-              var val = {
-                  idCategories: e.record.idCategories,
-              }
-              this.props.onDelete(val);  // вызываем action
-          }).catch((error) =>
-          {
-              console.error(error);
+
+    /// Удаление 
+    delete = ({record: {idStaff}}, path, _this) => {
+        confirm({
+            title: 'Вы действительно хотите удалить сотрудника?',
+            okText: 'Да',
+            okType: 'danger',
+            cancelText: 'Нет',
+            onOk() {
+                const url = path + "/DeleteStaff.php"; // удаление
+                fetch(url,
+                {
+                    method: 'POST',
+                    headers: 
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                    {
+                        idStaff: idStaff
+                    })
+                }).then((response) => response.json()).then((responseJsonFromServer) =>
+                {
+                    var val = {
+                        idStaff: idStaff
+                    }
+                    _this.props.onDelete(val);  // вызываем action
+                }).catch((error) =>
+                {
+                    console.error(error);
+                });
+            },
           });
     }
 
@@ -100,11 +116,12 @@ class Staff extends Component {
 
     handler = () => {
         this.setState({
-            currentEditCat: "0",
+            currentEditRecord: {},
+            statusJobRecord: "0",
         });
       }
 
-      loadingData = () => {
+    loadingData = () => {
         const url = this.props.optionapp[0].serverUrl + "/SelectStaff.php";
         this.setState({
             flLoading: true,
@@ -166,6 +183,10 @@ class Staff extends Component {
 
     onChange = (activeKey) => {
         this.setState({ activeKey });
+        this.setState({
+            currentEditRecord: {},
+            statusJobRecord: "0",
+        }); 
     }
 
     createDropdownMenu = (record) => {
@@ -180,15 +201,16 @@ class Staff extends Component {
         return menu;
     }
 
-    onChangeCategory = (e) => {
+    onChangeEditRecord = (e) => {
         this.setState ({ 
-            currentEditCat: e.key
+            currentEditRecord: this.props.staff.find(x => x.idStaff === e.key),
+            statusJobRecord: "1",
         });
     }
 
     render() {
 
-        const { searchString, currentEditCat, dataSource, flLoading } = this.state;
+        const { searchString, statusJobRecord, currentEditRecord, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
@@ -210,6 +232,7 @@ class Staff extends Component {
         const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
           });             
+
         const options = this.props.staff.map(item => <Option key={item.idStaff}>{item.chName}</Option>);
 
         return (<div>
@@ -231,13 +254,19 @@ class Staff extends Component {
                         />    
                         <Table
                             columns={columns}
-                            expandedRowRender={record => 
-                                <div className="d-table">
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Отображаемое имя</div>
-                                        <div className="d-td content-detail">{record.chNamePrint}</div>
-                                    </div>
-                                </div>
+                            expandedRowRender={({ arrAccess }) => 
+                            <Fragment>
+                                <ViewDetailDescription title="Доступ к разделам" value={
+                                    arrPageAccess.map((PageAccess, index) => {
+                                        return (
+                                                <Row key={index}>
+                                                    <Col span={12}>{PageAccess.name}</Col>
+                                                    <Col span={12}>{arrAccess[PageAccess.keyName] ? "Да" : "Нет"}</Col>
+                                                </Row>)
+                                    }) 
+                                    } 
+                                />
+                            </Fragment>
                             }
                             dataSource={!this.state.filtered ? this.props.staff : dataSource}
                             size="small"  
@@ -248,21 +277,21 @@ class Staff extends Component {
                         />,            
                     </TabPane>
                     <TabPane tab="Создать" key="2">
-                        <StaffForm copyrecord={this.state.currentRecord}/>
+                        <StaffForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/>
                     </TabPane>
                     <TabPane tab="Редактировать" key="3">
                         <Select
                         showSearch
                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                        onChange={this.onChangeCategory}
+                        onChange={this.onChangeEditRecord}
                         style={{ width: "100%" }}
                         labelInValue 
-                        value={{ key: currentEditCat }}
+                        value={{ key: typeof currentEditRecord.idStaff !== "undefined" ? currentEditRecord.idStaff : "0" }}
                         >
-                        <Option key="0">Выберите категорию для редактирования</Option>
+                        <Option key="0">Выберите сотрудника для редактирования</Option>
                         {options}
                     </Select>
-                    { currentEditCat === "0" ? null : <StaffForm handler = {this.handler} param={currentEditCat}/> }
+                    { statusJobRecord === "1" ? <StaffForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/> : null }
                     </TabPane>
                 </Tabs>
                 </div>
@@ -281,8 +310,8 @@ export default connect (
         onAdd: (data) => {
             dispatch({ type: 'LOAD_STAFF_ALL', payload: data});
           },
-        onDelete: (categoryData) => {
-            dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
+        onDelete: (data) => {
+            dispatch({ type: 'DELETE_STAFF', payload: data});
         },
     })
   )(Staff);

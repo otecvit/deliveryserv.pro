@@ -2,50 +2,21 @@ import React, { Component } from 'react';
 import { Form, Icon, Input, Button, Popconfirm, message, Switch, Table} from 'antd';
 import { connect } from 'react-redux';
 
-const FormItem = Form.Item;
-const generateKey = (pre) => {
-  return `${ new Date().getTime() }`;
-}
+import { arrPageAccess } from '../../constans'
 
-const arrAccess = [
-    { keyName: "dashboard",         name: 'Рабочий стол',             value: false},
-    { keyName: "orders",            name: 'Заказы',                   value: false},
-    { keyName: "customers",         name: 'Клиенты',                  value: false},
-    { keyName: "locations",         name: 'Рестораны',                value: false},
-    { keyName: "menus",             name: 'Меню - Меню',              value: false},
-    { keyName: "categories",        name: 'Меню - Категории',         value: false},
-    { keyName: "dishes",            name: 'Меню - Товары',            value: false},
-    { keyName: "option-sets",       name: 'Меню - Наборы',            value: false},
-    { keyName: "sorting",           name: 'Меню - Сортировка',        value: false},
-    { keyName: "staff",             name: 'Сотрудники',               value: false},
-    { keyName: "stock",             name: 'Маркетинг - Акции',        value: false},
-    { keyName: "push",              name: 'Маркетинг - Push-сообщения',value: false},
-    { keyName: "general-settings",  name: 'Настройки - Общие',        value: false},
-    { keyName: "type-order",        name: 'Настройки - Типы заказов', value: false},
-    { keyName: "times",             name: 'Настройки - Время',        value: false},
-    { keyName: "payment",           name: 'Настройки - Оплата',       value: false},
-    { keyName: "email-notifications",name: 'Настройки - E-mail уведомления', value: true},
-    { keyName: "customisation",     name: 'Настройки - Оформление',   value: false},
-    { keyName: "information",       name: 'Настройки - Информация',   value: true},
-    { keyName: "180",               name: 'Оплата',                   value: false},
-  ];
+const FormItem = Form.Item;
   
 class StaffForm extends React.Component {
 
-    constructor(props) {
-      super(props);
-    
-      this.state = {
-        
-      };
-    }
-
-    
+    state = {
+      arrAccess: arrPageAccess,
+    };
+  
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
           if (!err) {
-            
+            const { arrAccess } = this.state;
             var val = {};
             var obj = {};
             arrAccess.map( item => {
@@ -61,7 +32,7 @@ class StaffForm extends React.Component {
               }
 
 
-            if (this.props.param) {
+            if (this.props.type === '1') {
               
               const url = this.props.optionapp[0].serverUrl + "/EditStaff.php"; // добавляем категорию
               fetch(url, {
@@ -73,14 +44,14 @@ class StaffForm extends React.Component {
                 },
                 body: JSON.stringify(
                 {
-                  idStaff: this.props.param,
+                  idStaff: this.props.param.idStaff,
                   chPassword: values.chPassword,
                   arrAccess: obj
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                   if (responseJsonFromServer.status === "1") {
                   const val = {
-                    idStaff: this.props.param,
+                    idStaff: this.props.param.idStaff,
                     arrAccess: obj,
                   }
                   this.props.onEdit(val);  // вызываем action
@@ -99,6 +70,15 @@ class StaffForm extends React.Component {
               });
 
             } else {
+
+              console.log(JSON.stringify(
+                {
+                  chName: values.chName,
+                  chPassword: values.chPassword,
+                  idCustomer: this.props.owner.idCustomer,
+                  arrAccess: obj
+                }));
+              
 
               const url = this.props.optionapp[0].serverUrl + "/InsertStaff.php"; // добавляем категорию
               fetch(url, {
@@ -161,12 +141,12 @@ class StaffForm extends React.Component {
             },
             body: JSON.stringify(
             {
-              idStaff: this.props.param,
+              idStaff: this.props.param.idStaff,
            })
         }).then((response) => response.json()).then((responseJsonFromServer) =>
         {
             var val = {
-                idStaff: this.props.param,
+                idStaff: this.props.param.idStaff,
             }
             this.props.onDelete(val);  // вызываем action
         }).catch((error) =>
@@ -179,14 +159,19 @@ class StaffForm extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-      
       if(nextProps.param !== this.props.param) {
+        if (nextProps.type === "0") {
 
-        this.props.form.setFieldsValue({
-          'chName': this.props.staff.find(x => x.idStaff ===  nextProps.param).chName,
-          'dashboard': true,
+          this.props.form.setFieldsValue({
+            'chName': '',
+          });
+        }
 
-        });
+        if (nextProps.type === "2") {
+          this.props.form.setFieldsValue({
+            'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
+          });
+        }
 
       }
     }
@@ -195,17 +180,15 @@ class StaffForm extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { dataSource } = this.state;
+        const { arrAccess } = this.state;
         const labelColSpan = 8;
-
-        
         const AccessPages = arrAccess.map( (item, index) => 
             <FormItem
                 style={{ marginBottom: 2, paddingBottom: 0 }}
                 key = {index}
             >
               {getFieldDecorator(item.keyName, { 
-                initialValue: this.props.param ? this.props.staff.find(x => x.idStaff ===  this.props.param).arrAccess[item.keyName] : item.value, 
+                initialValue: this.props.type !== "0" ? this.props.param.arrAccess[item.keyName] : item.value,
                 valuePropName: 'checked'
               })(
                 <Switch size="small"/>
@@ -245,10 +228,9 @@ class StaffForm extends React.Component {
             >
               {getFieldDecorator('chName', {
                 rules: [{ required: true, message: 'Введите имя пользователя' }],
-                initialValue: this.props.param ? this.props.staff.find(x => x.idStaff ===  this.props.param).chName : 
-                  this.props.copyrecord.length !== 0 ? this.props.copyrecord.chName + " - Копия" : ""
+                initialValue: this.props.type !== "0" ? this.props.param.chName + `${this.props.type === "2" ? " - Копия" : "" }` : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} disabled = {this.props.param ? true : false} placeholder="Имя пользователя" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} disabled = {(this.props.type !== "0" && this.props.type !== "2") ? true : false} placeholder="Имя пользователя" />
               )}
             </FormItem>
             <FormItem
