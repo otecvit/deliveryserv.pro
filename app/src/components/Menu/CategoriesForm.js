@@ -16,11 +16,11 @@ class CategoriesForm extends React.Component {
         previewVisible: false,
         previewImage: '',
         tmpFileName: generateKey(),
-        fileList: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.length ? [{
+        fileList: this.props.param ? this.props.param.chMainImage.length ? [{
           uid: '-1',
-          name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
+          name: this.props.param.chMainImage.replace(/^.*(\\|\/|\:)/, ''),
           status: 'done',
-          url: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage,
+          url: this.props.param.chMainImage,
           
         }] : [] : [],
       };

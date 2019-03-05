@@ -201,9 +201,6 @@ class LocationsForm extends React.Component {
     componentWillReceiveProps(nextProps) {
 
       if(nextProps.param !== this.props.param) {
-        
-        
-        
         if (nextProps.type === "0") {
           this.props.form.setFieldsValue({
             'enShow': true,
@@ -218,7 +215,7 @@ class LocationsForm extends React.Component {
           });
         }
 
-        if (nextProps.type === "2") {
+        if (nextProps.type === "2" || nextProps.type === "1") {
           this.props.form.setFieldsValue({
             'enShow': nextProps.param.blShow === "true",
             'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
@@ -230,9 +227,7 @@ class LocationsForm extends React.Component {
             chPhoneLocation: nextProps.param.arrPhones,
             arrOperationMode: nextProps.param.arrOperationMode,
           });
-
         }
-
       }
 
     }
