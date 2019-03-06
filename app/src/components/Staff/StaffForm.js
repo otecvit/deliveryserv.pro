@@ -167,7 +167,7 @@ class StaffForm extends React.Component {
           });
         }
 
-        if (nextProps.type === "2") {
+        if (nextProps.type === "2" || nextProps.type === "1") {
           this.props.form.setFieldsValue({
             'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
           });

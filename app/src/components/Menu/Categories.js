@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
 
 import CategoriesForm from './CategoriesForm';
+import HeaderSection from '../../items/HeaderSection'
+import ViewDetailDescription from '../../items/ViewDetailDescription'
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -22,8 +24,8 @@ class Categories extends Component {
         this.state = {
           searchString: '',
           activeKey: "1",
-          currentEditCat: "0",
-          currentRecord: [],
+          statusJobRecord: "0", // 0 - создание, 1 - редактирование, 2 - копирование
+          currentEditRecord: {},
           filtered: false,
           dataSource: {},
           flLoading: true, // спиннер загрузки
@@ -31,71 +33,86 @@ class Categories extends Component {
     }
 
     handleMenuClick = (e, record) => {
+        var _this = this; // делаем ссылку на объект
         switch (e.key) {
-            case "0": this.editCategory(record); break; //Редактировать
-            case "1": this.copyCategory(record); break; //Копировать
-            case "2": this.DeleteCategory(record); break; 
-            default: this.setState({activeKey: "1"});    
+            case "0": this.edit(record); break; //Редактировать
+            case "1": this.copy(record); break; //Копировать
+            case "2": this.delete(record, this.props.optionapp[0].serverUrl, _this); break;  // передаеи путь на сервере и ссылку на объект
+            default: this.setState({
+                activeKey: "1",
+                statusJobRecord: "0"
+            });    
         }        
-      }
+    }
 
-      editCategory = (e) => {
+    edit = ({record}) => {
         this.setState({
             activeKey: "3",
-            currentEditCat: e.record.idCategories,
+            statusJobRecord: "1",
+            currentEditRecord: record,
         });
     }
 
-    copyCategory = (e) => {
+    copy = ({record}) => {
         // открываем вкладку копирования
         this.setState({
             activeKey: "2",
-            currentRecord: e.record,
+            statusJobRecord: "2",
+            currentEditRecord: record,
         });
     }
 
-    DeleteCategory = (e) => {
-        const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
-        fetch(url,
-          {
-              method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(
-              {
-                idCategories: e.record.idCategories,
-                tmpFileName: e.record.chMainImage.length ? e.record.chMainImage.replace(/^.*(\\|\/|\:)/, '') : "",
-             })
-          }).then((response) => response.json()).then((responseJsonFromServer) =>
-          {
-              var val = {
-                  idCategories: e.record.idCategories,
-              }
-              this.props.onDelete(val);  // вызываем action
-          }).catch((error) =>
-          {
-              console.error(error);
+    delete = ({record: {idCategories, chMainImage}}, path, _this) => {
+        confirm({
+            title: 'Вы действительно хотите удалить категорию?',
+            okText: 'Да',
+            okType: 'danger',
+            cancelText: 'Нет',
+            onOk() {
+                const url = path + "/DeleteCategories.php"; // удаление
+                fetch(url,
+                {
+                    method: 'POST',
+                    headers: 
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                    {
+                        idCategories: idCategories,
+                        tmpFileName: chMainImage.length ? chMainImage.replace(/^.*(\\|\/|\:)/, '') : "",
+                    })
+                }).then((response) => response.json()).then((responseJsonFromServer) =>
+                {
+                    var val = {
+                        idCategories: idCategories
+                    }
+                    _this.props.onDelete(val);  // вызываем action
+                }).catch((error) =>
+                {
+                    console.error(error);
+                });
+            },
           });
     }
-
 
     componentDidMount() {
         this.loadingData();
     }
 
-
-
     emitEmpty = () => {
-        this.searchStringInput.focus();
-        this.setState({ searchString: '' });
+        this.searchStringInput.focus(); //
+        this.setState({ 
+            searchString: '' , // удаляем поисковый запрос
+            filtered: false, // сброс фильтрации
+        });
     }
 
     handler = () => {
         this.setState({
-            currentEditCat: "0",
+            currentEditRecord: {},
+            statusJobRecord: "0",
         });
       }
 
@@ -105,7 +122,18 @@ class Categories extends Component {
         this.setState({
             flLoading: true,
         })
-        fetch(url)
+        fetch(url, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
         .then((response) => response.json())
         .then((responseJson) => {
             this.props.onAdd(responseJson.categories);
@@ -150,6 +178,10 @@ class Categories extends Component {
 
     onChange = (activeKey) => {
         this.setState({ activeKey });
+        this.setState({
+            currentEditRecord: {},
+            statusJobRecord: "0",
+        }); 
     }
 
     createDropdownMenu = (record) => {
@@ -164,15 +196,16 @@ class Categories extends Component {
         return menu;
     }
 
-    onChangeCategory = (e) => {
+    onChangeEditRecord = (e) => {
         this.setState ({ 
-            currentEditCat: e.key
+            currentEditRecord: this.props.categories.find(x => x.idCategories === e.key),
+            statusJobRecord: "1",
         });
     }
 
     render() {
 
-        const { searchString, currentEditCat, dataSource, flLoading } = this.state;
+        const { searchString, currentEditRecord, statusJobRecord, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
@@ -196,12 +229,8 @@ class Categories extends Component {
           });             
         const options = this.props.categories.map(item => <Option key={item.idCategories}>{item.chName}</Option>);
 
-        return (<div>
-        <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-menu" style={{ fontSize: '16px', marginRight: "10px"}}/>Категории</div>
-            </div>
-        </Content>
+        return (<Fragment>
+        <HeaderSection title="Категории" icon="icon-menu" />
         <Content style={{ background: '#fff', margin: '16px 0' }}>
             <div style={{ padding: 10 }}>
             <Tabs 
@@ -219,13 +248,11 @@ class Categories extends Component {
                     />    
                     <Table
                         columns={columns}
-                        expandedRowRender={record => 
-                            <div className="d-table">
-                                <div className="d-tr">
-                                    <div className="d-td title-detail">Отображаемое имя</div>
-                                    <div className="d-td content-detail">{record.chNamePrint}</div>
-                                </div>
-                            </div>
+                        expandedRowRender={({enShow, chNamePrint}) => 
+                            <Fragment>
+                                <ViewDetailDescription title="Активность" value={enShow === 'true' ? "Да" : "Нет"} />
+                                <ViewDetailDescription title="Отображаемое имя" value={chNamePrint} />
+                            </Fragment>
                         }
                         dataSource={!this.state.filtered ? this.props.categories : dataSource}
                         size="small"  
@@ -236,26 +263,26 @@ class Categories extends Component {
                     />,            
                 </TabPane>
                 <TabPane tab="Создать" key="2">
-                    <CategoriesForm copyrecord={this.state.currentRecord}/>
+                    <CategoriesForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/>
                 </TabPane>
                 <TabPane tab="Редактировать" key="3">
                     <Select
                     showSearch
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    onChange={this.onChangeCategory}
+                    onChange={this.onChangeEditRecord}
                     style={{ width: "100%" }}
                     labelInValue 
-                    value={{ key: currentEditCat }}
+                    value={{ key: typeof currentEditRecord.idCategories !== "undefined" ? currentEditRecord.idCategories : "0" }}
                     >
                     <Option key="0">Выберите категорию для редактирования</Option>
                     {options}
                 </Select>
-                { currentEditCat === "0" ? null : <CategoriesForm handler = {this.handler} param={currentEditCat}/> }
+                { statusJobRecord === "1" ? <CategoriesForm  handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/> : null }
                 </TabPane>
             </Tabs>
             </div>
         </Content>
-        </div>);
+        </Fragment>);
     }
 }
 
@@ -263,14 +290,16 @@ export default connect (
     state => ({
         categories: state.categories,
         optionapp: state.optionapp,
+        owner: state.owner,
     }),
     dispatch => ({
         onAdd: (data) => {
             dispatch({ type: 'LOAD_CATEGORIES_ALL', payload: data});
           },
-        onDelete: (categoryData) => {
-            dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
+        onDelete: (data) => {
+            dispatch({ type: 'DELETE_CATEGORY', payload: data});
         },
     })
   )(Categories);
 
+  
