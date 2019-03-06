@@ -40,7 +40,18 @@ class Menus extends Component {
         this.setState({
             flLoading: true,
         })
-        fetch(url)
+        fetch(url, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
         .then((response) => response.json())
         .then((responseJson) => {
             this.props.onAdd(responseJson.menus);
@@ -295,7 +306,8 @@ export default connect (
     state => ({
         menus: state.menus,
         optionapp: state.optionapp,
-        categories: state.categories
+        categories: state.categories,
+        owner: state.owner
     }),
     dispatch => ({
         onAdd: (data) => {

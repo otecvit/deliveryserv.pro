@@ -178,6 +178,10 @@ class Categories extends Component {
 
     onChange = (activeKey) => {
         this.setState({ activeKey });
+        this.setState({
+            currentEditRecord: {},
+            statusJobRecord: "0",
+        }); 
     }
 
     createDropdownMenu = (record) => {
@@ -192,9 +196,10 @@ class Categories extends Component {
         return menu;
     }
 
-    onChangeCategory = (e) => {
+    onChangeEditRecord = (e) => {
         this.setState ({ 
-            currentEditCat: e.key
+            currentEditRecord: this.props.categories.find(x => x.idCategories === e.key),
+            statusJobRecord: "1",
         });
     }
 
@@ -243,11 +248,10 @@ class Categories extends Component {
                     />    
                     <Table
                         columns={columns}
-                        expandedRowRender={({enShow, chNamePrint, chDescription}) => 
+                        expandedRowRender={({enShow, chNamePrint}) => 
                             <Fragment>
                                 <ViewDetailDescription title="Активность" value={enShow === 'true' ? "Да" : "Нет"} />
                                 <ViewDetailDescription title="Отображаемое имя" value={chNamePrint} />
-                                <ViewDetailDescription title="Описание" value={chDescription} />
                             </Fragment>
                         }
                         dataSource={!this.state.filtered ? this.props.categories : dataSource}
@@ -265,7 +269,7 @@ class Categories extends Component {
                     <Select
                     showSearch
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    onChange={this.onChangeCategory}
+                    onChange={this.onChangeEditRecord}
                     style={{ width: "100%" }}
                     labelInValue 
                     value={{ key: typeof currentEditRecord.idCategories !== "undefined" ? currentEditRecord.idCategories : "0" }}

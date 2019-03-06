@@ -16,7 +16,7 @@ class CategoriesForm extends React.Component {
         previewVisible: false,
         previewImage: '',
         tmpFileName: generateKey(),
-        fileList: this.props.param ? this.props.param.chMainImage.length ? [{
+        fileList: this.props.type === "1" ? this.props.param.chMainImage.length ? [{
           uid: '-1',
           name: this.props.param.chMainImage.replace(/^.*(\\|\/|\:)/, ''),
           status: 'done',
@@ -45,7 +45,7 @@ class CategoriesForm extends React.Component {
         this.props.form.validateFields((err, values) => {
           if (!err) {
             var val = {};
-            if (this.props.param) {
+            if (this.props.type === '1') {
               const url = this.props.optionapp[0].serverUrl + "/EditCategories.php"; // изменяем категорию
 
               fetch(url, {
@@ -57,27 +57,30 @@ class CategoriesForm extends React.Component {
                 },
                 body: JSON.stringify(
                 {
-                  idCategories: this.props.param,
+                  idCategories: this.props.param.idCategories,
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
                   tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
-                val = {
-                  dataload: { 
-                    key: this.props.param,
-                    idCategories: this.props.param,
-                    chName: values.chName,
-                    chNamePrint: values.chNamePrint,
-                    enShow: values.enShow ? "true" : "false",
-                    chMainImage:responseJsonFromServer, 
+                
+                if (responseJsonFromServer.status) {
+                  val = {
+                    dataload: { 
+                      key: this.props.param.idCategories,
+                      idCategories: this.props.param.idCategories,
+                      chName: values.chName,
+                      chNamePrint: values.chNamePrint,
+                      enShow: values.enShow ? "true" : "false",
+                      chMainImage: responseJsonFromServer.tmpFileName, 
+                    }
                   }
-                }
 
-                this.props.onEdit(val);  // вызываем action
-                message.success('Категория изменена');
-                this.props.form.resetFields(); // ресет полей
+                  this.props.onEdit(val);  // вызываем action
+                  message.success('Категория изменена');
+                  this.props.form.resetFields(); // ресет полей
+                }
               }).catch((error) => {
                   console.error(error);
               });
@@ -94,6 +97,7 @@ class CategoriesForm extends React.Component {
                 },
                 body: JSON.stringify(
                 {
+                  chUID: this.props.owner.chUID,
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
@@ -136,8 +140,6 @@ class CategoriesForm extends React.Component {
 
     DeleteCategory = () => {
       const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
-      //console.log(this.state.fileList[0].serverUrl);
-      
       
       fetch(url,
         {
@@ -168,23 +170,44 @@ class CategoriesForm extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+
+      
       
       if(nextProps.param !== this.props.param) {
+
         this.DeleteTmpFile(); // удаляем временный файл
+
+        if (nextProps.type === "0") {
+          this.props.form.setFieldsValue({
+            'enShow': true,
+            'chName': '',
+            'chNamePrint': '',
+          });
         
-        this.props.form.setFieldsValue({
-          'enShow': this.props.categories.find(x => x.idCategories ===  nextProps.param).enShow === "true",
-          'chName': this.props.categories.find(x => x.idCategories ===  nextProps.param).chName,
-          'chNamePrint': this.props.categories.find(x => x.idCategories ===  nextProps.param).chNamePrint,
-        });
-        this.setState({
-          tmpFileName: generateKey(),
-          fileList: this.props.categories.find(x => x.idCategories ===  nextProps.param).chMainImage.length ? [{
-            uid: '-1',
-            name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
-            status: 'done',
-            url: this.props.categories.find(x => x.idCategories ===  nextProps.param).chMainImage,
-        }] : [] });
+          this.setState({
+            tmpFileName: generateKey(),
+            fileList: [],
+          });
+        }
+
+        if (nextProps.type === "2" || nextProps.type === "1") {
+          this.props.form.setFieldsValue({
+            'enShow': nextProps.param.enShow === "true",
+            'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
+            'chNamePrint': nextProps.param.chNamePrint,
+          });
+
+          this.setState({
+            tmpFileName: generateKey(),
+            fileList: nextProps.param.chMainImage.length && nextProps.type !== "2" ? [{
+              uid: '-1',
+              name: nextProps.param.chMainImage.replace(/^.*(\\|\/|\:)/, ''),
+              status: 'done',
+              url: nextProps.param.chMainImage,
+              }] : []
+          });
+        }
+      
       }
     }
 
@@ -194,6 +217,10 @@ class CategoriesForm extends React.Component {
     }
 
     DeleteTmpFile = () => {
+
+      console.log(this.state.fileList[0]);
+      
+
       const url = this.props.optionapp[0].serverUrl + "/DeleteTmpFile.php"; // удаление
       fetch(url,
         {
@@ -233,7 +260,7 @@ class CategoriesForm extends React.Component {
 
         return (
           <div>
-            { this.props.param ? (       
+            { this.props.type === "1" ? (       
             <div style={{ 
               margin: "15px 0", 
               padding: "15px 0", 
@@ -257,7 +284,7 @@ class CategoriesForm extends React.Component {
               label="Активность"
             >
               {getFieldDecorator('enShow', { 
-                initialValue: this.props.param  ? (this.props.categories.find(x => x.idCategories ===  this.props.param).enShow === "true" ) : true,
+                initialValue: this.props.type !== "0"  ? this.props.param.enShow === "true" : true,
                 valuePropName: 'checked'
               })(
                 <Switch />
@@ -271,8 +298,7 @@ class CategoriesForm extends React.Component {
             >
               {getFieldDecorator('chName', {
                 rules: [{ required: true, message: 'Введите имя категории' }],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chName : 
-                  this.props.copyrecord.length !== 0 ? this.props.copyrecord.chName + " - Копия" : ""
+                initialValue: this.props.type !== "0" ? this.props.param.chName + `${this.props.type === "2" ? " - Копия" : "" }` : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя категории" />
               )}
@@ -285,8 +311,7 @@ class CategoriesForm extends React.Component {
             >
               {getFieldDecorator('chNamePrint', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chNamePrint :  
-                  this.props.copyrecord.length !== 0 ? this.props.copyrecord.chNamePrint : ""
+                initialValue: this.props.type !== "0" ? this.props.param.chNamePrint : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
               )}
@@ -335,6 +360,7 @@ export default connect (
   state => ({
       categories: state.categories,
       optionapp: state.optionapp,
+      owner: state.owner,
   }),
   dispatch => ({
     onAdd: (categoryData) => {
