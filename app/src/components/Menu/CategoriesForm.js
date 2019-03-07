@@ -57,8 +57,9 @@ class CategoriesForm extends React.Component {
                   chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
                   tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
+                  chMainImage: this.props.param.chMainImage,
                 }));
-              
+             
 
               fetch(url, {
                 method: 'POST',
@@ -73,7 +74,8 @@ class CategoriesForm extends React.Component {
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
-                  tmpFileName: this.state.fileList.length ? this.state.fileList[0].name : "",
+                  tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
+                  chMainImage: this.props.param.chMainImage,
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 
@@ -88,13 +90,14 @@ class CategoriesForm extends React.Component {
                       chName: values.chName,
                       chNamePrint: values.chNamePrint,
                       enShow: values.enShow ? "true" : "false",
+                      chMainImage: "", 
                     }
                   }
 
                   if (responseJsonFromServer.tmpFileName.length) {
                     val = {
-                      ...val,
                       dataload: { 
+                        ...val.dataload,
                         chMainImage: responseJsonFromServer.tmpFileName, 
                       }
                     }
@@ -239,9 +242,16 @@ class CategoriesForm extends React.Component {
     }
 
     DeleteTmpFile = () => {
+      console.log("this.state.fileList[0] = ", this.state.fileList[0]);
+      console.log("this.state.tmpFileName = ", this.state.tmpFileName);
+      
+      if (typeof this.state.fileList[0] !== 'undefined' && typeof this.state.fileList[0].response !== 'undefined')
+        console.log("this.state.fileList[0].response = ", this.state.fileList[0].response);
+      else
+        console.log("this.state.fileList[0].response = ", "error");
+      
 
-
-      if (typeof this.state.fileList[0] !== 'undefined') {
+      if (typeof this.state.fileList[0] !== 'undefined' && typeof this.state.fileList[0].response !== 'undefined') {
         const url = this.props.optionapp[0].serverUrl + "/DeleteTmpFile.php"; // удаление
         fetch(url,
           {
