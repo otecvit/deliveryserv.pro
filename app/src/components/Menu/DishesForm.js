@@ -90,6 +90,28 @@ class EditableCell extends Component {
                         required: true,
                         message: `${title} обязательно.`,
                       }],
+                      getValueFromEvent: ({currentTarget: {value}}) => {
+                        switch (dataIndex) {
+                          case 'chName': return value;
+                          case 'iSort': {
+                            const convertedValue = Number(value);
+                            if (isNaN(convertedValue)) {
+                              return Number(form.getFieldValue('iSort'));
+                            } else {
+                              return convertedValue;
+                            }
+                          }
+                          case 'chPriceChange': {
+                            const re = /^(\d{0,7}\.\d{0,2}|\d{0,7}|\.\d{0,2})$/;
+                            if (re.test(value)) {
+                              return value;
+                            } else {
+                              return Number(form.getFieldValue('chPriceChange'));
+                            }
+                          }
+                        }
+                        
+                     },
                       initialValue: record[dataIndex],
                     })(
                       <Input
@@ -127,26 +149,30 @@ class DishesForm extends React.Component {
           dataIndex: 'chName',
           width: '25%',
           editable: true,
-        }, {
+         }, {
           title: 'Сортировка',
           dataIndex: 'iSort',
           width: '25%',
           editable: true,
+          render: (text) => <div style={{textAlign: 'center'}}>{text}</div>
         }, {
           title: 'Изменение цены',
           dataIndex: 'chPriceChange',
           width: '25%',
           editable: true,
-        }, {
+          render: (text) => <div style={{textAlign: 'center'}}>{text}</div>
+          }, {
           title: 'Действие',
           dataIndex: 'operation',
           render: (text, record) => {
             return (
               this.state.dataSource.length >= 1
                 ? (
-                  <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record.key)}>
-                    <a href="javascript:;">Delete</a>
+                  <div style={{textAlign: 'center'}}>
+                  <Popconfirm title="Удалить опцию?" onConfirm={() => this.handleDelete(record.key)}>
+                    <a href="javascript:;">Удалить</a>
                   </Popconfirm>
+                  </div>
                 ) : null
             );
           },
@@ -596,7 +622,7 @@ class DishesForm extends React.Component {
                 rules: [{ }],
                 initialValue: this.props.type !== "0" ? this.props.param.chNamePrint : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" maxLength="100" />
               )}
             </FormItem>
             <FormItem
@@ -619,30 +645,21 @@ class DishesForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chPrice', {
-
                 rules: [{ required: true, message: 'Введите стоимость товара' }],
-                getValueFromEvent: (e) => {
-                  
-                  
-                  //const convertedValue = Number(e.currentTarget.value);
-                  const convertedValue = e.currentTarget.value.replace(/[^.\d]/g, '');
-                  
-                  return convertedValue;
-                  /*
-                  const convertedValue = Number(e.currentTarget.value);
-                  
-                  if (isNaN(convertedValue)) {
-                    return Number(this.props.form.getFieldValue("chPrice"));
-                  } else {
+                getValueFromEvent: ({currentTarget: {value}}) => {
+                  const convertedValue = value;
+                  const re = /^(\d{0,7}\.\d{0,2}|\d{0,7}|\.\d{0,2})$/;
+                  if (re.test(convertedValue)) {
                     return convertedValue;
+                  } else {
+                    return Number(this.props.form.getFieldValue("chPrice"));
                   }
-                  */
                 },
                 initialValue: this.props.type !== "0" ? this.props.param.chPrice : ""
               })(
                 <Input 
                   prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} 
-                  placeholder="Цена" maxLength="9"/>
+                  placeholder="Цена" maxLength="10"/>
               )}
             </FormItem>
             <FormItem
@@ -652,10 +669,18 @@ class DishesForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chOldPrice', {
-                rules: [{ }],
+                getValueFromEvent: ({currentTarget: {value}}) => {
+                  const convertedValue = value;
+                  const re = /^(\d{0,7}\.\d{0,2}|\d{0,7}|\.\d{0,2})$/;
+                  if (re.test(convertedValue)) {
+                    return convertedValue;
+                  } else {
+                    return Number(this.props.form.getFieldValue("chOldPrice"));
+                  }
+                },
                 initialValue: this.props.type !== "0" ? this.props.param.chOldPrice : ""
               })(
-                <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Старая цена" />
+                <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Старая цена"  maxLength="10"/>
               )}
             </FormItem>
             <FormItem
@@ -668,7 +693,7 @@ class DishesForm extends React.Component {
                 rules: [{ }],
                 initialValue: this.props.type !== "0" ? this.props.param.chDescription : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Описание" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Описание"  maxLength="200"/>
               )}
             </FormItem>
             <FormItem 
@@ -748,7 +773,7 @@ class DishesForm extends React.Component {
             </FormItem>
             <div>
                 <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
-                Добавить ингридиент
+                Добавить опцию
                 </Button>
                 <Table
                 components={components}
