@@ -7,7 +7,7 @@ const generateKey = (pre) => {
   return `${ new Date().getTime() }`;
 }
 
-class CategoriesForm extends React.Component {
+class CategoriesForm extends Component {
 
     constructor(props) {
       super(props);
@@ -35,9 +35,6 @@ class CategoriesForm extends React.Component {
     }
 
     handleChange = ({ fileList }) => {
-      console.log('====================================');
-      console.log(fileList);
-      console.log('====================================');
       this.setState({ fileList })
     }
 
@@ -49,18 +46,6 @@ class CategoriesForm extends React.Component {
             var val = {};
             if (this.props.type === '1') {
               const url = this.props.optionapp[0].serverUrl + "/EditCategories.php"; // изменяем категорию
-
-              console.log(JSON.stringify(
-                {
-                  idCategories: this.props.param.idCategories,
-                  chName: values.chName,
-                  chNamePrint: values.chNamePrint,
-                  enShow: values.enShow ? "1" : "0",
-                  tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
-                  chMainImage: this.props.param.chMainImage,
-                }));
-             
-
               fetch(url, {
                 method: 'POST',
                 headers: 
@@ -78,10 +63,6 @@ class CategoriesForm extends React.Component {
                   chMainImage: this.props.param.chMainImage,
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
-                
-                
-                console.log(responseJsonFromServer);
-
                 if (responseJsonFromServer.status) {
                   val = {
                     dataload: { 
@@ -102,8 +83,6 @@ class CategoriesForm extends React.Component {
                       }
                     }
                   }
-
-                  console.log(val);
 
                   this.props.onEdit(val);  // вызываем action
                   message.success('Категория изменена');
@@ -242,15 +221,6 @@ class CategoriesForm extends React.Component {
     }
 
     DeleteTmpFile = () => {
-      console.log("this.state.fileList[0] = ", this.state.fileList[0]);
-      console.log("this.state.tmpFileName = ", this.state.tmpFileName);
-      
-      if (typeof this.state.fileList[0] !== 'undefined' && typeof this.state.fileList[0].response !== 'undefined')
-        console.log("this.state.fileList[0].response = ", this.state.fileList[0].response);
-      else
-        console.log("this.state.fileList[0].response = ", "error");
-      
-
       if (typeof this.state.fileList[0] !== 'undefined' && typeof this.state.fileList[0].response !== 'undefined') {
         const url = this.props.optionapp[0].serverUrl + "/DeleteTmpFile.php"; // удаление
         fetch(url,
@@ -332,7 +302,7 @@ class CategoriesForm extends React.Component {
                 rules: [{ required: true, message: 'Введите имя категории' }],
                 initialValue: this.props.type !== "0" ? this.props.param.chName + `${this.props.type === "2" ? " - Копия" : "" }` : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя категории" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя категории" maxLength="100"/>
               )}
             </FormItem>
             <FormItem
@@ -345,7 +315,7 @@ class CategoriesForm extends React.Component {
                 rules: [{ }],
                 initialValue: this.props.type !== "0" ? this.props.param.chNamePrint : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" maxLength="100"/>
               )}
             </FormItem>
             <FormItem

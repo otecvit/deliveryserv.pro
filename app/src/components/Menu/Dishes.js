@@ -1,8 +1,10 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
 
 import DishesForm from './DishesForm';
+import HeaderSection from '../../items/HeaderSection'
+import ViewDetailDescription from '../../items/ViewDetailDescription'
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -22,8 +24,8 @@ class Dishes extends Component {
         this.state = {
           searchString: '',
           activeKey: "1",
-          currentEditOptionSets: "0",
-          currentRecord: [],
+          statusJobRecord: "0", // 0 - создание, 1 - редактирование, 2 - копирование
+          currentEditRecord: {},
           filtered: false,
           dataSource: {},
           flLoading: true, // спиннер загрузки
@@ -31,34 +33,92 @@ class Dishes extends Component {
     }
 
     handleMenuClick = (e, record) => {
+        var _this = this; // делаем ссылку на объект
         switch (e.key) {
-            case "0": this.editCategory(record); break; //Редактировать
-            case "1": this.copyDishes(record); break; //Копировать
-            case "2": this.DeleteCategory(record); break; 
-            default: this.setState({activeKey: "1"});    
+            case "0": this.edit(record); break; //Редактировать
+            case "1": this.copy(record); break; //Копировать
+            case "2": this.delete(record, this.props.optionapp[0].serverUrl, _this); break;  // передаеи путь на сервере и ссылку на объект
+            default: this.setState({
+                activeKey: "1",
+                statusJobRecord: "0"
+            });    
         }        
     }
 
-    copyDishes = (e) => {
+    edit = ({record}) => {
+        this.setState({
+            activeKey: "3",
+            statusJobRecord: "1",
+            currentEditRecord: record,
+        });
+    }
+
+    copy = ({record}) => {
         // открываем вкладку копирования
         this.setState({
             activeKey: "2",
-            currentRecord: e.record,
+            statusJobRecord: "2",
+            currentEditRecord: record,
         });
+    }
+
+
+    delete = ({record: {idDishes, chMainImage}}, path, _this) => {
+        confirm({
+            title: 'Вы действительно хотите удалить товар?',
+            okText: 'Да',
+            okType: 'danger',
+            cancelText: 'Нет',
+            onOk() {
+                const url = path + "/DeleteProducts.php"; // удаление
+                fetch(url,
+                {
+                    method: 'POST',
+                    headers: 
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                    {
+                        idDishes: idDishes,
+                        tmpFileName: chMainImage.length ? chMainImage.replace(/^.*(\\|\/|\:)/, '') : "",
+                    })
+                }).then((response) => response.json()).then((responseJsonFromServer) =>
+                {
+                    var val = {
+                        idDishes: idDishes
+                    }
+                    _this.props.onDelete(val);  // вызываем action
+                }).catch((error) =>
+                {
+                    console.error(error);
+                });
+            },
+          });
     }
 
     componentDidMount() {
         this.loadingData();
-        
     }
 
     loadingData = () => {
-
         const url = this.props.optionapp[0].serverUrl + "/SelectProducts.php";
         this.setState({
             flLoading: true,
         })
-        fetch(url)
+        fetch(url, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
         .then((response) => response.json())
         .then((responseJson) => {
             this.props.onAdd(responseJson.dishes);
@@ -75,7 +135,18 @@ class Dishes extends Component {
         this.setState({
             flLoading: true,
         })
-        fetch(urlCategories)
+        fetch(urlCategories, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
         .then((response) => response.json())
         .then((responseJson) => {
             this.props.onAddCategories(responseJson.categories);
@@ -91,7 +162,18 @@ class Dishes extends Component {
         this.setState({
             flLoading: true,
         })
-        fetch(urlOptionSets)
+        fetch(urlOptionSets, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
         .then((response) => response.json())
         .then((responseJson) => {
             this.props.onAddOptionSets(responseJson.optionsets);
@@ -105,32 +187,19 @@ class Dishes extends Component {
 
     }
 
-    editCategory = (e) => {
-        this.setState({
-            activeKey: "3",
-            currentEditOptionSets: e.record.idDishes,
-        });
-
-    }
-
-    DeleteCategory = (e) => {
-        var val = {
-            idDishes: e.record.idDishes,
-        }
-        this.props.onDeleteCategory(val);  // вызываем action
-               
-    }
-
     emitEmpty = () => {
-        this.searchStringInput.focus();
-        this.setState({ searchString: '' });
+        this.searchStringInput.focus(); //
+        this.setState({ 
+            searchString: '' , // удаляем поисковый запрос
+            filtered: false, // сброс фильтрации
+        });
     }
 
     handler = () => {
         this.setState({
-            currentEditOptionSets: "0",
+            currentEditRecord: {},
+            statusJobRecord: "0",
         });
-        
       }
     
 
@@ -164,11 +233,13 @@ class Dishes extends Component {
 
     onChange = (activeKey) => {
         this.setState({ activeKey });
+        this.setState({
+            currentEditRecord: {},
+            statusJobRecord: "0",
+        }); 
     }
 
     createDropdownMenu = (record) => {
-
-        //console.log(record);
         const menu = (
             <Menu onClick={e => this.handleMenuClick(e, record)}>
               <Menu.Item key="0">Редактировать</Menu.Item>
@@ -180,15 +251,16 @@ class Dishes extends Component {
         return menu;
     }
 
-    onChangeDishes = (e) => {
+    onChangeEditRecord = (e) => {
         this.setState ({ 
-            currentEditOptionSets: e.key
+            currentEditRecord: this.props.dishes.find(x => x.idDishes === e.key),
+            statusJobRecord: "1",
         });
     }
     
     render() {
 
-        const { searchString, currentEditOptionSets, dataSource, flLoading } = this.state;
+        const { searchString, currentEditRecord, statusJobRecord, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
@@ -212,12 +284,8 @@ class Dishes extends Component {
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
           });
 
-        return (<div>
-            <Content style={{ background: '#fff'}}>
-                <div style={{ padding: 10 }}>
-                    <div className="title-section"><IconFont type="icon-cutlery" style={{ fontSize: '20px', marginRight: "10px"}}/>Товары</div>
-                </div>
-            </Content>
+        return (<Fragment>
+            <HeaderSection title="Товары" icon="icon-cutlery" />
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
                 <Tabs 
@@ -235,50 +303,12 @@ class Dishes extends Component {
                         />    
                         <Table
                             columns={columns}
-                            expandedRowRender={record => 
-                                <div className="d-table">
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Активность</div>
-                                        <div className="d-td content-detail">{record.enShow === "true" ? "Да" : "Нет"}</div>
-                                    </div>                                    
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Категория</div>
-                                        <div className="d-td content-detail">{this.props.categories.find(x => x.idCategories ===  record.iCategories).chName}</div>
-                                    </div>
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Отображаемое имя</div>
-                                        <div className="d-td content-detail">{record.chNamePrint}</div>
-                                    </div>
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Подзаголовок</div>
-                                        <div className="d-td content-detail">{record.chSubtitle}</div>
-                                    </div>
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Цена</div>
-                                        <div className="d-td content-detail">{record.chPrice}</div>
-                                    </div>
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Старая цена</div>
-                                        <div className="d-td content-detail">{record.chOldPrice}</div>
-                                    </div>
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Описание</div>
-                                        <div className="d-td content-detail">{record.chDescription}</div>
-                                    </div>
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Набор</div>
-                                        <div className="d-td content-detail">{record.chOptionSets !== "0" ? this.props.optionsets.find(x => x.idOptionSets ===  record.chOptionSets).chName : ""}</div>
-                                    </div>
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Тэги</div>
-                                        <div className="d-td content-detail"></div>
-                                    </div>
-                                    <div className="d-tr">
-                                        <div className="d-td title-detail">Ингридиенты</div>
-                                        <div className="d-td content-detail">{record.ingredients.map((item, index) => <div key={index}>{item.chName}</div>)}</div>
-                                    </div>
-                                </div>
-                                }
+                            expandedRowRender={({enShow, chNamePrint}) => 
+                            <Fragment>
+                                <ViewDetailDescription title="Активность" value={enShow === 'true' ? "Да" : "Нет"} />
+                                <ViewDetailDescription title="Отображаемое имя" value={chNamePrint} />
+                            </Fragment>
+                            }
                             dataSource={!this.state.filtered ? this.props.dishes : dataSource}
                             size="small"  
                             pagination={false}
@@ -288,7 +318,7 @@ class Dishes extends Component {
                         />            
                     </TabPane>
                     <TabPane tab="Создать" key="2">
-                        <DishesForm copyrecord={this.state.currentRecord}/>
+                        <DishesForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/>
                     </TabPane>
                     <TabPane tab="Редактировать" key="3">
                         <Select
@@ -297,17 +327,17 @@ class Dishes extends Component {
                         onChange={this.onChangeDishes}
                         style={{ width: "100%" }}
                         labelInValue 
-                        value={{ key: currentEditOptionSets }}
+                        value={{ key: typeof currentEditRecord.idDishes !== "undefined" ? currentEditRecord.idDishes : "0" }}
                         >
                         <Option key="0">Выберите блюдо для редактирования</Option>
                         {options}
                     </Select>
-                    { currentEditOptionSets === "0" ? null : <DishesForm handler = {this.handler} param={currentEditOptionSets} /> }
+                    { statusJobRecord === "1" ? <DishesForm  handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/> : null }
                     </TabPane>
                  </Tabs>
                 </div>
             </Content>
-            </div>);        
+            </Fragment>);        
     }
 }
 
@@ -317,6 +347,7 @@ export default connect (
         categories: state.categories,
         optionsets: state.optionSets,
         optionapp: state.optionapp,
+        owner: state.owner,
     }),
     dispatch => ({
         onAdd: (data) => {

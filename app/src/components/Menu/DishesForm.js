@@ -20,8 +20,6 @@ const EditableRow = ({ form, index, ...props }) => (
 const EditableFormRow = Form.create()(EditableRow);
 
 class EditableCell extends Component {
-
-  
   state = {
     editing: false,
   }
@@ -157,16 +155,11 @@ class DishesForm extends React.Component {
         
     
         this.state = {
-          dataSource: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).ingredients : 
-            this.props.copyrecord.length !== 0 ? this.props.copyrecord.ingredients : [],
-          count: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).ingredients.length + 1 : 
-            this.props.copyrecord.length !== 0 ? this.props.copyrecord.ingredients.length + 1 : 0,
-          iCategories: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).iCategories : 
-            this.props.copyrecord.length !== 0 ? this.props.copyrecord.iCategories : '',
-          chOptionSets: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chOptionSets : 
-            this.props.copyrecord.length !== 0 ? this.props.copyrecord.chOptionSets : [],
-          chTags: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chTags : 
-            this.props.copyrecord.length !== 0 ? this.props.copyrecord.chTags : [],
+          dataSource: this.props.type !== "0" ? this.props.param.ingredients : [],
+          count: this.props.type !== "0" ? this.props.param.ingredients.length + 1 : 0,
+          iCategories: this.props.type !== "0" ? this.props.param.iCategories : '',
+          chOptionSets: this.props.type !== "0" ? this.props.param.chOptionSets : [],
+          chTags: this.props.type !== "0" ? this.props.param.chTags : [],
           arrTags: [
             {key: "1", chName: "Острая"},
             {key: "2", chName: "Веган"},
@@ -175,11 +168,11 @@ class DishesForm extends React.Component {
           previewVisible: false,
           previewImage: '',
           tmpFileName: generateKey(),
-          fileList: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chMainImage.length ? [{
+          fileList: this.props.type === "1" ? this.props.param.chMainImage.length ? [{
             uid: '-1',
-            name: this.props.dishes.find(x => x.idDishes ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
+            name: this.props.param.chMainImage.replace(/^.*(\\|\/|\:)/, ''),
             status: 'done',
-            url: this.props.dishes.find(x => x.idDishes ===  this.props.param).chMainImage,
+            url: this.props.param.chMainImage,
             
           }] : [] : [],
         };
@@ -379,7 +372,7 @@ class DishesForm extends React.Component {
         });
       }
 
-      DeleteDishes = () => {
+      delete = () => {
         const url = this.props.optionapp[0].serverUrl + "/DeleteProducts.php"; // удаление
         fetch(url,
           {
@@ -404,7 +397,7 @@ class DishesForm extends React.Component {
           {
               console.error(error);
           });
-          message.success('Товар удалена'); 
+          message.success('Товар удален'); 
           this.props.handler();
     }
 
@@ -440,6 +433,7 @@ class DishesForm extends React.Component {
 
     componentWillReceiveProps(nextProps) {
 
+      /*
       if ((nextProps.copyrecord !== this.props.copyrecord)&&(nextProps.copyrecord.length !== 0)) {
         this.setState(
           { 
@@ -481,6 +475,7 @@ class DishesForm extends React.Component {
             }] : [],
           })
       }
+      */
     }
 
     DeleteTmpFile = () => {
@@ -548,7 +543,7 @@ class DishesForm extends React.Component {
         
         return (
           <div>
-            { this.props.param ? (       
+            { this.props.type === "1" ? (       
             <div style={{ 
               margin: "15px 0", 
               padding: "15px 0", 
@@ -560,7 +555,7 @@ class DishesForm extends React.Component {
               borderBottomColor: "#cecece",
                }}>
                <h4>Удалить товар</h4>
-               <Popconfirm title="Удалить товар?" onConfirm={() => this.DeleteDishes()} okText="Да" cancelText="Нет">
+               <Popconfirm title="Удалить товар?" onConfirm={() => this.delete()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>
@@ -572,7 +567,7 @@ class DishesForm extends React.Component {
               label="Активность"
             >
               {getFieldDecorator('enShow', { 
-                initialValue: this.props.param ? (this.props.dishes.find(x => x.idDishes ===  this.props.param).enShow === "true" ) : true,
+                initialValue: this.props.type !== "0"  ? this.props.param.enShow === "true" : true,
                 valuePropName: 'checked'
               })(
                 <Switch/>
@@ -586,10 +581,9 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chName', {
                 rules: [{ required: true, message: 'Введите наименование товара' }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chName : 
-                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chName + " - Копия" : ""
+                initialValue: this.props.type !== "0" ? this.props.param.chName + `${this.props.type === "2" ? " - Копия" : "" }` : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Наименование товара" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Наименование товара" maxLength="100"/>
               )}
             </FormItem>
             <FormItem
@@ -600,8 +594,7 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chNamePrint', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chNamePrint : 
-                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chNamePrint : ""
+                initialValue: this.props.type !== "0" ? this.props.param.chNamePrint : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
               )}
@@ -614,8 +607,7 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chSubtitle', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chSubtitle : 
-                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chSubtitle : ""
+                initialValue: this.props.type !== "0" ? this.props.param.chSubtitle : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Подзаголовок" />
               )}
@@ -627,11 +619,30 @@ class DishesForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chPrice', {
+
                 rules: [{ required: true, message: 'Введите стоимость товара' }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chPrice : 
-                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chPrice : ""
+                getValueFromEvent: (e) => {
+                  
+                  
+                  //const convertedValue = Number(e.currentTarget.value);
+                  const convertedValue = e.currentTarget.value.replace(/[^.\d]/g, '');
+                  
+                  return convertedValue;
+                  /*
+                  const convertedValue = Number(e.currentTarget.value);
+                  
+                  if (isNaN(convertedValue)) {
+                    return Number(this.props.form.getFieldValue("chPrice"));
+                  } else {
+                    return convertedValue;
+                  }
+                  */
+                },
+                initialValue: this.props.type !== "0" ? this.props.param.chPrice : ""
               })(
-                <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Цена" />
+                <Input 
+                  prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} 
+                  placeholder="Цена" maxLength="9"/>
               )}
             </FormItem>
             <FormItem
@@ -642,8 +653,7 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chOldPrice', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chOldPrice : 
-                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chOldPrice : ""
+                initialValue: this.props.type !== "0" ? this.props.param.chOldPrice : ""
               })(
                 <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Старая цена" />
               )}
@@ -656,8 +666,7 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('chDescription', {
                 rules: [{ }],
-                initialValue: this.props.param ? this.props.dishes.find(x => x.idDishes ===  this.props.param).chDescription : 
-                  this.props.copyrecord.length !== 0  ? this.props.copyrecord.chDescription : ""
+                initialValue: this.props.type !== "0" ? this.props.param.chDescription : ""
               })(
                 <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Описание" />
               )}
@@ -717,8 +726,7 @@ class DishesForm extends React.Component {
             >
               <div className="dropbox">
                 {getFieldDecorator('chMainImage', {
-                  /*valuePropName: 'fileList',
-                  getValueFromEvent: this.normFile,*/
+
                 })(
                   <div>
                   <Upload
