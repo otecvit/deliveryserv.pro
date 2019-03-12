@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Popconfirm, Table, message, Switch, Select, Upload, Modal } from 'antd';
+import { Form, Icon, Input, Button, Popconfirm, Table, message, Switch, Select, Upload, Modal, Tooltip } from 'antd';
 import { connect } from 'react-redux';
 
 const FormItem = Form.Item;
@@ -147,7 +147,7 @@ class DishesForm extends React.Component {
         this.columns = [{
           title: 'Наименивание',
           dataIndex: 'chName',
-          width: '25%',
+          width: '30%',
           editable: true,
          }, {
           title: 'Сортировка',
@@ -282,7 +282,6 @@ class DishesForm extends React.Component {
                   enShow: values.enShow ? "1" : "0",
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
-                  chSubtitle: values.chSubtitle,
                   chPrice: values.chPrice,
                   chOldPrice: values.chOldPrice,
                   chDescription: values.chDescription,
@@ -300,7 +299,6 @@ class DishesForm extends React.Component {
                     enShow: values.enShow.toString(),
                     chName: values.chName,
                     chNamePrint: values.chNamePrint,
-                    chSubtitle: values.chSubtitle,
                     chPrice: values.chPrice,
                     chOldPrice: values.chOldPrice,
                     chDescription: values.chDescription,
@@ -334,7 +332,6 @@ class DishesForm extends React.Component {
                   enShow: values.enShow ? "1" : "0",
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
-                  chSubtitle: values.chSubtitle,
                   chPrice: values.chPrice,
                   chOldPrice: values.chOldPrice,
                   chDescription: values.chDescription,
@@ -352,7 +349,6 @@ class DishesForm extends React.Component {
                     enShow: values.enShow.toString(),
                     chName: values.chName,
                     chNamePrint: values.chNamePrint,
-                    chSubtitle: values.chSubtitle,
                     chPrice: values.chPrice,
                     chOldPrice: values.chOldPrice,
                     chDescription: values.chDescription,
@@ -381,7 +377,6 @@ class DishesForm extends React.Component {
                   'enShow': true,
                   'chName': "",
                   'chNamePrint': "",
-                  'chSubtitle': "",
                   'chPrice': "",
                   'chOldPrice': "",
                   'chDescription': "",
@@ -459,6 +454,54 @@ class DishesForm extends React.Component {
 
     componentWillReceiveProps(nextProps) {
 
+      if(nextProps.param !== this.props.param) {
+
+        this.DeleteTmpFile(); // удаляем временный файл
+
+        /// создание, всё чистим
+        if (nextProps.type === "0") {
+          this.props.form.setFieldsValue({
+            'enShow': true,
+            'chName': '',
+            'chNamePrint': '',
+            'chPrice': '',
+            'chOldPrice': '',
+            'chDescription': '',
+            'iCategories': '',
+          });
+
+        
+          this.setState({
+            dataSource: [],
+            count: 0,
+            iCategories: '',
+            chOptionSets: [],
+            chTags: [],
+            tmpFileName: generateKey(),
+            fileList: [],
+          });
+        }
+
+        if (nextProps.type === "2" || nextProps.type === "1") {
+          this.props.form.setFieldsValue({
+            'enShow': nextProps.param.enShow === "true",
+            'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
+            'chNamePrint': nextProps.param.chNamePrint,
+          });
+
+          this.setState({
+            tmpFileName: generateKey(),
+            fileList: nextProps.param.chMainImage.length && nextProps.type !== "2" ? [{
+              uid: '-1',
+              name: nextProps.param.chMainImage.replace(/^.*(\\|\/|\:)/, ''),
+              status: 'done',
+              url: nextProps.param.chMainImage,
+              }] : []
+          });
+        }
+      
+      }
+
       /*
       if ((nextProps.copyrecord !== this.props.copyrecord)&&(nextProps.copyrecord.length !== 0)) {
         this.setState(
@@ -480,7 +523,6 @@ class DishesForm extends React.Component {
           'enShow': this.props.dishes.find(x => x.idDishes ===  nextProps.param).enShow === "true",
           'chName': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chName,
           'chNamePrint': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chNamePrint,
-          'chSubtitle': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chSubtitle,
           'chPrice': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chPrice,
           'chOldPrice': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chOldPrice,
           'chDescription': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chDescription,
@@ -505,27 +547,28 @@ class DishesForm extends React.Component {
     }
 
     DeleteTmpFile = () => {
-      const url = this.props.optionapp[0].serverUrl + "/DeleteTmpFile.php"; // удаление
+      if (typeof this.state.fileList[0] !== 'undefined' && typeof this.state.fileList[0].response !== 'undefined') {
+        const url = this.props.optionapp[0].serverUrl + "/DeleteTmpFile.php"; // удаление
+        fetch(url,
+          {
+              method: 'POST',
+              headers: 
+              {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(
+              {
+                tmpFileName: this.state.tmpFileName + this.state.fileList[0].response,
+            })
+          }).then((response) => response.json()).then((responseJsonFromServer) =>
 
-      fetch(url,
-        {
-            method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-            {
-              tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
-           })
-        }).then((response) => response.json()).then((responseJsonFromServer) =>
-        {
-          //console.log(responseJsonFromServer);
-        }).catch((error) =>
-        {
-          //console.error(error);
-        });
+          {
+          }).catch((error) =>
+          {
+            console.error(error);
+          });
+        }
     }
 
     render() {
@@ -600,7 +643,14 @@ class DishesForm extends React.Component {
               )}
             </FormItem>
             <FormItem
-              label="Имя"
+              label={
+                <span>
+                    Имя&nbsp;
+                    <Tooltip title="Имя товара">
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }
               abelCol={{ span: labelColSpan }}
               style={{ marginBottom: 10 }}
               hasFeedback
@@ -613,7 +663,14 @@ class DishesForm extends React.Component {
               )}
             </FormItem>
             <FormItem
-              label="Отображаемое имя"  
+              label={
+                  <span>
+                      Отображаемое имя&nbsp;
+                      <Tooltip title='При необходимости укажите имя, которое будет отображаться клиенту в приложении. Если поле пустое, то используется значение из поля "Имя".'>
+                          <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                      </Tooltip>
+                  </span>
+              }
               abelCol={{ span: labelColSpan }}
               style={{ marginBottom: 10 }}
               hasFeedback
@@ -626,26 +683,20 @@ class DishesForm extends React.Component {
               )}
             </FormItem>
             <FormItem
-              label="Подзаголовок"  
-              abelCol={{ span: labelColSpan }}
-              style={{ marginBottom: 10 }}
-              hasFeedback
-            >
-              {getFieldDecorator('chSubtitle', {
-                rules: [{ }],
-                initialValue: this.props.type !== "0" ? this.props.param.chSubtitle : ""
-              })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Подзаголовок" />
-              )}
-            </FormItem>
-            <FormItem
-              label="Цена"  
+              label={
+                <span>
+                    Цена&nbsp;
+                    <Tooltip title='Цена товара. В качестве разделителя используется "."'>
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }
               abelCol={{ span: labelColSpan }}
               style={{ marginBottom: 10 }}
               hasFeedback
             >
               {getFieldDecorator('chPrice', {
-                rules: [{ required: true, message: 'Введите стоимость товара' }],
+                rules: [{ required: true, message: 'Введите цену товара' }],
                 getValueFromEvent: ({currentTarget: {value}}) => {
                   const convertedValue = value;
                   const re = /^(\d{0,7}\.\d{0,2}|\d{0,7}|\.\d{0,2})$/;
@@ -663,7 +714,14 @@ class DishesForm extends React.Component {
               )}
             </FormItem>
             <FormItem
-              label="Старая цена"  
+              label={
+                <span>
+                    Старая цена&nbsp;
+                    <Tooltip title='Старая цена товара, будет показана в приложении зачеркнутой. В качестве разделителя используется "."'>
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              } 
               abelCol={{ span: labelColSpan }}
               style={{ marginBottom: 10 }}
               hasFeedback
@@ -684,7 +742,14 @@ class DishesForm extends React.Component {
               )}
             </FormItem>
             <FormItem
-              label="Описание"  
+              label={
+                <span>
+                    Описание&nbsp;
+                    <Tooltip title='Описание товара. До 200 символов.'>
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }
               abelCol={{ span: labelColSpan }}
               style={{ marginBottom: 10 }}
               hasFeedback
@@ -697,7 +762,14 @@ class DishesForm extends React.Component {
               )}
             </FormItem>
             <FormItem 
-              label="Категория"
+              label={
+                <span>
+                    Категория&nbsp;
+                    <Tooltip title='Выберите категорию товара.'>
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }
                style={{ marginBottom: 10 }}
               hasFeedback
             >
@@ -715,7 +787,14 @@ class DishesForm extends React.Component {
               )}
             </FormItem>
             <FormItem 
-              label="Набор опций"
+              label={
+                <span>
+                    Набор&nbsp;
+                    <Tooltip title='Набор представляет собой разновидность товара с одной измененной характеристикой. Например: размер пиццы, объём воды и т.п. Набор создается в разделе "Наборы"'>
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }
                style={{ marginBottom: 10 }}
               hasFeedback
             >
@@ -731,7 +810,14 @@ class DishesForm extends React.Component {
               )}
             </FormItem>
             <FormItem 
-              label="Тэги"
+              label={
+                <span>
+                    Тэги&nbsp;
+                    <Tooltip title='Тэги товара. В приложении появятся соответствующие метки'>
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }
                style={{ marginBottom: 10 }}
               hasFeedback
             >
@@ -747,7 +833,14 @@ class DishesForm extends React.Component {
               )}
             </FormItem>
             <FormItem
-              label="Изображение"
+              label={
+                <span>
+                    Изображение&nbsp;
+                    <Tooltip title='Изображение товара. Рекомендуемый размер: '>
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }
             >
               <div className="dropbox">
                 {getFieldDecorator('chMainImage', {
@@ -771,6 +864,15 @@ class DishesForm extends React.Component {
                 )}
               </div>
             </FormItem>
+            <div className="ant-form-item-label">
+              <label><span>
+                      Опции&nbsp;
+                      <Tooltip title='Дополнительные опции товара. Например: двойной сыр, лента для букета и т.п. Укажите наименование, порядок сортировки и значение увеличения цены'>
+                          <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                      </Tooltip>
+                  </span>
+              </label>
+            </div>
             <div>
                 <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
                 Добавить опцию
