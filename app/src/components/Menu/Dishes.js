@@ -324,7 +324,7 @@ class Dishes extends Component {
                         <Select
                         showSearch
                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                        onChange={this.onChangeDishes}
+                        onChange={this.onChangeEditRecord}
                         style={{ width: "100%" }}
                         labelInValue 
                         value={{ key: typeof currentEditRecord.idDishes !== "undefined" ? currentEditRecord.idDishes : "0" }}

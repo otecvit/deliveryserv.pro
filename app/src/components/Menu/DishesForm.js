@@ -266,7 +266,7 @@ class DishesForm extends React.Component {
 
           if (!err) {
             var val = {};
-            if (this.props.param) {
+            if (this.props.type === '1') {
 
               const url = this.props.optionapp[0].serverUrl + "/EditProducts.php"; // изменяем категорию
               fetch(url, {
@@ -282,8 +282,8 @@ class DishesForm extends React.Component {
                   enShow: values.enShow ? "1" : "0",
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
-                  chPrice: values.chPrice,
-                  chOldPrice: values.chOldPrice,
+                  chPrice: Number(values.chPrice).toFixed(2),
+                  chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
                   chDescription: values.chDescription,
                   iCategories: this.state.iCategories,
                   chOptionSets: values.chOptionSets,
@@ -299,8 +299,8 @@ class DishesForm extends React.Component {
                     enShow: values.enShow.toString(),
                     chName: values.chName,
                     chNamePrint: values.chNamePrint,
-                    chPrice: values.chPrice,
-                    chOldPrice: values.chOldPrice,
+                    chPrice: Number(values.chPrice).toFixed(2),
+                    chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
                     chDescription: values.chDescription,
                     iCategories: this.state.iCategories,
                     chOptionSets: values.chOptionSets,
@@ -329,11 +329,12 @@ class DishesForm extends React.Component {
                 },
                 body: JSON.stringify(
                 {
+                  chUID: this.props.owner.chUID,
                   enShow: values.enShow ? "1" : "0",
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
-                  chPrice: values.chPrice,
-                  chOldPrice: values.chOldPrice,
+                  chPrice: Number(values.chPrice).toFixed(2),
+                  chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
                   chDescription: values.chDescription,
                   iCategories: this.state.iCategories,
                   chOptionSets: values.chOptionSets,
@@ -349,8 +350,8 @@ class DishesForm extends React.Component {
                     enShow: values.enShow.toString(),
                     chName: values.chName,
                     chNamePrint: values.chNamePrint,
-                    chPrice: values.chPrice,
-                    chOldPrice: values.chOldPrice,
+                    chPrice: Number(values.chPrice).toFixed(2),
+                    chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
                     chDescription: values.chDescription,
                     iCategories: this.state.iCategories,
                     chOptionSets: values.chOptionSets,
@@ -468,6 +469,8 @@ class DishesForm extends React.Component {
             'chOldPrice': '',
             'chDescription': '',
             'iCategories': '',
+            'chOptionSets': '',
+            'chTags': [],
           });
 
         
@@ -836,7 +839,7 @@ class DishesForm extends React.Component {
               label={
                 <span>
                     Изображение&nbsp;
-                    <Tooltip title='Изображение товара. Рекомендуемый размер: '>
+                    <Tooltip title='Изображение товара. Рекомендуемый размер: 360x360 px'>
                         <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
                     </Tooltip>
                 </span>
@@ -907,6 +910,7 @@ export default connect (
   state => ({
       dishes: state.dishes,
       categories: state.categories,
+      owner: state.owner,
       optionSets: state.optionSets,
       optionapp: state.optionapp,
   }),
