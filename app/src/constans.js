@@ -8,6 +8,7 @@ export const arrPageAccess = [
     { keyName: "categories",        name: 'Меню - Категории',         value: true},
     { keyName: "dishes",            name: 'Меню - Товары',            value: true},
     { keyName: "option-sets",       name: 'Меню - Наборы',            value: true},
+    { keyName: "tags",              name: 'Меню - Тэги',              value: true},
     { keyName: "sorting",           name: 'Меню - Сортировка',        value: true},
     { keyName: "staff",             name: 'Сотрудники',               value: true},
     { keyName: "stock",             name: 'Маркетинг - Акции',        value: true},

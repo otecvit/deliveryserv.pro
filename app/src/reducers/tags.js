@@ -1,21 +1,21 @@
 const initialState = [];
 
 
-export default function categories (state = initialState, action) {
+export default function tags (state = initialState, action) {
     switch (action.type) {
-      case "LOAD_CATEGORIES_ALL":
+      case "LOAD_TAG_ALL":
         return action.payload; 
-      case "LOAD_CATEGORIES_SUCCESS":
+      case "LOAD_TAG_SUCCESS":
         return [
           ...state,
           action.payload
         ];  
-      case "ADD_CATEGORY":
+      case "ADD_TAG":
         return [
           ...state,
           action.payload.dataload
         ];   
-      case "EDIT_CATEGORY": 
+      case "EDIT_TAG": 
         // проходим по основному state
         const updatedRootItems = state.map(item => {
           if(item.idCategories === action.payload.dataload.idCategories){
@@ -26,7 +26,7 @@ export default function categories (state = initialState, action) {
     
         return updatedRootItems;
 
-        case "DELETE_CATEGORY": 
+        case "DELETE_TAG": 
           return state.filter(category => category.idCategories !== action.payload.idCategories );
       default:
         return state;

@@ -434,7 +434,7 @@ class DishesForm extends React.Component {
       this.setState({
         chOptionSets: value,
       })
-    }
+    } 
 
     onChangeTag = (value) => {
       this.setState({
@@ -586,9 +586,9 @@ class DishesForm extends React.Component {
             },
           };
 
-        const options = this.props.categories.map(d => <Option key={d.idCategories}>{d.chName}</Option>)
-        const children = this.state.arrTags.map(d => <Option key={d.key}>{d.chName}</Option>);
-        const childrenOptionSets = this.props.optionSets.map(d => <Option key={d.idOptionSets}>{d.chName}</Option>)
+        const options = this.props.categories.map(d => <Option key={d.idCategories} value={d.iCategories}>{d.chName}</Option>)
+        const children = this.state.arrTags.map(d => <Option key={d.key} value={d.key}>{d.chName}</Option>);
+        const childrenOptionSets = this.props.optionSets.map(d => <Option key={d.idOptionSets} value={d.idOptionSets}>{d.chName}</Option>)
 
         const uploadButton = (
           <div>
@@ -778,7 +778,7 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('iCategories', {
                 rules: [{ required: true, message: 'Выберите категорию' }],
-                initialValue: iCategories,
+                initialValue: this.props.categories.find(x => x.idCategories ===  iCategories).chName,
               })(
                 <Select
                   showSearch
@@ -802,7 +802,7 @@ class DishesForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chOptionSets', {
-                initialValue: chOptionSets,
+                initialValue: chOptionSets !== "0" ? this.props.optionSets.find(x => x.idOptionSets ===  chOptionSets).chName : "",
               })(
                 <Select
                   onChange={this.onChangeOptionSets}

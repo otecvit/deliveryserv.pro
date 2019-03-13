@@ -70,6 +70,7 @@ class SiderMenu extends Component {
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["categories"]) && <Menu.Item key="6"><Link to="categories">Категории</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["dishes"]) && <Menu.Item key="7"><Link to="dishes">Товары</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["option-sets"]) && <Menu.Item key="8"><Link to="option-sets">Наборы</Link></Menu.Item> }
+                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["tags"]) && <Menu.Item key="24"><Link to="tags">Теги</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["sorting"]) && <Menu.Item key="10"><Link to="sorting">Сортировка</Link></Menu.Item> }
                 </SubMenu>
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["staff"]) && <Menu.Item key="11"><Link to="staff"><IconFont type="icon-employees_icon" /><span>Сотрудники</span></Link></Menu.Item> }

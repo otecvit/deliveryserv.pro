@@ -12,6 +12,7 @@ import Locations from './locations';
 import Stock from './stock';
 import Staff from './staff';
 import Owner from './owner';
+import Tags from './tags';
 import PushNotification from './pushNotification';
 
 const allReducers = combineReducers ({
@@ -27,6 +28,7 @@ const allReducers = combineReducers ({
     stock: Stock,
     staff: Staff,
     owner: Owner,
+    tags: Tags,
     pushNotification: PushNotification,
 });
 

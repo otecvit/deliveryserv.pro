@@ -21,6 +21,7 @@ import Orders from '../components/Orders/Orders';
 import Clients from '../components/Clients/Clients';
 import Locations from '../components/Locations/Locations';
 import Sorting from '../components/Menu/Sorting';
+import Tags from '../components/Menu/Tags';
 import Stock from '../components/Stock/Stock';
 import Push from '../components/Push/Push';
 import Staff from '../components/Staff/Staff';
@@ -33,6 +34,8 @@ import AutoExecution from '../components/Settings/AutoExecution';
 import Customisation from '../components/Settings/Customisation';
 import Information from '../components/Settings/Information';
 import License from '../components/Settings/License';
+
+
 
 
 
@@ -181,6 +184,7 @@ class CmsWrapper extends Component {
                         <Route exact path="/customers" component={Clients}/>
                         <Route exact path="/locations" component={Locations}/>
                         <Route exact path="/sorting" component={Sorting}/>
+                        <Route exact path="/tags" component={Tags}/>
                         <Route exact path="/stock" component={Stock}/>
                         <Route exact path="/push" component={Push}/>
                         <Route exact path="/staff" component={Staff}/>
