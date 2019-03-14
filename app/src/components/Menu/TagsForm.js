@@ -33,26 +33,22 @@ class TagsForm extends Component {
                 },
                 body: JSON.stringify(
                 {
-                  idCategories: this.props.param.idCategories,
+                  idTag: this.props.param.idTag,
                   chName: values.chName,
-                  chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
+                  chColor: chColor.slice(1),
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 if (responseJsonFromServer.status) {
                   val = {
-                    dataload: { 
-                      key: this.props.param.idCategories,
-                      idCategories: this.props.param.idCategories,
+                      idTag: this.props.param.idTag,
                       chName: values.chName,
-                      chNamePrint: values.chNamePrint,
                       enShow: values.enShow ? "true" : "false",
-                    }
+                      chColor: chColor.slice(1),
                   }
 
                   this.props.onEdit(val);  // вызываем action
                   message.success('Тег изменен');
-                  this.props.form.resetFields(); // ресет полей
                 }
               }).catch((error) => {
                   console.error(error);
@@ -158,7 +154,7 @@ class TagsForm extends Component {
           });
 
           this.setState({
-            chColor: nextProps.param.chColor,
+            chColor: `#${nextProps.param.chColor}`,
           });
 
         }

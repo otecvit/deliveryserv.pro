@@ -35,19 +35,15 @@ import Customisation from '../components/Settings/Customisation';
 import Information from '../components/Settings/Information';
 import License from '../components/Settings/License';
 
-
-
-
-
 import СheckNewOrder from '../components/СheckNewOrder';
 
-const { Header, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 
 class CmsWrapper extends Component {
-
+    
     constructor(props) {
         super(props);
-        this.handler = this.handler.bind(this)
+      //  this.handler = this.handler.bind(this)
         this.state = {
             loadStatus: false,
             loadingStatus: false,
@@ -55,7 +51,7 @@ class CmsWrapper extends Component {
             showMessage: false,
           };
     }
-
+    
     handler = () => {
         this.setState({
             loadingStatus: true,
@@ -84,7 +80,7 @@ class CmsWrapper extends Component {
             }).then((response) => response.json()).then((responseJsonFromServer) => {
                 if (responseJsonFromServer.owner.length) {
                     this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
-                    this.timer = setInterval(()=> this.getItems(), 1000);
+                    //this.timer = setInterval(()=> this.getItems(), 1000);
                 }
 
                 this.setState ({
@@ -104,7 +100,7 @@ class CmsWrapper extends Component {
       }
 
       componentWillUnmount() {
-        this.timer = null; // here...
+        //this.timer = null; // here...
       }
 
       getItems() {
@@ -128,7 +124,7 @@ class CmsWrapper extends Component {
                     chUIDStaff: this.props.owner.chUIDStaff,
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
-                  console.log(responseJsonFromServer);
+                  //console.log(responseJsonFromServer);
 
               }).catch((error) => {
                   console.error(error);
@@ -139,14 +135,15 @@ class CmsWrapper extends Component {
             showMessage : !showMessage,
         })
     }
+    
 
     render() {
         const { loadingStatus, checkCookies, showMessage } = this.state;
-
+        
         // загружаем данные с сервера
        if (!checkCookies) return <LoadingScreen />;
         
-       
+        
        if (typeof this.props.owner.chUID === 'undefined') {
         return <Redirect to="/login"/>
        } 
@@ -155,12 +152,11 @@ class CmsWrapper extends Component {
        if (this.props.owner.chName.length === 0) {
             return <Redirect to="/setup"/>
         }
-       
 
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <SiderMenu/>
-                {this.state.loadStatus && <СheckNewOrder/>}
+                <СheckNewOrder/>
                 <Layout>
                     <Content style={{ width: 840 }}>
                     

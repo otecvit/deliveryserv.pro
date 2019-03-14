@@ -2,6 +2,56 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
 import Sound from 'react-sound';
 
+
+class test extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            playSound: false,
+        }
+        const url = this.props.optionapp[0].serverUrl + "/SelectCountOrders.php";
+        this.eventSource = new EventSource(url);
+    }
+    
+
+    componentDidMount() {
+        this.subscribeToServerEvent();
+    }
+
+    subscribeToServerEvent = () => {
+        this.eventSource.onmessage = e => {
+          try {
+            //this.setState({ ..... })
+          } catch (e) {
+            console.log('error parsing server response', e)
+          }
+        }
+    }
+
+    render() {
+        return (<Fragment></Fragment>)
+    }
+}
+
+
+export default connect (
+    state => ({
+        optionapp: state.optionapp,
+        owner: state.owner,
+    }),
+    dispatch => ({
+        onControlOrder: (data) => {
+            dispatch({ type: 'EDIT_OPTIONAPP_CONTROL_ORDER', payload: data});
+          },
+        changeStatus: (data) => {
+            dispatch({ type: 'CHANGE_OPTIONAPP_CLOUD_STATUS', payload: data});
+          },
+    })
+  )(test);
+
+
+/*
 class test extends Component {
     
     constructor(props) {
@@ -80,3 +130,4 @@ export default connect (
           },
     })
   )(test);
+  */

@@ -18,8 +18,8 @@ export default function tags (state = initialState, action) {
       case "EDIT_TAG": 
         // проходим по основному state
         const updatedRootItems = state.map(item => {
-          if(item.idTag === action.payload.dataload.idTag){
-            return {...item, ...action.payload.dataload};
+          if(item.idTag === action.payload.idTag){
+            return {...item, ...action.payload};
           }
           return item;
         });

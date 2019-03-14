@@ -17,24 +17,6 @@ import 'antd/dist/antd.css';
 import './index.css';
 
 import allReducers from './reducers/index';
-import Startup from './components/Startup';
-import Dashboard from './components/Dashboard';
-import SiderMenu from './components/SiderMenu';
-import HeaderStatus from './components/HeaderStatus';
-import Categories from './components/Menu/Categories';
-import OptionSets from './components/Menu/OptionSets';
-import Dishes from './components/Menu/Dishes';
-import Menus from './components/Menu/Menus';
-import Orders from './components/Orders/Orders';
-import Clients from './components/Clients/Clients';
-import Locations from './components/Locations/Locations';
-import Sorting from './components/Menu/Sorting';
-import Stock from './components/Stock/Stock';
-import GeneralSettings from './components/Settings/General';
-import Times from './components/Settings/Times';
-import TypeOrder from './components/Settings/TypeOrder';
-import Login from './authentication/Login';
-import Registration from './authentication/Registration';
 
 import ApplicationContainer from './containers/ApplicationContainer';
 
