@@ -22,3 +22,4 @@ export const arrPageAccess = [
     { keyName: "information",       name: 'Настройки - Информация',   value: true},
     { keyName: "license",           name: 'Оплата',                   value: true},
   ];
+

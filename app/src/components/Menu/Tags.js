@@ -62,14 +62,14 @@ class Tags extends Component {
         });
     }
 
-    delete = ({record: {idCategories, chMainImage}}, path, _this) => {
+    delete = ({record: {idTag}}, path, _this) => {
         confirm({
-            title: 'Вы действительно хотите удалить категорию?',
+            title: 'Вы действительно хотите удалить тег?',
             okText: 'Да',
             okType: 'danger',
             cancelText: 'Нет',
             onOk() {
-                const url = path + "/DeleteCategories.php"; // удаление
+                const url = path + "/DeleteTags.php"; // удаление
                 fetch(url,
                 {
                     method: 'POST',
@@ -80,13 +80,12 @@ class Tags extends Component {
                     },
                     body: JSON.stringify(
                     {
-                        idCategories: idCategories,
-                        tmpFileName: chMainImage.length ? chMainImage.replace(/^.*(\\|\/|\:)/, '') : "",
+                        idTag: idTag,
                     })
                 }).then((response) => response.json()).then((responseJsonFromServer) =>
                 {
                     var val = {
-                        idCategories: idCategories
+                        idTag: idTag
                     }
                     _this.props.onDelete(val);  // вызываем action
                 }).catch((error) =>
@@ -118,7 +117,7 @@ class Tags extends Component {
 
       loadingData = () => {
 
-        const url = this.props.optionapp[0].serverUrl + "/SelectCategories.php";
+        const url = this.props.optionapp[0].serverUrl + "/SelectTags.php";
         this.setState({
             flLoading: true,
         })
@@ -136,15 +135,16 @@ class Tags extends Component {
           })
         .then((response) => response.json())
         .then((responseJson) => {
-            this.props.onAdd(responseJson.categories);
+            this.props.onAdd(responseJson.tags);
             this.setState({
-                dataSource: responseJson.categories,
+                dataSource: responseJson.tags,
                 flLoading: false,
             });
         })
         .catch((error) => {
           console.error(error);
         });
+        
     }
 
 
@@ -153,7 +153,7 @@ class Tags extends Component {
         this.setState({ 
             searchString: e.target.value,
             filtered: !!e.target.value,
-            dataSource: this.props.categories.map((record) => {
+            dataSource: this.props.tags.map((record) => {
                 if (record.chName.length)
                 { 
                 const match = record.chName.match(reg);
@@ -198,7 +198,7 @@ class Tags extends Component {
 
     onChangeEditRecord = (e) => {
         this.setState ({ 
-            currentEditRecord: this.props.categories.find(x => x.idCategories === e.key),
+            currentEditRecord: this.props.tags.find(x => x.idTag === e.key),
             statusJobRecord: "1",
         });
     }
@@ -227,7 +227,7 @@ class Tags extends Component {
         const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
           });             
-        const options = this.props.categories.map(item => <Option key={item.idCategories}>{item.chName}</Option>);
+        const options = this.props.tags.map(item => <Option key={item.idTag}>{item.chName}</Option>);
 
         return (<Fragment>
         <HeaderSection title="Теги" icon="icon-menu" />
@@ -251,10 +251,9 @@ class Tags extends Component {
                         expandedRowRender={({enShow, chNamePrint}) => 
                             <Fragment>
                                 <ViewDetailDescription title="Активность" value={enShow === 'true' ? "Да" : "Нет"} />
-                                <ViewDetailDescription title="Отображаемое имя" value={chNamePrint} />
                             </Fragment>
                         }
-                        dataSource={!this.state.filtered ? this.props.categories : dataSource}
+                        dataSource={!this.state.filtered ? this.props.tags : dataSource}
                         size="small"  
                         pagination={false}
                         loading={flLoading}
@@ -272,9 +271,9 @@ class Tags extends Component {
                     onChange={this.onChangeEditRecord}
                     style={{ width: "100%" }}
                     labelInValue 
-                    value={{ key: typeof currentEditRecord.idCategories !== "undefined" ? currentEditRecord.idCategories : "0" }}
+                    value={{ key: typeof currentEditRecord.idTag !== "undefined" ? currentEditRecord.idTag : "0" }}
                     >
-                    <Option key="0">Выберите категорию для редактирования</Option>
+                    <Option key="0">Выберите тег для редактирования</Option>
                     {options}
                 </Select>
                 { statusJobRecord === "1" ? <TagsForm  handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/> : null }
@@ -288,16 +287,16 @@ class Tags extends Component {
 
 export default connect (
     state => ({
-        categories: state.categories,
+        tags: state.tags,
         optionapp: state.optionapp,
         owner: state.owner,
     }),
     dispatch => ({
         onAdd: (data) => {
-            dispatch({ type: 'LOAD_CATEGORIES_ALL', payload: data});
+            dispatch({ type: 'LOAD_TAG_ALL', payload: data});
           },
         onDelete: (data) => {
-            dispatch({ type: 'DELETE_CATEGORY', payload: data});
+            dispatch({ type: 'DELETE_TAG', payload: data});
         },
     })
   )(Tags);

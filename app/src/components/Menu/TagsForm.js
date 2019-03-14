@@ -1,29 +1,29 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Popconfirm, Upload, message, Switch, Modal } from 'antd';
+import { Form, Icon, Input, Button, Popconfirm, Tooltip, message, Switch, Modal } from 'antd';
 import { connect } from 'react-redux';
 import ColorPicker from 'rc-color-picker';
 import 'rc-color-picker/assets/index.css';
 
 const FormItem = Form.Item;
-const generateKey = (pre) => {
-  return `${ new Date().getTime() }`;
-}
 
-class CategoriesForm extends Component {
+class TagsForm extends Component {
 
     constructor(props) {
       super(props);
       this.state = {
+        chColor: this.props.type !== "0" ? `#${this.props.param.chColor}` : `#36c`
       };
     }
 
     handleSubmit = (e) => {
         e.preventDefault();
+        const { chColor } = this.state;
+
         this.props.form.validateFields((err, values) => {
           if (!err) {
             var val = {};
             if (this.props.type === '1') {
-              const url = this.props.optionapp[0].serverUrl + "/EditCategories.php"; // изменяем категорию
+              const url = this.props.optionapp[0].serverUrl + "/EditTags.php"; // изменяем категорию
               fetch(url, {
                 method: 'POST',
                 headers: 
@@ -51,7 +51,7 @@ class CategoriesForm extends Component {
                   }
 
                   this.props.onEdit(val);  // вызываем action
-                  message.success('Категория изменена');
+                  message.success('Тег изменен');
                   this.props.form.resetFields(); // ресет полей
                 }
               }).catch((error) => {
@@ -60,7 +60,7 @@ class CategoriesForm extends Component {
 
             } else {
 
-              const url = this.props.optionapp[0].serverUrl + "/InsertCategories.php"; // добавляем категорию
+              const url = this.props.optionapp[0].serverUrl + "/InsertTags.php"; // добавляем категорию
               fetch(url, {
                 method: 'POST',
                 headers: 
@@ -72,30 +72,31 @@ class CategoriesForm extends Component {
                 {
                   chUID: this.props.owner.chUID,
                   chName: values.chName,
-                  chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
+                  chColor: chColor.slice(1),
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
                   dataload: { 
-                    key: responseJsonFromServer.id.toString(),
-                    idCategories: responseJsonFromServer.id.toString(),
+                    idTag: responseJsonFromServer.id.toString(),
                     chName: values.chName,
-                    chNamePrint: values.chNamePrint,
                     enShow: values.enShow ? "true" : "false",
+                    chColor: chColor.slice(1),
                   }
                 }
 
                 this.props.onAdd(val);  // вызываем action
-                message.success('Категория создана'); 
+                message.success('Тег создан'); 
                 this.props.form.resetFields(); // ресет полей
 
                 this.props.form.setFieldsValue({
                   'enShow': true,
                   'chName': "",
-                  'chNamePrint': "",
                 });
 
+                this.setState({
+                  chColor: `#36c`,
+                });
 
               }).catch((error) => {
                   console.error(error);
@@ -106,7 +107,7 @@ class CategoriesForm extends Component {
       }
 
     delete = () => {
-      const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
+      const url = this.props.optionapp[0].serverUrl + "/DeleteTags.php"; // удаление
       
       fetch(url,
         {
@@ -118,20 +119,19 @@ class CategoriesForm extends Component {
             },
             body: JSON.stringify(
             {
-              idCategories: this.props.param.idCategories,
-              tmpFileName: this.state.fileList.length ? this.state.fileList[0].name : "",
+              idTag: this.props.param.idTag,
            })
         }).then((response) => response.json()).then((responseJsonFromServer) =>
         {
             var val = {
-                idCategories: this.props.param.idCategories,
+              idTag: this.props.param.idTag,
             }
             this.props.onDelete(val);  // вызываем action
         }).catch((error) =>
         {
             console.error(error);
         });
-        message.success('Категория удалена'); 
+        message.success('Тег удален'); 
         this.props.handler();
         
     }
@@ -143,7 +143,10 @@ class CategoriesForm extends Component {
           this.props.form.setFieldsValue({
             'enShow': true,
             'chName': '',
-            'chNamePrint': '',
+          });
+
+          this.setState({
+            chColor: `#36c`,
           });
         
         }
@@ -152,7 +155,10 @@ class CategoriesForm extends Component {
           this.props.form.setFieldsValue({
             'enShow': nextProps.param.enShow === "true",
             'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
-            'chNamePrint': nextProps.param.chNamePrint,
+          });
+
+          this.setState({
+            chColor: nextProps.param.chColor,
           });
 
         }
@@ -160,19 +166,22 @@ class CategoriesForm extends Component {
       }
     }
 
-    changeHandler = (colors) => {
-        console.log(colors);
-      }
+    changeHandler = ({color}) => {
+      this.setState({
+        chColor: color,
+      });
       
-    closeHandler = (colors) => {
-        console.log(colors);
-      }
-
-    
-
+    }
+      
+    closeHandler = ({color}) => {
+      this.setState({
+        chColor: color,
+      });
+    }
 
     render() {
         const { getFieldDecorator } = this.props.form;
+        const { chColor } = this.state;
         const labelColSpan = 8;
 
         return (
@@ -208,41 +217,44 @@ class CategoriesForm extends Component {
               )}
             </FormItem>
             <FormItem
-              label="Имя"
+              label={
+                <span>
+                    Имя&nbsp;
+                    <Tooltip title='Текст тега. До 9 символов'>
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }
               abelCol={{ span: labelColSpan }}
               style={{ marginBottom: 10 }}
               hasFeedback
             >
               {getFieldDecorator('chName', {
-                rules: [{ required: true, message: 'Введите имя категории' }],
+                rules: [{ required: true, message: 'Введите текст тега' }],
                 initialValue: this.props.type !== "0" ? this.props.param.chName + `${this.props.type === "2" ? " - Копия" : "" }` : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя категории" maxLength="100"/>
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Текст тега" maxLength="9"/>
               )}
             </FormItem>
-            <FormItem
-              label="Отображаемое имя"  
-              abelCol={{ span: labelColSpan }}
-              style={{ marginBottom: 10 }}
-              hasFeedback
-            >
-              {getFieldDecorator('chNamePrint', {
-                rules: [{ }],
-                initialValue: this.props.type !== "0" ? this.props.param.chNamePrint : ""
-              })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" maxLength="100"/>
-              )}
-            </FormItem>
-            <div style={{ margin: '20px 20px 20px', textAlign: 'center' }}>
+            <div className="ant-form-item-label">
+              <label><span>
+                      Цвет&nbsp;
+                      <Tooltip title='Фон тега для отображения в приложении. Цвет шрифта "белый".'>
+                          <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                      </Tooltip>
+                  </span>
+              </label>
+            </div>
+            <div style={{ margin: '0px 0px 20px'}}>
             <ColorPicker
-                color={'#36c'}
+                color={chColor}
                 enableAlpha={false} 
                 onChange={this.changeHandler}
                 onClose={this.closeHandler}
                 placement="topLeft"
                 className="some-class"
                 >
-                <span className="rc-color-picker-trigger" />
+                <span className="rc-color-picker-trigger"/>
             </ColorPicker>
             </div>
             <FormItem
@@ -257,24 +269,24 @@ class CategoriesForm extends Component {
     }
 }
 
-const WrappedNormalLoginForm = Form.create()(CategoriesForm);
+const WrappedNormalLoginForm = Form.create()(TagsForm);
 
 export default connect (
   state => ({
-      categories: state.categories,
+      tags: state.tags,
       optionapp: state.optionapp,
       owner: state.owner,
   }),
   dispatch => ({
-    onAdd: (categoryData) => {
-      dispatch({ type: 'ADD_CATEGORY', payload: categoryData});
+    onAdd: (data) => {
+      dispatch({ type: 'ADD_TAG', payload: data});
     },
-    onEdit: (categoryData) => {
-      dispatch({ type: 'EDIT_CATEGORY', payload: categoryData});
+    onEdit: (data) => {
+      dispatch({ type: 'EDIT_TAG', payload: data});
     },
     
-    onDelete: (categoryData) => {
-      dispatch({ type: 'DELETE_CATEGORY', payload: categoryData});
+    onDelete: (data) => {
+      dispatch({ type: 'DELETE_TAG', payload: data});
     },
   })
 )(WrappedNormalLoginForm);

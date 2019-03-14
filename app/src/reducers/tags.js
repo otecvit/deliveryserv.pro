@@ -18,7 +18,7 @@ export default function tags (state = initialState, action) {
       case "EDIT_TAG": 
         // проходим по основному state
         const updatedRootItems = state.map(item => {
-          if(item.idCategories === action.payload.dataload.idCategories){
+          if(item.idTag === action.payload.dataload.idTag){
             return {...item, ...action.payload.dataload};
           }
           return item;
@@ -27,7 +27,7 @@ export default function tags (state = initialState, action) {
         return updatedRootItems;
 
         case "DELETE_TAG": 
-          return state.filter(category => category.idCategories !== action.payload.idCategories );
+          return state.filter(tag => tag.idTag !== action.payload.idTag );
       default:
         return state;
     }
