@@ -10,7 +10,7 @@ class test extends Component {
         this.state = {
             playSound: false,
         }
-        const url = this.props.optionapp[0].serverUrl + "/SelectCountOrders.php";
+        const url = this.props.optionapp[0].serverUrlStart + "/NotificationNewOrder.php?chUID=150";
         this.eventSource = new EventSource(url);
     }
     
@@ -22,6 +22,8 @@ class test extends Component {
     subscribeToServerEvent = () => {
         this.eventSource.onmessage = e => {
           try {
+              console.log(e);
+              
             //this.setState({ ..... })
           } catch (e) {
             console.log('error parsing server response', e)
