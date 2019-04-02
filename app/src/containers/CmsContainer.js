@@ -196,7 +196,7 @@ class CmsWrapper extends Component {
                     </div>
                     </Content>
                     <Footer style={{ textAlign: 'center', color: '#bfbfbf', fontSize: 12 }}>
-                        Deliveryserv ©2018 Created by Overcode
+                        Deliveryserv ©2019 Created by Overcode
                     </Footer>
                 </Layout>
             </Layout> 

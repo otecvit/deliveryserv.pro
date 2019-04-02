@@ -40,6 +40,7 @@ class Login extends Component {
             chUIDStaff: currentUser,
           })
         }).then((response) => response.json()).then((responseJsonFromServer) => {
+           
             if (responseJsonFromServer.owner.length) {
                 this.props.onCheckUser(responseJsonFromServer.owner[0]);  // вызываем action
             }

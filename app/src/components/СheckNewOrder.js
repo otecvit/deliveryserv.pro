@@ -10,7 +10,7 @@ class test extends Component {
         this.state = {
             playSound: false,
         }
-        const url = this.props.optionapp[0].serverUrlStart + "/NotificationNewOrder.php?chUID=150";
+        const url = this.props.optionapp[0].serverUrlStart + "/NotificationNewOrder.php?chUID=" + this.props.owner.chUID + "&CountOrder=" + this.props.owner.CountOrder;
         this.eventSource = new EventSource(url);
     }
     
