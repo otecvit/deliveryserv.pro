@@ -95,7 +95,7 @@ class Orders extends Component {
                 flLoading: false,
             });
             this.props.onControlOrder({
-                newOrderCount: 0,
+                NewOrderPrint: "0"                                                                                                         ,
             });
             this.CalculatePlaced();
         })
@@ -325,8 +325,8 @@ class Orders extends Component {
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
                 
-                { this.props.optionapp[0].newOrderCount ? <Alert 
-                                        message={`${this.props.optionapp[0].newOrderCount} ${this.declOfNum(['новый заказ','новых заказа','новых заказов'])(this.props.optionapp[0].newOrderCount)}`} 
+                { this.props.owner.NewOrderPrint !== "0" ? <Alert 
+                                        message={`${this.props.owner.NewOrderPrint} ${this.declOfNum(['новый заказ','новых заказа','новых заказов'])(this.props.owner.NewOrderPrint)}`} 
                                         closable 
                                         type="info" 
                                         style={{ margin: '16px 0', textAlign: "center" }} 
@@ -365,7 +365,7 @@ export default connect (
             dispatch({ type: 'LOAD_ORDERS_ALL', payload: data});
           },
         onControlOrder: (data) => {
-            dispatch({ type: 'EDIT_OPTIONAPP_CONTROL_ORDER', payload: data});
+            dispatch({ type: 'RESET_NEW_ORDER_FOR_PRINT', payload: data});
           },
     })
   )(Orders);

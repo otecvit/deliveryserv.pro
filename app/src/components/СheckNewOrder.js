@@ -13,6 +13,19 @@ class test extends Component {
         const url = this.props.optionapp[0].serverUrlStart + "/NotificationNewOrder.php?chUID=" + this.props.owner.chUID + "&CountOrder=" + this.props.owner.CountOrder;
         this.eventSource = new EventSource(url);
     }
+
+
+    newEventSource = () => {
+        // закрываем соединение
+        this.eventSource.close();
+        delete this.eventSource;
+        /// делаем новое
+        const url = this.props.optionapp[0].serverUrlStart + "/NotificationNewOrder.php?chUID=" + this.props.owner.chUID + "&CountOrder=" + this.props.owner.CountOrder;
+        this.eventSource = new EventSource(url);
+        this.subscribeToServerEvent();
+        console.log(url);
+        
+    }
     
 
     componentDidMount() {
@@ -20,11 +33,28 @@ class test extends Component {
     }
 
     subscribeToServerEvent = () => {
+        
+        this.setState({
+            playSound: false,
+        })
+
         this.eventSource.onmessage = e => {
           try {
-              console.log(e);
-              
-            //this.setState({ ..... })
+              // если получено сообщение значит пришел новый заказ
+              // меняем общее значение заказов (CountOrder) и изменяем количество новых заказов, выводим сообщение и проигрываем звук
+              console.log(e.data);
+
+              this.props.onNewOrder({
+                CountOrder: e.data,
+                NewOrderPrint: (Number(e.data) - Number(this.props.owner.CountOrder) + Number(this.props.owner.NewOrderPrint)).toString(),
+             });
+
+              this.setState({
+                  playSound: true,
+              })
+
+              this.newEventSource();
+
           } catch (e) {
             console.log('error parsing server response', e)
           }
@@ -32,7 +62,9 @@ class test extends Component {
     }
 
     render() {
-        return (<Fragment></Fragment>)
+        return (<Fragment>
+             { this.state.playSound && <Sound url="http://mircoffee.by/deliveryserv/app/sound/new_order.mp3" playStatus={Sound.status.PLAYING} /> }
+        </Fragment>)
     }
 }
 
@@ -43,6 +75,9 @@ export default connect (
         owner: state.owner,
     }),
     dispatch => ({
+        onNewOrder: (data) => {
+            dispatch({ type: 'EDIT_NEW_ORDER_FOR_PRINT', payload: data});
+          },        
         onControlOrder: (data) => {
             dispatch({ type: 'EDIT_OPTIONAPP_CONTROL_ORDER', payload: data});
           },

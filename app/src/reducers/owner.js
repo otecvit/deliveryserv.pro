@@ -17,8 +17,16 @@ export default function owner (state = initialState, action) {
         case "EDIT_OWNER": 
         // проходим по основному state
             return {...state, ...action.payload};
-                
-        case "LOGOUT_OWNER": 
+
+            case "EDIT_NEW_ORDER_FOR_PRINT": 
+            // проходим по основному state
+                return {...state, ...action.payload};
+                    
+        case "RESET_NEW_ORDER_FOR_PRINT": 
+            // проходим по основному state
+              return {...state, ...action.payload};
+                        
+            case "LOGOUT_OWNER": 
           return {};
       default:
         return state;
