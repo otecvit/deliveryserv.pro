@@ -486,13 +486,17 @@ class DishesForm extends React.Component {
         }
 
         if (nextProps.type === "2" || nextProps.type === "1") {
+          console.log(nextProps.param.iCategories);
+          
           this.props.form.setFieldsValue({
             'enShow': nextProps.param.enShow === "true",
             'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
             'chNamePrint': nextProps.param.chNamePrint,
+            'iCategories': this.props.categories.find(x => x.idCategories ===  nextProps.param.iCategories).chName
           });
 
           this.setState({
+            iCategories: nextProps.param.iCategories,
             tmpFileName: generateKey(),
             fileList: nextProps.param.chMainImage.length && nextProps.type !== "2" ? [{
               uid: '-1',
@@ -596,7 +600,7 @@ class DishesForm extends React.Component {
             <div className="ant-upload-text">Загрузить</div>
           </div>
         );
-        
+
         const columns = this.columns.map((col) => {
         if (!col.editable) {
             return col;
@@ -613,6 +617,9 @@ class DishesForm extends React.Component {
         };
         });
         
+        console.log(iCategories);
+        
+
         return (
           <div>
             { this.props.type === "1" ? (       
@@ -778,7 +785,7 @@ class DishesForm extends React.Component {
             >
               {getFieldDecorator('iCategories', {
                 rules: [{ required: true, message: 'Выберите категорию' }],
-                initialValue: this.props.categories.find(x => x.idCategories ===  iCategories).chName,
+                initialValue: this.props.type !== "0" ? this.props.categories.find(x => x.idCategories ===  iCategories).chName : "",
               })(
                 <Select
                   showSearch
@@ -802,7 +809,7 @@ class DishesForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chOptionSets', {
-                initialValue: chOptionSets !== "0" ? this.props.optionSets.find(x => x.idOptionSets ===  chOptionSets).chName : "",
+                initialValue: chOptionSets,
               })(
                 <Select
                   onChange={this.onChangeOptionSets}

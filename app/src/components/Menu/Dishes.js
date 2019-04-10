@@ -109,11 +109,6 @@ class Dishes extends Component {
         })
         fetch(url, {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               chUID: this.props.owner.chUID,
@@ -137,11 +132,6 @@ class Dishes extends Component {
         })
         fetch(urlCategories, {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               chUID: this.props.owner.chUID,
@@ -164,11 +154,6 @@ class Dishes extends Component {
         })
         fetch(urlOptionSets, {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               chUID: this.props.owner.chUID,
@@ -252,6 +237,8 @@ class Dishes extends Component {
     }
 
     onChangeEditRecord = (e) => {
+        console.log(this.props.dishes.find(x => x.idDishes === e.key));
+        
         this.setState ({ 
             currentEditRecord: this.props.dishes.find(x => x.idDishes === e.key),
             statusJobRecord: "1",
