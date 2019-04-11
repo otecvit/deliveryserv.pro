@@ -185,12 +185,13 @@ class DishesForm extends React.Component {
           count: this.props.type !== "0" ? this.props.param.ingredients.length + 1 : 0,
           iCategories: this.props.type !== "0" ? this.props.param.iCategories : '',
           chOptionSets: this.props.type !== "0" ? this.props.param.chOptionSets : [],
-          chTags: this.props.type !== "0" ? this.props.param.chTags : [],
-          arrTags: [
-            {key: "1", chName: "Острая"},
-            {key: "2", chName: "Веган"},
-            {key: "3", chName: "Рекомендуем"},
-          ],
+          chTags: this.props.type !== "0" ? this.props.param.tags : [],
+          arrTags: this.props.tags.map(item => {
+            return {
+              key: item.idTag, 
+              chName: item.chName, 
+            }
+          }),
           previewVisible: false,
           previewImage: '',
           tmpFileName: generateKey(),
@@ -263,7 +264,6 @@ class DishesForm extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-
           if (!err) {
             var val = {};
             if (this.props.type === '1') {
@@ -304,7 +304,7 @@ class DishesForm extends React.Component {
                     chDescription: values.chDescription,
                     iCategories: this.state.iCategories,
                     chOptionSets: values.chOptionSets,
-                    chTags: values.chTags,
+                    tags: values.chTags,
                     ingredients: this.state.dataSource,
                     chMainImage:responseJsonFromServer, 
                   }
@@ -355,7 +355,7 @@ class DishesForm extends React.Component {
                     chDescription: values.chDescription,
                     iCategories: this.state.iCategories,
                     chOptionSets: values.chOptionSets,
-                    chTags: values.chTags,
+                    tags: values.chTags,
                     ingredients: this.state.dataSource,
                     chMainImage: responseJsonFromServer.tmpFileName, 
                   }
@@ -394,25 +394,23 @@ class DishesForm extends React.Component {
         });
       }
 
+
+      // Удаляем
       delete = () => {
+
         const url = this.props.optionapp[0].serverUrl + "/DeleteProducts.php"; // удаление
         fetch(url,
           {
               method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
               body: JSON.stringify(
               {
-                idDishes: this.props.param,
+                idDishes: this.props.param.idDishes,
                 tmpFileName: this.state.fileList.length ? this.state.fileList[0].name : "",
              })
           }).then((response) => response.json()).then((responseJsonFromServer) =>
           {
               var val = {
-                idDishes: this.props.param,
+                idDishes: this.props.param.idDishes,
               }
               this.props.onDelete(val);  // вызываем action
           }).catch((error) =>
@@ -421,6 +419,7 @@ class DishesForm extends React.Component {
           });
           message.success('Товар удален'); 
           this.props.handler();
+
     }
 
 
@@ -485,18 +484,20 @@ class DishesForm extends React.Component {
           });
         }
 
+        
         if (nextProps.type === "2" || nextProps.type === "1") {
-          console.log(nextProps.param.iCategories);
-          
+
           this.props.form.setFieldsValue({
             'enShow': nextProps.param.enShow === "true",
             'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
             'chNamePrint': nextProps.param.chNamePrint,
-            'iCategories': this.props.categories.find(x => x.idCategories ===  nextProps.param.iCategories).chName
+            'iCategories': this.props.categories.find(x => x.idCategories ===  nextProps.param.iCategories).chName,
+            'chTags': nextProps.param.tags
           });
 
           this.setState({
             iCategories: nextProps.param.iCategories,
+            chTags: nextProps.param.tags,
             tmpFileName: generateKey(),
             fileList: nextProps.param.chMainImage.length && nextProps.type !== "2" ? [{
               uid: '-1',
@@ -509,48 +510,6 @@ class DishesForm extends React.Component {
       
       }
 
-      /*
-      if ((nextProps.copyrecord !== this.props.copyrecord)&&(nextProps.copyrecord.length !== 0)) {
-        this.setState(
-          { 
-            dataSource: nextProps.copyrecord.ingredients,
-            count: nextProps.copyrecord.ingredients.length + 1,
-            iCategories: nextProps.copyrecord.iCategories,
-            chOptionSets: nextProps.copyrecord.chOptionSets,
-            chTags: nextProps.copyrecord.chTags
-          })
-      }
-
-
-      if(nextProps.param !== this.props.param) {
-                
-        this.DeleteTmpFile(); // удаляем временный файл
-
-        this.props.form.setFieldsValue({
-          'enShow': this.props.dishes.find(x => x.idDishes ===  nextProps.param).enShow === "true",
-          'chName': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chName,
-          'chNamePrint': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chNamePrint,
-          'chPrice': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chPrice,
-          'chOldPrice': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chOldPrice,
-          'chDescription': this.props.dishes.find(x => x.idDishes ===  nextProps.param).chDescription,
-          'iCategories': this.props.dishes.find(x => x.idDishes ===  this.props.param).iCategories,
-          'chOptionSets': this.props.dishes.find(x => x.idDishes ===  this.props.param).chOptionSets,
-          'chTags': this.props.dishes.find(x => x.idDishes ===  this.props.param).chTags,
-        });
-        this.setState(
-          { 
-            dataSource: this.props.dishes.find(x => x.idDishes ===  nextProps.param).ingredients,
-            count: this.props.dishes.find(x => x.idDishes ===  nextProps.param).ingredients.length + 1,
-            tmpFileName: generateKey(),
-            fileList: this.props.dishes.find(x => x.idDishes ===  nextProps.param).chMainImage.length ? [{
-              uid: '-1',
-              name: this.props.dishes.find(x => x.idDishes ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
-              status: 'done',
-              url: this.props.dishes.find(x => x.idDishes ===  nextProps.param).chMainImage,
-            }] : [],
-          })
-      }
-      */
     }
 
     DeleteTmpFile = () => {
@@ -559,11 +518,7 @@ class DishesForm extends React.Component {
         fetch(url,
           {
               method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
+
               body: JSON.stringify(
               {
                 tmpFileName: this.state.tmpFileName + this.state.fileList[0].response,
@@ -590,7 +545,7 @@ class DishesForm extends React.Component {
             },
           };
 
-        const options = this.props.categories.map(d => <Option key={d.idCategories} value={d.iCategories}>{d.chName}</Option>)
+        const options = this.props.categories.map(d => <Option key={d.idCategories} value={d.idCategories}>{d.chName}</Option>)
         const children = this.state.arrTags.map(d => <Option key={d.key} value={d.key}>{d.chName}</Option>);
         const childrenOptionSets = this.props.optionSets.map(d => <Option key={d.idOptionSets} value={d.idOptionSets}>{d.chName}</Option>)
 
@@ -617,9 +572,6 @@ class DishesForm extends React.Component {
         };
         });
         
-        console.log(iCategories);
-        
-
         return (
           <div>
             { this.props.type === "1" ? (       
@@ -920,6 +872,7 @@ export default connect (
       owner: state.owner,
       optionSets: state.optionSets,
       optionapp: state.optionapp,
+      tags: state.tags,
   }),
   dispatch => ({
     onAdd: (data) => {
@@ -928,8 +881,8 @@ export default connect (
     onEdit: (data) => {
       dispatch({ type: 'EDIT_DISHES', payload: data});
     },
-    onDelete: (optionSetsData) => {
-      dispatch({ type: 'DELETE_DISHES', payload: optionSetsData});
+    onDelete: (data) => {
+      dispatch({ type: 'DELETE_DISHES', payload: data});
     },
   })
 )(WrappedNormalLoginForm);

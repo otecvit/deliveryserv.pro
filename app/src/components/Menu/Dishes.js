@@ -74,11 +74,6 @@ class Dishes extends Component {
                 fetch(url,
                 {
                     method: 'POST',
-                    headers: 
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
                     body: JSON.stringify(
                     {
                         idDishes: idDishes,
@@ -170,6 +165,38 @@ class Dishes extends Component {
           console.error(error);
         });
 
+        const urlTags = this.props.optionapp[0].serverUrl + "/SelectTags.php";
+        this.setState({
+            flLoading: true,
+        })
+        fetch(urlTags, {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+          })
+        .then((response) => response.json())
+        .then((responseJson) => {
+            this.props.onAddTags(responseJson.tags);
+            this.setState({
+                dataSource: responseJson.tags,
+                flLoading: false,
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+        
+
+        
+
+
     }
 
     emitEmpty = () => {
@@ -236,12 +263,12 @@ class Dishes extends Component {
         return menu;
     }
 
+    // выбор позиции на вкладке "Редактировать"
     onChangeEditRecord = (e) => {
-        console.log(this.props.dishes.find(x => x.idDishes === e.key));
-        
+        // если выбрана позиция в списке, то ищем запись для редактирования и показываем форму, иначе пустой массив и срываем форму
         this.setState ({ 
-            currentEditRecord: this.props.dishes.find(x => x.idDishes === e.key),
-            statusJobRecord: "1",
+            currentEditRecord: e.key !== "0" ? this.props.dishes.find(x => x.idDishes === e.key) : {},
+            statusJobRecord: e.key !== "0" ?  "1" : "0",
         });
     }
     
@@ -345,7 +372,13 @@ export default connect (
           },
         onAddOptionSets: (data) => {
             dispatch({ type: 'LOAD_OPTION_SETS_ALL', payload: data});
-          },          
+          },        
+        onAddTags: (data) => {
+            dispatch({ type: 'LOAD_TAG_ALL', payload: data});
+          }, 
+        onDelete: (data) => {
+            dispatch({ type: 'DELETE_DISHES', payload: data});
+        },
           
     })
   )(Dishes);

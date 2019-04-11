@@ -66,7 +66,7 @@ export default function dishes (state = initialState, action) {
         return updatedRootItems;
 
         case "DELETE_DISHES": 
-          return state.filter(optionset => optionset.idDishes !== action.payload.idDishes );
+          return state.filter(item => item.idDishes !== action.payload.idDishes );
       default:
         return state;
     }
