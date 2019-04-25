@@ -184,7 +184,7 @@ class DishesForm extends React.Component {
           dataSource: this.props.type !== "0" ? this.props.param.ingredients : [],
           count: this.props.type !== "0" ? this.props.param.ingredients.length + 1 : 0,
           iCategories: this.props.type !== "0" ? this.props.param.iCategories : '',
-          chOptionSets: this.props.type !== "0" ? this.props.param.chOptionSets : [],
+          chOptionSets: this.props.type !== "0" ? this.props.param.chOptionSets : 'Выберите набор опций',
           chTags: this.props.type !== "0" ? this.props.param.tags : [],
           arrTags: this.props.tags.map(item => {
             return {
@@ -216,15 +216,6 @@ class DishesForm extends React.Component {
 
       handleChange = ({ fileList }) => {
         this.setState({ fileList })
-      }
-
-
-
-      searchSelectedRow = (param) => { // возвращает значение key для множественного выбора
-        if (this.props.optionSets.find(x => x.idOptionSets ===  param).blNecessarily === "true")
-          return this.props.optionSets.find(x => x.idOptionSets ===  param).options.find(y => y.blDefault === "true").key;
-        else
-          return "0";
       }
 
       handleDelete = (key) => {
@@ -267,32 +258,25 @@ class DishesForm extends React.Component {
           if (!err) {
             var val = {};
             if (this.props.type === '1') {
-
-              console.log(JSON.stringify(
-                {
-                  idDishes: this.props.param.idDishes,
-                  enShow: values.enShow ? "1" : "0",
-                  chName: values.chName,
-                  chNamePrint: values.chNamePrint,
-                  chPrice: Number(values.chPrice).toFixed(2),
-                  chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
-                  chDescription: values.chDescription,
-                  iCategories: this.state.iCategories,
-                  chOptionSets: values.chOptionSets,
-                  chTags: values.chTags,
-                  ingredients: this.state.dataSource,
-                  tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
-                }));
+              console.log( {
+                idDishes: this.props.param.idDishes,
+                enShow: values.enShow ? "1" : "0",
+                chName: values.chName,
+                chNamePrint: values.chNamePrint,
+                chPrice: Number(values.chPrice).toFixed(2),
+                chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
+                chDescription: values.chDescription,
+                iCategories: this.state.iCategories,
+                chOptionSets: values.chOptionSets,
+                chTags: values.chTags,
+                ingredients: this.state.dataSource,
+                tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
+                chMainImage: this.props.param.chMainImage,
+              });
               
-
               const url = this.props.optionapp[0].serverUrl + "/EditProducts.php"; // изменяем категорию
               fetch(url, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   idDishes: this.props.param.idDishes,
@@ -307,28 +291,53 @@ class DishesForm extends React.Component {
                   chTags: values.chTags,
                   ingredients: this.state.dataSource,
                   tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
+                  chMainImage: this.props.param.chMainImage,
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
-                val = {
-                  dataload: { 
-                    key: this.props.param.idDishes,
-                    idDishes: this.props.param.idDishes,
-                    enShow: values.enShow.toString(),
-                    chName: values.chName,
-                    chNamePrint: values.chNamePrint,
-                    chPrice: Number(values.chPrice).toFixed(2),
-                    chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
-                    chDescription: values.chDescription,
-                    iCategories: this.state.iCategories,
-                    chOptionSets: values.chOptionSets,
-                    tags: values.chTags,
-                    ingredients: this.state.dataSource,
-                    chMainImage:responseJsonFromServer, 
+                console.log(responseJsonFromServer);
+                
+                if (responseJsonFromServer.status) {
+                  val = {
+                    dataload: { 
+                      key: this.props.param.idDishes,
+                      idDishes: this.props.param.idDishes,
+                      enShow: values.enShow.toString(),
+                      chName: values.chName,
+                      chNamePrint: values.chNamePrint,
+                      chPrice: Number(values.chPrice).toFixed(2),
+                      chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
+                      chDescription: values.chDescription,
+                      iCategories: this.state.iCategories,
+                      chOptionSets: values.chOptionSets,
+                      tags: values.chTags,
+                      ingredients: this.state.dataSource,
+                      chMainImage: "", 
+                    }
                   }
+
+                  if (responseJsonFromServer.tmpFileName.length) {
+                    val = {
+                      dataload: { 
+                        ...val.dataload,
+                        chMainImage: responseJsonFromServer.tmpFileName, 
+                      }
+                    }
+                  }
+
+                  this.props.onEdit(val);  // вызываем action
+                  message.success('Товар изменен');
+                  // подставляем новые значения в форму
+                  this.props.form.setFieldsValue({
+                    'enShow': values.enShow.toString() === "true",
+                    'chName': values.chName,
+                    'chNamePrint': values.chNamePrint,
+                    'chPrice': Number(values.chPrice).toFixed(2),
+                    'chOldPrice': values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
+                    'chDescription': values.chDescription,
+                  });
+                  ///////////////////////////////////
+
                 }
-                this.props.onEdit(val);  // вызываем action
-                message.success('Товар изменен');
-                this.props.form.resetFields(); // ресет полей
 
               }).catch((error) => {
                   console.error(error);
@@ -339,11 +348,6 @@ class DishesForm extends React.Component {
               const url = this.props.optionapp[0].serverUrl + "/InsertProducts.php"; // изменяем категорию
               fetch(url, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   chUID: this.props.owner.chUID,
@@ -485,7 +489,7 @@ class DishesForm extends React.Component {
             'chOldPrice': '',
             'chDescription': '',
             'iCategories': '',
-            'chOptionSets': '',
+            'chOptionSets': 'Выберите набор опций',
             'chTags': [],
           });
 
@@ -512,7 +516,7 @@ class DishesForm extends React.Component {
             'chOldPrice': nextProps.param.chOldPrice,
             'chDescription': nextProps.param.chDescription,
             'iCategories': this.props.categories.find(x => x.idCategories ===  nextProps.param.iCategories).chName,
-            'chOptionSets': nextProps.param.chOptionSets !== "0" ? this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param.chOptionSets).chName : '',
+            'chOptionSets': nextProps.param.chOptionSets !== "0" ? this.props.optionSets.find(x => x.idOptionSets === nextProps.param.chOptionSets).chName : 'Выберите набор опций',
             'chTags': nextProps.param.tags
           });
 
@@ -788,7 +792,7 @@ class DishesForm extends React.Component {
                 <Select
                   onChange={this.onChangeOptionSets}
                 >
-                  <Option key="0">Выберите набор опций</Option>
+                  <Option key="0" value="0">Выберите набор опций</Option>
                   {childrenOptionSets}
               </Select>
               )}
