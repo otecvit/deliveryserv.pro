@@ -268,6 +268,23 @@ class DishesForm extends React.Component {
             var val = {};
             if (this.props.type === '1') {
 
+              console.log(JSON.stringify(
+                {
+                  idDishes: this.props.param.idDishes,
+                  enShow: values.enShow ? "1" : "0",
+                  chName: values.chName,
+                  chNamePrint: values.chNamePrint,
+                  chPrice: Number(values.chPrice).toFixed(2),
+                  chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
+                  chDescription: values.chDescription,
+                  iCategories: this.state.iCategories,
+                  chOptionSets: values.chOptionSets,
+                  chTags: values.chTags,
+                  ingredients: this.state.dataSource,
+                  tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
+                }));
+              
+
               const url = this.props.optionapp[0].serverUrl + "/EditProducts.php"; // изменяем категорию
               fetch(url, {
                 method: 'POST',
@@ -278,7 +295,7 @@ class DishesForm extends React.Component {
                 },
                 body: JSON.stringify(
                 {
-                  idDishes: this.props.param,
+                  idDishes: this.props.param.idDishes,
                   enShow: values.enShow ? "1" : "0",
                   chName: values.chName,
                   chNamePrint: values.chNamePrint,
@@ -294,8 +311,8 @@ class DishesForm extends React.Component {
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
                   dataload: { 
-                    key: this.props.param,
-                    idDishes: this.props.param,
+                    key: this.props.param.idDishes,
+                    idDishes: this.props.param.idDishes,
                     enShow: values.enShow.toString(),
                     chName: values.chName,
                     chNamePrint: values.chNamePrint,
@@ -491,7 +508,11 @@ class DishesForm extends React.Component {
             'enShow': nextProps.param.enShow === "true",
             'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
             'chNamePrint': nextProps.param.chNamePrint,
+            'chPrice': nextProps.param.chPrice,
+            'chOldPrice': nextProps.param.chOldPrice,
+            'chDescription': nextProps.param.chDescription,
             'iCategories': this.props.categories.find(x => x.idCategories ===  nextProps.param.iCategories).chName,
+            'chOptionSets': nextProps.param.chOptionSets !== "0" ? this.props.optionSets.find(x => x.idOptionSets ===  nextProps.param.chOptionSets).chName : '',
             'chTags': nextProps.param.tags
           });
 
@@ -499,6 +520,7 @@ class DishesForm extends React.Component {
             iCategories: nextProps.param.iCategories,
             chTags: nextProps.param.tags,
             tmpFileName: generateKey(),
+            dataSource: nextProps.param.ingredients,
             fileList: nextProps.param.chMainImage.length && nextProps.type !== "2" ? [{
               uid: '-1',
               name: nextProps.param.chMainImage.replace(/^.*(\\|\/|\:)/, ''),
