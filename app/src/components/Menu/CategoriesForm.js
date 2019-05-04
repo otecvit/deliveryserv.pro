@@ -46,13 +46,9 @@ class CategoriesForm extends Component {
             var val = {};
             if (this.props.type === '1') {
               const url = this.props.optionapp[0].serverUrl + "/EditCategories.php"; // изменяем категорию
+
               fetch(url, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   idCategories: this.props.param.idCategories,
@@ -71,22 +67,18 @@ class CategoriesForm extends Component {
                       chName: values.chName,
                       chNamePrint: values.chNamePrint,
                       enShow: values.enShow ? "true" : "false",
-                      chMainImage: "", 
-                    }
-                  }
-
-                  if (responseJsonFromServer.tmpFileName.length) {
-                    val = {
-                      dataload: { 
-                        ...val.dataload,
-                        chMainImage: responseJsonFromServer.tmpFileName, 
-                      }
+                      chMainImage: responseJsonFromServer.tmpFileName,
                     }
                   }
 
                   this.props.onEdit(val);  // вызываем action
                   message.success('Категория изменена');
-                  this.props.form.resetFields(); // ресет полей
+                  
+                  this.props.form.setFieldsValue({
+                    'enShow': values.enShow.toString() === "true",
+                    'chName': values.chName,
+                    'chNamePrint': values.chNamePrint,
+                  });
                 }
               }).catch((error) => {
                   console.error(error);
@@ -95,13 +87,10 @@ class CategoriesForm extends Component {
             } else {
 
               const url = this.props.optionapp[0].serverUrl + "/InsertCategories.php"; // добавляем категорию
+
+
               fetch(url, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   chUID: this.props.owner.chUID,

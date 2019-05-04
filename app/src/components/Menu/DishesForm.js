@@ -258,22 +258,6 @@ class DishesForm extends React.Component {
           if (!err) {
             var val = {};
             if (this.props.type === '1') {
-              console.log( {
-                idDishes: this.props.param.idDishes,
-                enShow: values.enShow ? "1" : "0",
-                chName: values.chName,
-                chNamePrint: values.chNamePrint,
-                chPrice: Number(values.chPrice).toFixed(2),
-                chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
-                chDescription: values.chDescription,
-                iCategories: this.state.iCategories,
-                chOptionSets: values.chOptionSets,
-                chTags: values.chTags,
-                ingredients: this.state.dataSource,
-                tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
-                chMainImage: this.props.param.chMainImage,
-              });
-              
               const url = this.props.optionapp[0].serverUrl + "/EditProducts.php"; // изменяем категорию
               fetch(url, {
                 method: 'POST',
@@ -294,8 +278,7 @@ class DishesForm extends React.Component {
                   chMainImage: this.props.param.chMainImage,
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
-                console.log(responseJsonFromServer);
-                
+               
                 if (responseJsonFromServer.status) {
                   val = {
                     dataload: { 
@@ -311,16 +294,7 @@ class DishesForm extends React.Component {
                       chOptionSets: values.chOptionSets,
                       tags: values.chTags,
                       ingredients: this.state.dataSource,
-                      chMainImage: "", 
-                    }
-                  }
-
-                  if (responseJsonFromServer.tmpFileName.length) {
-                    val = {
-                      dataload: { 
-                        ...val.dataload,
-                        chMainImage: responseJsonFromServer.tmpFileName, 
-                      }
+                      chMainImage: responseJsonFromServer.tmpFileName, 
                     }
                   }
 
