@@ -59,7 +59,7 @@ class SiderMenu extends Component {
                 collapsed={this.state.collapsed}
                 onCollapse={this.onCollapse}
             >
-            <div className="logo" />
+            <div className="logo"></div>
             <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" onClick={this.onClickMenu}>
                 { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["dashboard"]) && <Menu.Item key="1"><Link to="/"><Icon type="home" /><span>Рабочий стол</span></Link></Menu.Item> }
                 { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["orders"]) && <Menu.Item key="2"><Link to="orders"><IconFont type="icon-orders"/><span>Заказы</span></Link></Menu.Item> }

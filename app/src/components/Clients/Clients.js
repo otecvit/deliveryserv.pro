@@ -1,9 +1,10 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
 import { Layout, Tabs, Avatar , Icon, Table, Menu, Dropdown, Row, Col, Select, message, Popconfirm, Modal, Alert  } from 'antd';
 import moment from 'moment';
 
-import ClientsForm from './ClientsForm';
+import ClientsForm from './ClientsForm'
+import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -84,11 +85,6 @@ class Customers extends Component {
 
         fetch(url, {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               chUID: this.props.owner.chUID,
@@ -249,25 +245,11 @@ class Customers extends Component {
                 title: 'Последний заказа', 
                 dataIndex: 'dLastOrder', 
                 render: (record) => {
-                    //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
                     <div style={{ textAlign: 'center' }}>
                             {record}
                     </div>);
                 }
-            },{ 
-                title: 'Действие', 
-                key: 'operation', 
-                fixed: 'right', 
-                width: 100, 
-                render: (record) => 
-                <div style={{ textAlign: 'center' }}>
-                    <Dropdown overlay={this.createDropdownMenu({record})} onVisibleChange={this.onOpenDropMenu} trigger={['click']}>
-                        <a className="ant-dropdown-link" href="#">
-                            <IconFont type="icon-menu1" style={{ fontSize: "18px", color: "#000000a6" }}/>
-                        </a>
-                    </Dropdown>
-                </div>
             },
         ];
 
@@ -278,13 +260,8 @@ class Customers extends Component {
 
         //const options = this.props.dishes.map(item => <Option key={item.idDishes}>{item.chName}</Option>);
 
-        return (<div>
-            <Content style={{ background: '#fff'}}>
-                <div style={{ padding: 10 }}>
-                    <div className="title-section"><Icon type="team" style={{ fontSize: '20px', marginRight: "10px"}}/>Клиенты</div>
-                </div>
-            </Content>
-            
+        return (<Fragment>
+            <HeaderSection title="Клиенты" icon="icon-team" />
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
                 
@@ -312,7 +289,7 @@ class Customers extends Component {
                 {this.state.showOrders && !this.state.openDropMenu ? <ClientsForm handler = {this.handler} param={this.val}/> : null}
                 </div>
             </Content>
-            </div>);        
+            </Fragment>);        
     }
 }
 

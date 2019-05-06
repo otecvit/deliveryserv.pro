@@ -41,13 +41,14 @@ class Orders extends Component {
     createDropdownMenu = (record) => {
         const menu = (
             <Menu onClick={e => {
-      
-                
                 this.handleMenuClick(e, record);
             }}>
-              <Menu.Item key="0">Редактировать</Menu.Item>
-              <Menu.Item key="1">Копировать</Menu.Item>
-              <Menu.Item key="2"> Удалить </Menu.Item>
+              <Menu.Item key="0">Печать заказа</Menu.Item>
+              <Menu.Divider />
+              <Menu.Item key="1">Заказ подтвержден</Menu.Item>
+              <Menu.Item key="2">Заказ выполнен</Menu.Item>
+              <Menu.Divider />
+              <Menu.Item key="3">Заказ отменен</Menu.Item>
             </Menu>
           );
    
@@ -290,9 +291,6 @@ class Orders extends Component {
                     )
                 }
             },{ 
-                title: 'Ресторан', 
-                dataIndex: 'chLocation', 
-            },{ 
                 title: 'Действие', 
                 key: 'operation', 
                 fixed: 'right', 
@@ -332,7 +330,7 @@ class Orders extends Component {
                             columns={columns}
                             dataSource={dataSource}
                             size="small"  
-                            pagination={{ pageSize: 20 }}
+                            pagination={false}
                             loading={flLoading}
                             onRow={(record, index) => ({
                                 onClick: (event) => { this.onRowClick(record, index, event) } 

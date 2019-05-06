@@ -79,7 +79,13 @@ class Sorting extends Component {
     this.setState({
         flLoading: true,
     })
-    fetch(url)
+    fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(
+      {
+        chUID: this.props.owner.chUID,
+      })
+    })
     .then((response) => response.json())
     .then((responseJson) => {
         this.props.onAdd(responseJson.categories);
@@ -123,7 +129,6 @@ class Sorting extends Component {
       }
       
       onChangeCategory = (e) => {
-        //console.log(e);
         this.setState ({ 
             currentEditCat: e.key
         });
@@ -210,6 +215,7 @@ export default connect (
       categories: state.categories,
       dishes: state.dishes,
       optionapp: state.optionapp,
+      owner: state.owner,
   }),
   dispatch => ({
       onAdd: (data) => {

@@ -70,15 +70,9 @@ class TovarSorting extends Component {
       }
     
       loadingData = (idCategories) => {
-
         const url = this.props.optionapp[0].serverUrl + "/SelectProductSort.php"; // изменяем категорию
             fetch(url, {
               method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
               body: JSON.stringify(
               {
                 idCategories: idCategories,
@@ -103,11 +97,6 @@ class TovarSorting extends Component {
         const url = this.props.optionapp[0].serverUrl + "/EditProductSort.php"; // изменяем категорию
             fetch(url, {
               method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
               body: JSON.stringify(
               {
                 products: this.state.items.map( (item, index) => {
@@ -145,9 +134,6 @@ class TovarSorting extends Component {
         const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
         });
-
-        
-        
 
         return (<div style={{ marginTop: "10px" }}>
             <Spin spinning={flLoading}>

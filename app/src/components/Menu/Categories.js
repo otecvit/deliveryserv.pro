@@ -124,11 +124,6 @@ class Categories extends Component {
         })
         fetch(url, {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               chUID: this.props.owner.chUID,
