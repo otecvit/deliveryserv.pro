@@ -184,7 +184,7 @@ class DishesForm extends React.Component {
           dataSource: this.props.type !== "0" ? this.props.param.ingredients : [],
           count: this.props.type !== "0" ? this.props.param.ingredients.length + 1 : 0,
           iCategories: this.props.type !== "0" ? this.props.param.iCategories : '',
-          chOptionSets: this.props.type !== "0" ? this.props.param.chOptionSets : 'Выберите набор опций',
+          chOptionSets: this.props.type !== "0" ? this.props.param.chOptionSets : '0',
           chTags: this.props.type !== "0" ? this.props.param.tags : [],
           arrTags: this.props.tags.map(item => {
             return {
@@ -271,7 +271,7 @@ class DishesForm extends React.Component {
                   chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
                   chDescription: values.chDescription,
                   iCategories: this.state.iCategories,
-                  chOptionSets: values.chOptionSets,
+                  chOptionSets: this.state.chOptionSets,
                   chTags: values.chTags,
                   ingredients: this.state.dataSource,
                   tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
@@ -291,7 +291,7 @@ class DishesForm extends React.Component {
                       chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
                       chDescription: values.chDescription,
                       iCategories: this.state.iCategories,
-                      chOptionSets: values.chOptionSets,
+                      chOptionSets: this.state.chOptionSets,
                       tags: values.chTags,
                       ingredients: this.state.dataSource,
                       chMainImage: responseJsonFromServer.tmpFileName, 
@@ -332,7 +332,7 @@ class DishesForm extends React.Component {
                   chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
                   chDescription: values.chDescription,
                   iCategories: this.state.iCategories,
-                  chOptionSets: values.chOptionSets,
+                  chOptionSets: this.state.chOptionSets,
                   chTags: values.chTags,
                   ingredients: this.state.dataSource,
                   tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
@@ -349,7 +349,7 @@ class DishesForm extends React.Component {
                     chOldPrice: values.chOldPrice.length ? Number(values.chOldPrice).toFixed(2) : "",
                     chDescription: values.chDescription,
                     iCategories: this.state.iCategories,
-                    chOptionSets: values.chOptionSets,
+                    chOptionSets: this.state.chOptionSets,
                     tags: values.chTags,
                     ingredients: this.state.dataSource,
                     chMainImage: responseJsonFromServer.tmpFileName, 
@@ -463,7 +463,7 @@ class DishesForm extends React.Component {
             'chOldPrice': '',
             'chDescription': '',
             'iCategories': '',
-            'chOptionSets': 'Выберите набор опций',
+            'chOptionSets': '0',
             'chTags': [],
           });
 
@@ -472,7 +472,7 @@ class DishesForm extends React.Component {
             dataSource: [],
             count: 0,
             iCategories: '',
-            chOptionSets: [],
+            chOptionSets: '0',
             chTags: [],
             tmpFileName: generateKey(),
             fileList: [],
@@ -490,7 +490,7 @@ class DishesForm extends React.Component {
             'chOldPrice': nextProps.param.chOldPrice,
             'chDescription': nextProps.param.chDescription,
             'iCategories': this.props.categories.find(x => x.idCategories ===  nextProps.param.iCategories).chName,
-            'chOptionSets': nextProps.param.chOptionSets !== "0" ? this.props.optionSets.find(x => x.idOptionSets === nextProps.param.chOptionSets).chName : 'Выберите набор опций',
+            'chOptionSets': nextProps.param.chOptionSets !== "0" ? this.props.optionSets.find(x => x.idOptionSets === nextProps.param.chOptionSets).chName : '0',
             'chTags': nextProps.param.tags
           });
 
