@@ -1,13 +1,16 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { Layout, Tabs, Avatar, Icon, Table, Menu, Dropdown, Row, Col, Select, message, Popconfirm, Modal, Alert  } from 'antd';
+import { Layout, Tabs, Avatar, Icon, Table, Menu, Dropdown, Pagination, Col, Row, message, Popconfirm, Modal, Alert  } from 'antd';
 import moment from 'moment';
 
-import OrdersForm from './OrdersForm';
+import { PrintOrder } from '../../items/PDFPrint'
+import OrdersForm from './OrdersForm'
 import HeaderSection from '../../items/HeaderSection'
 import ViewDetailDescription from '../../items/ViewDetailDescription'
 
 const { Content } = Layout;
+const PAGE_HITS = 'hitsPerPage=';
+const CURRENT_PAGE = 'defaultCurrentPage=';
 
 class Orders extends Component {
     
@@ -21,6 +24,8 @@ class Orders extends Component {
             flLoading: true,
             showOrders: false,
             openDropMenu: false,
+            hitsPerPage: 10,
+            defaultCurrentPage: 1,
         };
     }
 
@@ -57,7 +62,7 @@ class Orders extends Component {
 
     handleMenuClick = (e, record) => {
         switch (e.key) {
-            case "0": console.log("0"); break; //Редактировать
+            case "0": this.handlePrintOrder(record); break; //Отправляем на печать
             case "1": console.log("1"); break; //Копировать
             case "2": console.log("2"); break; 
             default: console.log("3");;    
@@ -67,11 +72,35 @@ class Orders extends Component {
         });
       }
 
+    handlePrintOrder = ({record}) => {
+        
+        const url = this.props.optionapp[0].serverUrl + "/SelectOrdersDetail.php";
+
+        fetch(url, 
+          {
+              method: 'POST',
+              body: JSON.stringify(
+              {
+                idOrder: record.idOrder
+             })
+          })
+        .then((response) => response.json())
+        .then((responseJson) => {
+           PrintOrder(record, responseJson.ordersdetail);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+        
+    }
+
 
     loadingData = () => {
 
-        const url = this.props.optionapp[0].serverUrl +  "/SelectOrders.php";
-
+        const { hitsPerPage, defaultCurrentPage } = this.state;
+        const url = `${this.props.optionapp[0].serverUrl}/SelectOrders.php?${PAGE_HITS}${hitsPerPage}&${CURRENT_PAGE}${defaultCurrentPage}`;
+        
         this.setState({
             flLoading: true,
         })
@@ -98,6 +127,21 @@ class Orders extends Component {
         .catch((error) => {
           console.error(error);
         });
+    }
+
+    // изменение номера страницы
+    onChangePageNumber = (pageNumber) => {
+        this.setState({
+            defaultCurrentPage: pageNumber,
+        }, () => this.loadingData())
+    }
+
+    // изменение количества записей на странице
+    onShowSizeChange = (currentPage, pageSize) => {
+        this.setState({
+            defaultCurrentPage: currentPage,
+            hitsPerPage: pageSize,
+        }, () => this.loadingData())
     }
 
     CalculatePlaced = () => {
@@ -186,7 +230,7 @@ class Orders extends Component {
       }
 
     render() {
-        const { dataSource, newOrderCount, flLoading } = this.state;
+        const { dataSource, defaultCurrentPage, flLoading } = this.state;
 
         const columns = [{ 
                 title: 'Тип', 
@@ -340,6 +384,21 @@ class Orders extends Component {
                             
     
                         />
+                
+                    <Row style={{ padding: 20, textAlign: "center" }}>
+                        <Col span={24}>
+                        { dataSource.length !== 0 &&
+                            <Pagination 
+                                showSizeChanger 
+                                defaultCurrent={defaultCurrentPage} 
+                                total={+this.props.owner.CountOrder} 
+                                onChange={this.onChangePageNumber}
+                                onShowSizeChange={this.onShowSizeChange}
+                            />
+                        }
+                        </Col>
+                    </Row>
+                 
                 {this.state.showOrders && !this.state.openDropMenu ? <OrdersForm handler = {this.handler} param={this.val}/> : null}
                 </div>
             </Content>

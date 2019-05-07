@@ -66,11 +66,6 @@ const CollectionCreateForm = Form.create()(
         const url = this.props.optionapp[0].serverUrl + "/EditStatusOrder.php"; // изменяем категорию
         fetch(url, {
           method: 'POST',
-          headers: 
-          {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-          },
           body: JSON.stringify(
           {
             idOrder: this.props.param.idOrder,
@@ -95,11 +90,6 @@ const CollectionCreateForm = Form.create()(
       fetch(url, 
         {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               idOrder: this.props.param.idOrder
@@ -126,32 +116,6 @@ const CollectionCreateForm = Form.create()(
       const labelColSpan = 8;
       const wrapperColSpan = 16;
       const dateFormat = 'DD.MM.YYYY';
-      /*
-      const columns = [{ 
-          title: 'Товар', 
-          dataIndex: 'chNameProduct', 
-          key: 'chNameProduct',
-          className: 'header-left',
-          render: (record) => {
-            return (
-            <div style={{ textAlign: 'left' }}>
-                <div style={{ fontSize: '13px' }}>{record}</div>
-            </div>);
-        }
-        },{ 
-          title: 'Цена', 
-          dataIndex: 'chPriceProduct', 
-          key: 'chPriceProduct',
-          className: 'header-right',
-          render: (record) => {
-            return (
-            <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '13px' }}>{record}</div>
-            </div>);
-          }
-        },
-      ];
-      */
        
       return (
         <Modal
