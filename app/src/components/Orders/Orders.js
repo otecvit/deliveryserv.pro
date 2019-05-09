@@ -86,7 +86,7 @@ class Orders extends Component {
           })
         .then((response) => response.json())
         .then((responseJson) => {
-           PrintOrder(record, responseJson.ordersdetail);
+           PrintOrder(record, responseJson.ordersdetail, this.props.owner.chCurrency);
         })
         .catch((error) => {
           console.error(error);
