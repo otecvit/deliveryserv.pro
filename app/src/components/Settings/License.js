@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { Layout, Icon, Row, Col, Radio, Divider, Button } from 'antd'
 
 import TariffPlans, { Tariffs } from '../../items/TariffPlans';
+import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
 
@@ -15,7 +16,7 @@ class License extends Component {
 
         this.state = {
             currentTariff: this.props.owner.iTarif,
-            currentCost: Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].cost,
+            currentCost: this.props.owner.iTarif !== '0' ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].cost : 1,
         }
 
     }
@@ -36,11 +37,7 @@ class License extends Component {
           });
         
         return (<div>
-            <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-orders" style={{ fontSize: '16px', marginRight: "10px"}}/>Оплата</div>
-            </div>
-            </Content>  
+            <HeaderSection title="Оплата" icon="icon-orders" />  
             <Content style={{ background: '#fff', margin: '16px 0', width: 800 }}>
                 <div style={{ padding: 10 }}>
                 <Row>

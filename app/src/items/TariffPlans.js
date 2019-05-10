@@ -105,7 +105,7 @@ class TariffPlans extends Component {
 
         this.state = {
             currentTarif: this.props.currentTariff,
-            currentPeriod: this.props.currentTariff ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.currentTariff)].period : "месяц",
+            currentPeriod: this.props.currentTariff > 0 ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.currentTariff)].period : "месяц",
         }
     }
 
