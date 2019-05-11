@@ -138,8 +138,6 @@ class Setup extends Component {
               };
               return newdata;
             });
-            console.log(arrPhones);
-            console.log(OperationMode);
 
             this.setState({
               currentStep: 2,
@@ -326,24 +324,19 @@ class Setup extends Component {
     saveSetup = () => {
       
       //var val={};
-      const {currentTarif, currentPeriodMonth, chName, chEmailStore, chTimeZone, chCurrency, chNameLocation, chAddressLocation, chPhoneLocation, blPickup, arrOperationMode} = this.state;
+      const {currentTarif, chName, chEmailStore, chTimeZone, chCurrency, chNameLocation, chAddressLocation, chPhoneLocation, blPickup, arrOperationMode} = this.state;
 
       var val = {};
 
       const url = this.props.optionapp[0].serverUrl + "/SaveSetup.php"; // сохраняем настройки
               fetch(url, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   chUID: this.props.owner.chUID,
                   chName: chName,
                   chEmailStore: chEmailStore,
-                  iTarif: currentTarif,
+                  iTarif: `0`,
                   chTimeZone: chTimeZone,
                   chCurrency: chCurrency,
                   blPickup: blPickup ? "1" : "0",
@@ -353,7 +346,7 @@ class Setup extends Component {
                   chUID: this.props.owner.chUID,
                   chName: chName,
                   chEmailStore: chEmailStore,
-                  iTarif: currentTarif,
+                  iTarif: `0`,
                   chTimeZone: chTimeZone,
                   chCurrency: chCurrency,
                   blVerification: "0",
@@ -368,48 +361,27 @@ class Setup extends Component {
                   SetupSuccessful: false,
                 });
                 console.error(error);
-                console.error(error);
               });
           
           // отправляем письмо с подтверждением email
           const urlSendMailAct = this.props.optionapp[0].serverUrl + "/SendMailAct.php"; // изменяем категорию
               fetch(urlSendMailAct, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   chUIDStaff: this.props.owner.chUIDStaff,
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
-                  console.log(responseJsonFromServer);
+                  
                   
               }).catch((error) => {
                   console.error(error);
               });
 
           const urlLocation = this.props.optionapp[0].serverUrl + "/InsertLocation.php"; // изменяем категорию
-              console.log(JSON.stringify(
-                {
-                  chUID: this.props.owner.chUID,
-                  blShow: "1",
-                  chName: chNameLocation,
-                  chAddress: chAddressLocation,
-                  arrPhones: chPhoneLocation,
-                  arrOperationMode: arrOperationMode,
-                  blPickup: blPickup ? "1" : "0",
-                }));
               
               fetch(urlLocation, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   chUID: this.props.owner.chUID,

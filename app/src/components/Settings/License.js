@@ -9,14 +9,16 @@ const { Content } = Layout;
 
 const CURRENCY = "$"; // валюта
 
+
 class License extends Component {
 
     constructor(props){
         super(props);
 
         this.state = {
-            currentTariff: this.props.owner.iTarif,
-            currentCost: this.props.owner.iTarif !== '0' ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].cost : 1,
+            currentTariff: this.props.owner.iTarif !== '0' ? this.props.owner.iTarif : '1',
+            currentCost: this.props.owner.iTarif !== '0' ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].cost : '1',
+            oldNameTariff: this.props.owner.iTarif !== '0' ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].name : `Пробный период`, //текущий оплаченный тариф или пробный период
         }
 
     }
@@ -30,13 +32,10 @@ class License extends Component {
 
     render() {
 
-        const {currentTariff, currentCost} = this.state;
+        const {currentTariff, currentCost, oldNameTariff} = this.state;
+
         
-        const IconFont = Icon.createFromIconfontCN({
-            scriptUrl: this.props.optionapp[0].scriptIconUrl,
-          });
-        
-        return (<div>
+        return (<div> 
             <HeaderSection title="Оплата" icon="icon-orders" />  
             <Content style={{ background: '#fff', margin: '16px 0', width: 800 }}>
                 <div style={{ padding: 10 }}>
@@ -47,7 +46,7 @@ class License extends Component {
                                 <div className="b-subscription__plan b-subscription__plan-full">
                                     <div className="b-subscription__main">
                                         <span className="b-subscription__main-title">Ваш тарифный план</span>
-                                        <div className="b-plans__title b-plans__title-left b-plans__title-sm-marg">Начинающий</div>
+                                        <div className="b-plans__title b-plans__title-left b-plans__title-sm-marg">{oldNameTariff}</div>
                                         <div>активен до<b> 08 февраля 2019 г.</b></div>
                                     </div>
                                 </div>

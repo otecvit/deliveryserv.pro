@@ -7,8 +7,6 @@ import Cookies from 'js-cookie'
 
 import { arrPageAccess } from '../constans'
 
-const RadioGroup = Radio.Group;
-const RadioButton = Radio.Button;
 const FormItem = Form.Item;
 
 class Registration extends Component {
