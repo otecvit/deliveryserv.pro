@@ -93,18 +93,9 @@ class Dashboard extends Component {
 
     // получаем статистику из базы
     const url = this.props.optionapp[0].serverUrl + "/SelectStatistics.php";
-      /*  
-      this.setState({
-            flLoading: true,
-        })
-        */
-        fetch(url, {
+
+    fetch(url, {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               chUID: this.props.owner.chUID,
