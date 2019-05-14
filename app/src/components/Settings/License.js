@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { Layout, Icon, Row, Col, Radio, Divider, Button } from 'antd'
+import { Layout, Row, Col, Modal, Divider, Button } from 'antd'
 import moment from 'moment'
 import 'moment/locale/ru'
 
@@ -19,7 +19,7 @@ class License extends Component {
 
         this.state = {
             currentTariff: this.props.owner.iTarif !== '0' ? this.props.owner.iTarif : '1',
-            currentCost: this.props.owner.iTarif !== '0' ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].cost : '1',
+            currentCost: this.props.owner.iTarif !== '0' ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].cost : Tariffs[0].cost,
             oldNameTariff: this.props.owner.iTarif !== '0' ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].name : `Пробный период`, //текущий оплаченный тариф или пробный период
             arrStatistics: [  { iStatus: "0", CountOrder: 0, SumOrder: 0},
                                 { iStatus: "5", CountOrder: 0, SumOrder: 0}, 
@@ -105,8 +105,8 @@ class License extends Component {
         //Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].countOrders
         const { arrStatistics } = this.state;
         const currentOrder = arrStatistics[0].CountOrder + arrStatistics[1].CountOrder; //текущее количество заказов
-        const countOrdersLimit = Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].countOrders; // лимит заказов по тарифу
-        const costOverLimit = Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].costOverLimit; // стоимость заказа сверх лимита
+        const countOrdersLimit = this.props.owner.iTarif !== '0' ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].countOrders : 10000; // лимит заказов по тарифу
+        const costOverLimit = this.props.owner.iTarif !== '0' ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.owner.iTarif)].costOverLimit : 0.03; // стоимость заказа сверх лимита
 
         if ( currentOrder > countOrdersLimit) {
             const orderExcessLimit = currentOrder - countOrdersLimit;
@@ -118,6 +118,15 @@ class License extends Component {
         }
     }
 
+    // обработка нажатия "Перейти к оплате"
+    goToPayment = () => {
+        Modal.success({
+          title: 'Оплата',
+          content: 'Оплата проведена успешно...',
+        });
+    }
+
+
     render() {
 
 
@@ -125,7 +134,7 @@ class License extends Component {
         const {currentTariff, currentCost, oldNameTariff, arrStatistics, costExcessLimit, orderExcessLimit} = this.state;
         const dEndSubscription = moment([this.props.owner.dEndSubscription[0], this.props.owner.dEndSubscription[1]-1, this.props.owner.dEndSubscription[2]]).format(`LL`);
         const chOrderLimit = orderExcessLimit !== 0 ? `${orderExcessLimit} шт. (${costExcessLimit}${CURRENCY})` : `0 шт.`;
-
+        const totalCost = Number(currentCost) + Number(costExcessLimit);
 
         return (<div> 
             <HeaderSection title="Оплата" icon="icon-orders" />  
@@ -161,37 +170,37 @@ class License extends Component {
                     </Col>
                 </Row>
                 <TariffPlans onSelectTariff={this.handleTariff} currentTariff = {currentTariff}/>
-                <Divider />
+                <Divider style={{ margin: '3px 0' }}/>
                 <Row>
                     <Col span={12}>
                         <span>Стоимость выбранного тарифного плана</span>
                     </Col>
                     <Col span={12} style = {{ textAlign: 'right' }}>
-                        {currentCost}{CURRENCY}
+                        {Number(currentCost).toFixed(2)}{CURRENCY}
                     </Col>
                 </Row>
-                <Divider dashed />
+                <Divider dashed style={{ margin: '3px 0' }}/>
                 <Row>
                     <Col span={12}>
                     <span>Превышение лимита в предыдущем периоде</span>
                     </Col>
                     <Col span={12} style = {{ textAlign: 'right' }}>
-                        {costExcessLimit}{CURRENCY}
+                        {Number(costExcessLimit).toFixed(2)}{CURRENCY}
                     </Col>
                 </Row>
-                <Divider />
+                <Divider style={{ margin: '3px 0' }}/>
                 <Row>
                     <Col span={12}>
                     <span><b>ИТОГО</b></span>
                     </Col>
                     <Col span={12} style = {{ textAlign: 'right' }}>
-                        <b>190,25</b>
+                        <b>{Number(totalCost).toFixed(2)}{CURRENCY}</b>
                     </Col>
                 </Row>
                 <Row>
-                    <Col span={24} style = {{ textAlign: 'right' }}>
-                        <Button type="primary" htmlType="submit">
-                            Оплатить
+                    <Col span={24} style = {{ textAlign: 'right', margin: '15px 0' }}>
+                        <Button type="primary" onClick={this.goToPayment}>
+                            Перейти к оплате
                         </Button>
                     </Col>
                 </Row>
