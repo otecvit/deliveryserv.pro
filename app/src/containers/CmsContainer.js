@@ -163,8 +163,8 @@ class CmsWrapper extends Component {
                                     closeText="Отправить письмо ещё раз" 
                                     afterClose={this.sendMailVerification}
                                     className="alert-order"/> </div> : null }
-
-                    
+                                    
+                  
                     <div style={{ padding: !showMessage ? 16 : "0px 16px 16px 16px", minHeight: 360 }}>
                         <Route exact path="/" component={Dashboard}/>
                         <Route exact path="/categories" component={Categories}/>

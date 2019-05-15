@@ -359,6 +359,7 @@ class Orders extends Component {
 
         return (<div>
             <HeaderSection title="Заказы" icon="icon-orders" />
+
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
                 

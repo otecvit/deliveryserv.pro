@@ -226,6 +226,19 @@ thead[class*="ant-table-thead"] th{
   border-bottom: none;
 }
 
+.alert-order a {
+  font-size: 14px;
+  position: initial;
+  border-bottom: 1px dashed #000000a6;
+  color: #000000a6;
+  margin-left: 5px;
+}
+
+.alert-order a:hover {
+  border-bottom: none;
+}
+
+
 .title-section {
   font-size: 18px;
   font-weight: 500;

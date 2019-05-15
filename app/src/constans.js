@@ -23,3 +23,5 @@ export const arrPageAccess = [
     { keyName: "license",           name: 'Оплата',                   value: true},
   ];
 
+  export const parrentDomain = "http://deliveryserv.pro/"
+

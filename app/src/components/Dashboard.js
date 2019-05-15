@@ -158,10 +158,10 @@ class Dashboard extends Component {
     return (
     <div>
       <HeaderSection title="Рабочий стол" icon="icon-home" />
-      <Content style={{ background: '#fff', marginTop: -25}}>
-        <div style={{ padding: 10 }}>
-            <Divider />
-            <Row type="flex" justify="space-around" align="middle">
+
+      <Content style={{ background: '#fff', margin: '16px 0' }}>
+      <div style={{ padding: 20 }}>
+      <Row type="flex" justify="space-around" align="middle">
                 <Col span={12}>
                 <Radio.Group defaultValue="1" buttonStyle="solid" onChange={this.onChangeTimePeriod}>
                   <Radio.Button value="1">Сегодня</Radio.Button>
@@ -174,12 +174,9 @@ class Dashboard extends Component {
                 <Col span={12}>
 
                 </Col>
-            </Row>
-        </div>
-      </Content>
-      <Content style={{ background: '#fff', margin: '16px 0' }}>
-      <div style={{ padding: 20 }}>
-      <Row type="flex" justify="space-around" align="middle" style={{ margin: '5px 0 20px 0' }}>
+      </Row>
+      <Divider />
+      <Row type="flex" justify="space-around" align="middle" style={{ margin: '5px 0 15px 0' }}>
           <Col span={12}>
             <div style = {{ fontWeight: 600 }}>{currValuePeriod}</div>
           </Col>

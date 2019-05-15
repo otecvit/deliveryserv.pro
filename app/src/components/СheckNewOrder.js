@@ -2,9 +2,6 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
 import MIDISounds from 'midi-sounds-react';
 
-
-
-
 class test extends Component {
 
     constructor(props) {
@@ -47,10 +44,6 @@ class test extends Component {
 
     subscribeToServerEvent = () => {
 
-       this.setState({
-           currentStatus: false,
-       })
-       
        this.eventSource.onmessage = e => {
           try {
             
@@ -60,33 +53,13 @@ class test extends Component {
                 CountOrder: e.data,
                 NewOrderPrint: (Number(e.data) - Number(this.props.owner.CountOrder) + Number(this.props.owner.NewOrderPrint)).toString(),
              });
-              //this.handlePlay()
-              /*
-              if (this.audio) {
-                this.audio.pause();
-              }
-              this.audio = new Audio("http://mircoffee.by/deliveryserv/app/sound/new_order.mp3");
-              this.audio.play();
-              */
              this.playTestInstrument();
-              this.newEventSource();
+             this.newEventSource();
 
           } catch (e) {
             console.log('error parsing server response', e)
           }
         }
-        
-        this.eventSource.onopen = () => {
-            this.setState({
-                currentStatus: true,
-            })
-        };
-
-        this.props.changeStatus({
-            statusCloud: this.state.currentStatus ? 1 : 0,
-         });
-
-
     }
 
     handlePlay() {
