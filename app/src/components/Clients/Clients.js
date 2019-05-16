@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
-import { Layout, Tabs, Avatar , Icon, Table, Menu, Dropdown, Row, Col, Select, message, Popconfirm, Modal, Alert  } from 'antd';
+import { Layout, Tabs, Avatar , Icon, Table, Menu, Button, Row, Col, Select, message, Popconfirm, Modal, Alert  } from 'antd';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 import ClientsForm from './ClientsForm'
 import HeaderSection from '../../items/HeaderSection'
@@ -262,33 +263,54 @@ class Customers extends Component {
 
         return (<Fragment>
             <HeaderSection title="Клиенты" icon="icon-team" />
-            <Content style={{ background: '#fff', margin: '16px 0' }}>
-                <div style={{ padding: 10 }}>
-                
-                { this.props.optionapp[0].newOrderCount ? <Alert 
-                                        message={`${this.props.optionapp[0].newOrderCount} ${this.declOfNum(['новый заказ','новых заказа','новых заказов'])(this.props.optionapp[0].newOrderCount)}`} 
-                                        closable 
-                                        type="info" 
-                                        style={{ margin: '16px 0', textAlign: "center" }} 
-                                        closeText="Обновить список" 
-                                        afterClose={this.loadingData}
-                                        className="alert-order"/> : null }
-                <Table
-                            columns={columns}
-                            dataSource={dataSource}
-                            size="small"  
-                            pagination={false}
-                            loading={flLoading}
-                            onRow={(record, index) => ({
-                                onClick: (event) => { this.onRowClick(record, index, event) } 
-                              })}
-                            rowClassName="cursor-pointer"
-                            locale={{emptyText: 'Нет данных'}}
-    
-                        />
-                {this.state.showOrders && !this.state.openDropMenu ? <ClientsForm handler = {this.handler} param={this.val}/> : null}
-                </div>
-            </Content>
+            { this.props.owner.blStatusCustomer  ? 
+                <Content style={{ background: '#fff', margin: '16px 0' }}>
+                    <div style={{ padding: 10 }}>
+                    
+                    { this.props.optionapp[0].newOrderCount ? <Alert 
+                                            message={`${this.props.optionapp[0].newOrderCount} ${this.declOfNum(['новый заказ','новых заказа','новых заказов'])(this.props.optionapp[0].newOrderCount)}`} 
+                                            closable 
+                                            type="info" 
+                                            style={{ margin: '16px 0', textAlign: "center" }} 
+                                            closeText="Обновить список" 
+                                            afterClose={this.loadingData}
+                                            className="alert-order"/> : null }
+                    <Table
+                                columns={columns}
+                                dataSource={dataSource}
+                                size="small"  
+                                pagination={false}
+                                loading={flLoading}
+                                onRow={(record, index) => ({
+                                    onClick: (event) => { this.onRowClick(record, index, event) } 
+                                })}
+                                rowClassName="cursor-pointer"
+                                locale={{emptyText: 'Нет данных'}}
+        
+                            />
+                    {this.state.showOrders && !this.state.openDropMenu ? <ClientsForm handler = {this.handler} param={this.val}/> : null}
+                    </div>
+                </Content> : 
+                <Content style={{ margin: '16px 0' }}>
+                <Alert
+                    message="Бесплатный пробный период закончился"
+                    description={
+                        <Fragment>
+                            <Row>
+                                <Col span={24}>
+                                Купите подписку, чтобы продолжить работать.
+                                </Col>
+                            </Row>
+                            <Row style={{ marginTop: 10 }}>
+                                <Col span={24}>
+                                    <Link to="license"><Button type="primary">Купить</Button></Link>
+                                </Col>
+                            </Row>
+                        </Fragment>}
+                    type="warning"
+                    showIcon 
+                />
+            </Content>}
             </Fragment>);        
     }
 }

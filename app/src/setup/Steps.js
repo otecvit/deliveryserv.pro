@@ -324,7 +324,7 @@ class Setup extends Component {
     saveSetup = () => {
       
       //var val={};
-      const {currentTarif, chName, chEmailStore, chTimeZone, chCurrency, chNameLocation, chAddressLocation, chPhoneLocation, blPickup, arrOperationMode} = this.state;
+      const { chName, chEmailStore, chTimeZone, chCurrency, chNameLocation, chAddressLocation, chPhoneLocation, blPickup, arrOperationMode } = this.state;
 
       var val = {};
 

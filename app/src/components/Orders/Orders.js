@@ -1,7 +1,8 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
-import { Layout, Tabs, Avatar, Icon, Table, Menu, Dropdown, Pagination, Col, Row, message, Popconfirm, Modal, Alert  } from 'antd';
+import { Layout, Tabs, Avatar, Icon, Table, Menu, Dropdown, Pagination, Col, Row, Button, Popconfirm, Modal, Alert  } from 'antd';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 import { PrintOrder } from '../../items/PDFPrint'
 import OrdersForm from './OrdersForm'
@@ -359,10 +360,10 @@ class Orders extends Component {
 
         return (<div>
             <HeaderSection title="Заказы" icon="icon-orders" />
-
+            { this.props.owner.blStatusCustomer  ? 
             <Content style={{ background: '#fff', margin: '16px 0' }}>
-                <div style={{ padding: 10 }}>
                 
+                <div style={{ padding: 10 }}>
                 { this.props.owner.NewOrderPrint !== "0" ? <Alert 
                                         message={`${this.props.owner.NewOrderPrint} ${this.declOfNum(['новый заказ','новых заказа','новых заказов'])(this.props.owner.NewOrderPrint)}`} 
                                         closable 
@@ -401,8 +402,28 @@ class Orders extends Component {
                     </Row>
                  
                 {this.state.showOrders && !this.state.openDropMenu ? <OrdersForm handler = {this.handler} param={this.val}/> : null}
-                </div>
-            </Content>
+                    </div> 
+            </Content> : 
+                <Content style={{ margin: '16px 0' }}>
+                <Alert
+                    message="Бесплатный пробный период закончился"
+                    description={
+                        <Fragment>
+                            <Row>
+                                <Col span={24}>
+                                Купите подписку, чтобы продолжить работать.
+                                </Col>
+                            </Row>
+                            <Row style={{ marginTop: 10 }}>
+                                <Col span={24}>
+                                    <Link to="license"><Button type="primary">Купить</Button></Link>
+                                </Col>
+                            </Row>
+                        </Fragment>}
+                    type="warning"
+                    showIcon 
+                />
+            </Content> } 
             </div>);        
     }
 }
