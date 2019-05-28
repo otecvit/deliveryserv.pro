@@ -25,7 +25,7 @@ class Login extends Component {
           const url = `${this.props.optionapp[0].serverUrl}/SelectOwner.php`; // проверяем пользователя
           fetch(url, {
             method: 'POST',
-            body: JSON.stringify(
+            body: JSON.stringify( 
             {
               chUIDStaff: currentUser,
             })
@@ -163,9 +163,6 @@ export default connect (
     owner: state.owner,
   }),
   dispatch => ({
-    onEditStatus: (data) => {
-        dispatch({ type: 'EDIT_ORDERS_STATUS', payload: data});
-      },
     onCheckUser: (data) => {
         dispatch({ type: 'LOAD_OWNER_ALL', payload: data})
     },    
