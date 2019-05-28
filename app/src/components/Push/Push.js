@@ -4,6 +4,7 @@ import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, message} from 'antd';
 import moment from 'moment';
 
 import PushForm from './PushForm';
+import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -220,11 +221,7 @@ class Push extends Component {
                     
 
         return (<div>
-        <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-push" style={{ fontSize: '16px', marginRight: "10px"}}/>Push-уведомления</div>
-            </div>
-        </Content>
+        <HeaderSection title="Push-уведомления" icon="icon-push"/>
         <Content style={{ background: '#fff', margin: '16px 0' }}>
             <div style={{ padding: 10 }}>
             <Tabs 

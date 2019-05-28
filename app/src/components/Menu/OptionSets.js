@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
 
 import OptionSetsForm from './OptionSetsForm';
+import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -181,11 +182,7 @@ class OptionSets extends Component {
         const options = this.props.optionSets.map(item => <Option key={item.idOptionSets}>{item.chName}</Option>);
 
         return (<div>
-            <Content style={{ background: '#fff'}}>
-                <div style={{ padding: 10 }}>
-                    <div className="title-section"><IconFont type="icon-menu" style={{ fontSize: '16px', marginRight: "10px"}}/>Категории</div>
-                </div>
-            </Content>
+            <HeaderSection title="Наборы" icon="icon-menu" />
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
                 <Tabs 

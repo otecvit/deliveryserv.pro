@@ -106,7 +106,7 @@ class CmsWrapper extends Component {
     sendMailVerification = () => {
         const { showMessage } = this.state;
 
-        const urlLocation = this.props.optionapp[0].serverUrl + "/SendMailAct.php"; // изменяем категорию
+        const urlLocation = this.props.optionapp[0].serverUrl + "/SendMailActivation.php"; // изменяем категорию
               fetch(urlLocation, {
                 method: 'POST',
                 headers: 

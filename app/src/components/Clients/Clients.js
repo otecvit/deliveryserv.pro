@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
-import { Layout, Tabs, Avatar , Icon, Table, Menu, Button, Row, Col, Select, message, Popconfirm, Modal, Alert  } from 'antd';
+import { Layout, Tabs, Avatar , Icon, Table, Menu, Button, Row, Col, Select, Pagination, Popconfirm, Modal, Alert  } from 'antd';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 
@@ -8,9 +8,8 @@ import ClientsForm from './ClientsForm'
 import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
-const TabPane = Tabs.TabPane;
-const Option = Select.Option;
-const confirm = Modal.confirm;
+const PAGE_HITS = 'hitsPerPage=';
+const CURRENT_PAGE = 'defaultCurrentPage=';
 
 const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
@@ -27,6 +26,8 @@ class Customers extends Component {
             flLoading: true,
             showOrders: false,
             openDropMenu: false,
+            hitsPerPage: 10,
+            defaultCurrentPage: 1,
         };
     }
 
@@ -77,8 +78,9 @@ class Customers extends Component {
 
 
     loadingData = () => {
-        //const proxyurl = "https://cors-anywhere.herokuapp.com/";
-        const url = this.props.optionapp[0].serverUrl + "/SelectClients.php";
+
+        const { hitsPerPage, defaultCurrentPage } = this.state;
+        const url = `${this.props.optionapp[0].serverUrl}/SelectClients.php?${PAGE_HITS}${hitsPerPage}&${CURRENT_PAGE}${defaultCurrentPage}`;
 
         this.setState({
             flLoading: true,
@@ -105,6 +107,21 @@ class Customers extends Component {
         .catch((error) => {
           console.error(error);
         });
+    }
+
+    // изменение номера страницы
+    onChangePageNumber = (pageNumber) => {
+        this.setState({
+            defaultCurrentPage: pageNumber,
+        }, () => this.loadingData())
+    }
+
+    // изменение количества записей на странице
+    onShowSizeChange = (currentPage, pageSize) => {
+        this.setState({
+            defaultCurrentPage: currentPage,
+            hitsPerPage: pageSize,
+        }, () => this.loadingData())
     }
 
     /// определяем сколько прошло времени
@@ -177,7 +194,7 @@ class Customers extends Component {
     }
 
     render() {
-        const { dataSource, newOrderCount, flLoading } = this.state;
+        const { dataSource, defaultCurrentPage, flLoading } = this.state;
         const columns = [{ 
                 title: '', 
                 dataIndex: 'idClient',
@@ -288,6 +305,20 @@ class Customers extends Component {
                                 locale={{emptyText: 'Нет данных'}}
         
                             />
+                                        <Row style={{ padding: 20, textAlign: "center" }}>
+                        <Col span={24}>
+                        { dataSource.length !== 0 &&
+                            <Pagination 
+                                showSizeChanger 
+                                defaultCurrent={defaultCurrentPage} 
+                                total={+this.props.owner.CountCustomers} 
+                                onChange={this.onChangePageNumber}
+                                onShowSizeChange={this.onShowSizeChange}
+                            />
+                        }
+                        </Col>
+                    </Row>
+
                     {this.state.showOrders && !this.state.openDropMenu ? <ClientsForm handler = {this.handler} param={this.val}/> : null}
                     </div>
                 </Content> : 

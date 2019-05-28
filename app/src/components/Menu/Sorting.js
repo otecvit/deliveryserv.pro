@@ -4,6 +4,7 @@ import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import TovarSorting from './TovarSorting';
+import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
@@ -144,11 +145,7 @@ class Sorting extends Component {
 
     return (
     <div>
-      <Content style={{ background: '#fff'}}>
-                <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-sort" style={{ fontSize: '16px', marginRight: "10px"}}/>Сортировка</div>
-                </div>
-      </Content>
+      <HeaderSection title="Сортировка" icon="icon-sort" />
       <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
                 <Tabs>

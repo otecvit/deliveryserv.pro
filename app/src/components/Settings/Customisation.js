@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Form, Icon, Input, Button, Popconfirm, Upload, message, Switch, Modal, Layout, Select } from 'antd';
 import { connect } from 'react-redux';
 
+import HeaderSection from '../../items/HeaderSection'
+
 const { Content } = Layout;
 const FormItem = Form.Item;
 const generateKey = (pre) => {
@@ -96,11 +98,7 @@ class Customisation extends Component {
           });
 
         return (<div>
-            <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-orders" style={{ fontSize: '16px', marginRight: "10px"}}/>Оформление</div>
-            </div>
-            </Content>  
+            <HeaderSection title="Оформление" icon="icon-orders"/>
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
                 <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px"}}>
