@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Form, Icon, Input, Button, Tag, message, Switch, Layout, Select } from 'antd';
 import { connect } from 'react-redux';
 
+import HeaderSection from '../../items/HeaderSection'
+
 const { Content } = Layout;
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -122,11 +124,7 @@ class EmailNotifications extends Component {
           });
         
         return (<div>
-            <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-                <div className="title-section"><IconFont type="icon-orders" style={{ fontSize: '16px', marginRight: "10px"}}/>E-mail уведомления</div>
-            </div>
-            </Content>  
+            <HeaderSection title="E-mail уведомления" icon="icon-orders"/>
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
                 <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px"}}>

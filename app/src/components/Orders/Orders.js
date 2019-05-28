@@ -13,6 +13,12 @@ const { Content } = Layout;
 const PAGE_HITS = 'hitsPerPage=';
 const CURRENT_PAGE = 'defaultCurrentPage=';
 
+const STATUS_CONFIRM = '2'; // статус подтвержден
+const STATUS_SUCCESFUL = '5'; // статус успешно выполнен
+const STATUS_CANCEL = '6'; // статус отменен
+
+
+
 class Orders extends Component {
     
     constructor(props) {
@@ -64,19 +70,18 @@ class Orders extends Component {
     handleMenuClick = (e, record) => {
         switch (e.key) {
             case "0": this.handlePrintOrder(record); break; //Отправляем на печать
-            case "1": console.log("1"); break; //Копировать
-            case "2": console.log("2"); break; 
-            default: console.log("3");;    
+            case "1": this.handlerOrderChangeStatus(record, STATUS_CONFIRM); break; // Заказ подтвержден
+            case "2": this.handlerOrderChangeStatus(record, STATUS_SUCCESFUL); break; // Заказ выполнен 
+            case "3": this.handlerOrderChangeStatus(record, STATUS_CANCEL); break; // Заказ отменен 
         }
+
         this.setState({
             openDropMenu: false,
         });
       }
 
     handlePrintOrder = ({record}) => {
-        
         const url = this.props.optionapp[0].serverUrl + "/SelectOrdersDetail.php";
-
         fetch(url, 
           {
               method: 'POST',
@@ -92,8 +97,31 @@ class Orders extends Component {
         .catch((error) => {
           console.error(error);
         });
+    }
 
+    // изменение статуса заказа из контекстного меню
+    handlerOrderChangeStatus = ({record}, status) => {
         
+        const url = this.props.optionapp[0].serverUrl + "/EditStatusOrder.php"; // изменяем категорию
+        fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(
+          {
+            idOrder: record.idOrder,
+            iStatus: status, 
+          })
+        }).then((response) => response.json()).then((responseJsonFromServer) => {
+          
+          var val = {
+            idOrder: record.idOrder,
+            iStatus: status, 
+          }
+          this.props.onEditStatus(val);
+          this.loadingData();
+
+        }).catch((error) => {
+            console.error(error);
+        });        
     }
 
 
@@ -440,6 +468,9 @@ export default connect (
           },
         onControlOrder: (data) => {
             dispatch({ type: 'RESET_NEW_ORDER_FOR_PRINT', payload: data});
+          },
+        onEditStatus: (data) => {
+            dispatch({ type: 'EDIT_ORDERS_STATUS', payload: data});
           },
     })
   )(Orders);

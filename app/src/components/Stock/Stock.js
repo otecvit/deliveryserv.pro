@@ -5,6 +5,8 @@ import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message
 import StockForm from './StockForm';
 import StockSorting from './StockSorting';
 
+import HeaderSection from '../../items/HeaderSection'
+
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
 const FormItem = Form.Item;
@@ -199,11 +201,7 @@ class Stock extends Component {
         const options = this.props.stock.map(item => <Option key={item.idStock}>{item.chName}</Option>);
 
         return (<div>
-        <Content style={{ background: '#fff'}}>
-            <div style={{ padding: 10 }}>
-                <div className="title-section"><Icon type="gift" style={{ fontSize: '16px', marginRight: "10px"}}/>Акции</div>
-            </div>
-        </Content>
+        <HeaderSection title="Акции" icon="icon-orders"/>
         <Content style={{ background: '#fff', margin: '16px 0' }}>
             <div style={{ padding: 10 }}>
             <Tabs 
