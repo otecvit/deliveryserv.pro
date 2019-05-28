@@ -9,9 +9,7 @@ const generateKey = (pre) => {
 
 class CategoriesForm extends Component {
 
-    constructor(props) {
-      super(props);
-      this.state = {
+    state = {
         previewVisible: false,
         previewImage: '',
         tmpFileName: generateKey(),
@@ -20,10 +18,8 @@ class CategoriesForm extends Component {
           name: this.props.param.chMainImage.replace(/^.*(\\|\/|\:)/, ''),
           status: 'done',
           url: this.props.param.chMainImage,
-          
         }] : [] : [],
-      };
-    }
+    };
 
     handleCancel = () => this.setState({ previewVisible: false })
 
@@ -45,8 +41,7 @@ class CategoriesForm extends Component {
           if (!err) {
             var val = {};
             if (this.props.type === '1') {
-              const url = this.props.optionapp[0].serverUrl + "/EditCategories.php"; // изменяем категорию
-
+              const url = `${this.props.optionapp[0].serverUrl}/EditCategories.php`; // изменяем категорию
               fetch(url, {
                 method: 'POST',
                 body: JSON.stringify(
@@ -86,8 +81,7 @@ class CategoriesForm extends Component {
 
             } else {
 
-              const url = this.props.optionapp[0].serverUrl + "/InsertCategories.php"; // добавляем категорию
-
+              const url = `${this.props.optionapp[0].serverUrl}/InsertCategories.php`; // добавляем категорию
 
               fetch(url, {
                 method: 'POST',
@@ -135,16 +129,11 @@ class CategoriesForm extends Component {
       }
 
     delete = () => {
-      const url = this.props.optionapp[0].serverUrl + "/DeleteCategories.php"; // удаление
+      const url = `${this.props.optionapp[0].serverUrl}/DeleteCategories.php`; // удаление
       
       fetch(url,
         {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               idCategories: this.props.param.idCategories,
@@ -166,42 +155,41 @@ class CategoriesForm extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-      if(nextProps.param !== this.props.param) {
 
-        this.DeleteTmpFile(); // удаляем временный файл
+        if(nextProps.param !== this.props.param) {
+          this.DeleteTmpFile(); // удаляем временный файл
+          if (nextProps.type === "0") {
+            this.props.form.setFieldsValue({
+              'enShow': true,
+              'chName': '',
+              'chNamePrint': '',
+            });
+          
+            this.setState({
+              tmpFileName: generateKey(),
+              fileList: [],
+            });
+          }
 
-        if (nextProps.type === "0") {
-          this.props.form.setFieldsValue({
-            'enShow': true,
-            'chName': '',
-            'chNamePrint': '',
-          });
+          if (nextProps.type === "2" || nextProps.type === "1") {
+            this.props.form.setFieldsValue({
+              'enShow': nextProps.param.enShow === "true",
+              'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
+              'chNamePrint': nextProps.param.chNamePrint,
+            });
+
+            this.setState({
+              tmpFileName: generateKey(),
+              fileList: nextProps.param.chMainImage.length && nextProps.type !== "2" ? [{
+                uid: '-1',
+                name: nextProps.param.chMainImage.replace(/^.*(\\|\/|\:)/, ''),
+                status: 'done',
+                url: nextProps.param.chMainImage,
+                }] : []
+            });
+          }
         
-          this.setState({
-            tmpFileName: generateKey(),
-            fileList: [],
-          });
         }
-
-        if (nextProps.type === "2" || nextProps.type === "1") {
-          this.props.form.setFieldsValue({
-            'enShow': nextProps.param.enShow === "true",
-            'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
-            'chNamePrint': nextProps.param.chNamePrint,
-          });
-
-          this.setState({
-            tmpFileName: generateKey(),
-            fileList: nextProps.param.chMainImage.length && nextProps.type !== "2" ? [{
-              uid: '-1',
-              name: nextProps.param.chMainImage.replace(/^.*(\\|\/|\:)/, ''),
-              status: 'done',
-              url: nextProps.param.chMainImage,
-              }] : []
-          });
-        }
-      
-      }
     }
 
     

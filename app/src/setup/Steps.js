@@ -8,15 +8,11 @@ import Cookies from 'js-cookie'
 
 import TariffPlans, { Tariffs } from '../items/TariffPlans'
 
-
-const RadioGroup = Radio.Group;
-const RadioButton = Radio.Button;
 const FormItem = Form.Item;
 const Step = Steps.Step;
 const Option = Select.Option;
 const format = 'HH:mm';
 
-const CURRENCY = "$"; // валюта
 
 const timezones = [
   { name: 'Europe/Warsaw',      value: "(GMT+01:00) Варшава"},
@@ -116,8 +112,6 @@ class Setup extends Component {
       this.props.form.validateFields((err, values) => {
         if (!err) {
             const {chPhoneLocation, arrOperationMode} = this.state;
-            var val = {};
-
             const arrPhones = chPhoneLocation.map( (item, index) => {
               var newArr = {};
               newArr.iPhone= index.toString();

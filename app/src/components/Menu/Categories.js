@@ -20,7 +20,6 @@ class Categories extends Component {
     constructor(props) {
         super(props);
         this.handler = this.handler.bind(this)
-
         this.state = {
           searchString: '',
           activeKey: "1",
