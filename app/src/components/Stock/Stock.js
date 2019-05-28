@@ -26,8 +26,8 @@ class Stock extends Component {
         this.state = {
           searchString: '',
           activeKey: "1",
-          currentEditCat: "0",
-          currentRecord: [],
+          statusJobRecord: "0", // 0 - создание, 1 - редактирование, 2 - копирование
+          currentEditRecord: {},
           filtered: false,
           dataSource: {},
           flLoading: true, // спиннер загрузки
@@ -35,53 +35,62 @@ class Stock extends Component {
     }
 
     handleMenuClick = (e, record) => {
+        var _this = this; // делаем ссылку на объект
         switch (e.key) {
             case "0": this.edit(record); break; //Редактировать
             case "1": this.copy(record); break; //Копировать
-            case "2": this.DeleteStock(record); break; 
-            default: this.setState({activeKey: "1"});    
+            case "2": this.delete(record, this.props.optionapp[0].serverUrl, _this); break;  // передаеи путь на сервере и ссылку на объект
+            default: this.setState({
+                activeKey: "1",
+                statusJobRecord: "0"
+            });    
         }        
       }
 
-      edit = (e) => {
+      edit = ({record}) => {
         this.setState({
             activeKey: "3",
-            currentEditCat: e.record.idStock,
+            statusJobRecord: "1",
+            currentEditRecord: record,
         });
     }
 
-    copy = (e) => {
+    copy = ({record}) => {
         // открываем вкладку копирования
         this.setState({
             activeKey: "2",
-            currentRecord: e.record,
+            statusJobRecord: "2",
+            currentEditRecord: record,
         });
     }
 
-    DeleteStock = (e) => {
-        const url = this.props.optionapp[0].serverUrl + "/DeleteStock.php"; // удаление
-        fetch(url,
-          {
-              method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(
-              {
-                idStock: e.record.idStock,
-                tmpFileName: e.record.chMainImage.length ? e.record.chMainImage.replace(/^.*(\\|\/|\:)/, '') : "",
-             })
-          }).then((response) => response.json()).then((responseJsonFromServer) =>
-          {
-              var val = {
-                idStock: e.record.idStock,
-              }
-              this.props.onDelete(val);  // вызываем action
-          }).catch((error) =>
-          {
-              console.error(error);
+    delete = ({record: {idStock, chMainImage}}, path, _this) => {
+        confirm({
+            title: 'Вы действительно хотите удалить категорию?',
+            okText: 'Да',
+            okType: 'danger',
+            cancelText: 'Нет',
+            onOk() {
+                const url = path + "/DeleteStock.php"; // удаление
+                fetch(url,
+                {
+                    method: 'POST',
+                    body: JSON.stringify(
+                    {
+                        idStock: idStock,
+                        tmpFileName: chMainImage.length ? chMainImage.replace(/^.*(\\|\/|\:)/, '') : "",
+                    })
+                }).then((response) => response.json()).then((responseJsonFromServer) =>
+                {
+                    var val = {
+                        idStock: idStock
+                    }
+                    _this.props.onDelete(val);  // вызываем action
+                }).catch((error) =>
+                {
+                    console.error(error);
+                });
+            },
           });
     }
 
@@ -93,23 +102,33 @@ class Stock extends Component {
 
 
     emitEmpty = () => {
-        this.searchStringInput.focus();
-        this.setState({ searchString: '' });
+        this.searchStringInput.focus(); //
+        this.setState({ 
+            searchString: '' , // удаляем поисковый запрос
+            filtered: false, // сброс фильтрации
+        });
     }
 
     handler = () => {
         this.setState({
-            currentEditCat: "0",
+            currentEditRecord: {},
+            statusJobRecord: "0",
         });
       }
 
       loadingData = () => {
 
-        const url = this.props.optionapp[0].serverUrl + "/SelectStock.php";
+        const url = `${this.props.optionapp[0].serverUrl}/SelectStock.php`;
         this.setState({
             flLoading: true,
         })
-        fetch(url)
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+        })
         .then((response) => response.json())
         .then((responseJson) => {
             this.props.onAdd(responseJson.stock);
@@ -154,6 +173,10 @@ class Stock extends Component {
 
     onChange = (activeKey) => {
         this.setState({ activeKey });
+        this.setState({
+            currentEditRecord: {},
+            statusJobRecord: "0",
+        }); 
     }
 
     createDropdownMenu = (record) => {
@@ -168,15 +191,16 @@ class Stock extends Component {
         return menu;
     }
 
-    onChangeCategory = (e) => {
+    onChangeEditRecord = (e) => {
         this.setState ({ 
-            currentEditCat: e.key
+            currentEditRecord: this.props.stock.find(x => x.idStock === e.key),
+            statusJobRecord: "1",
         });
     }
 
     render() {
 
-        const { searchString, currentEditCat, dataSource, flLoading } = this.state;
+        const { searchString, currentEditRecord, statusJobRecord, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         const columns = [
             { title: 'Имя', dataIndex: 'chName', key: 'name' },
@@ -236,21 +260,21 @@ class Stock extends Component {
                     />,            
                 </TabPane>
                 <TabPane tab="Создать" key="2">
-                    <StockForm copyrecord={this.state.currentRecord}/>
+                    <StockForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/>
                 </TabPane>
                 <TabPane tab="Редактировать" key="3">
                     <Select
                     showSearch
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    onChange={this.onChangeCategory}
+                    onChange={this.onChangeEditRecord}
                     style={{ width: "100%" }}
                     labelInValue 
-                    value={{ key: currentEditCat }}
+                    value={{ key: typeof currentEditRecord.idStock !== "undefined" ? currentEditRecord.idStock : "0" }}
                     >
                     <Option key="0">Выберите категорию для редактирования</Option>
                     {options}
                 </Select>
-                { currentEditCat === "0" ? null : <StockForm handler = {this.handler} param={currentEditCat}/> }
+                { statusJobRecord === "1" ? <StockForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/> : null }
                 </TabPane>
                 <TabPane tab="Сортировка" key="4">
                     <StockSorting />
@@ -266,6 +290,7 @@ class Stock extends Component {
 export default connect (
     state => ({
         stock: state.stock,
+        owner: state.owner,
         optionapp: state.optionapp,
     }),
     dispatch => ({
