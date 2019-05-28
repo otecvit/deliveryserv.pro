@@ -10,27 +10,19 @@ const Option = Select.Option;
 
 class TypeOrder extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
+    state = {
             blPickup: this.props.owner.blPickup === "true",
             blDelivery: this.props.owner.blDelivery === "true"
         }
-    }
     
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
           if (!err) {
             var val = {};
-                const url = this.props.optionapp[0].serverUrl + "/EditOwnerSettings.php"; // изменяем категорию
+                const url = `${this.props.optionapp[0].serverUrl}/EditOwnerSettings.php`; // 
               fetch(url, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   chUID: this.props.owner.chUID,
