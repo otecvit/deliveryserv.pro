@@ -258,7 +258,8 @@ class DishesForm extends React.Component {
           if (!err) {
             var val = {};
             if (this.props.type === '1') {
-              const url = this.props.optionapp[0].serverUrl + "/EditProducts.php"; // изменяем категорию
+
+               const url = `${this.props.optionapp[0].serverUrl}/EditProducts.php`; // изменяем товар
               fetch(url, {
                 method: 'POST',
                 body: JSON.stringify(

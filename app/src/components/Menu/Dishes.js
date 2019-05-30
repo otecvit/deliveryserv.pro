@@ -98,7 +98,7 @@ class Dishes extends Component {
     }
 
     loadingData = () => {
-        const url = this.props.optionapp[0].serverUrl + "/SelectProducts.php";
+        const url = `${this.props.optionapp[0].serverUrl}/SelectProducts.php`;
         this.setState({
             flLoading: true,
         })
@@ -107,6 +107,7 @@ class Dishes extends Component {
             body: JSON.stringify(
             {
               chUID: this.props.owner.chUID,
+              chTimeZone: this.props.owner.chTimeZone,
             })
           })
         .then((response) => response.json())
