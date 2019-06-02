@@ -139,6 +139,7 @@ class Orders extends Component {
             body: JSON.stringify(
             {
               chUID: this.props.owner.chUID,
+              chTimeZone: this.props.owner.chTimeZone,
             })
           })
         .then((response) => response.json())

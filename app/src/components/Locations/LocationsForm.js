@@ -354,7 +354,11 @@ class LocationsForm extends React.Component {
                     </Tooltip>
               </label>
             </div>
-            <OperationMode arrOperationMode = {arrOperationMode} updateData={this.updateArrOperationMode}/>
+            <Row>
+              <Col span={17}>
+                <OperationMode arrOperationMode = {arrOperationMode} updateData={this.updateArrOperationMode}/>
+              </Col>
+            </Row>
             <Divider dashed />
             <FormItem
               label={

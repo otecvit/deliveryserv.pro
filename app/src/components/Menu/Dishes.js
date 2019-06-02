@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
+import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Select, Modal } from 'antd';
 
 import DishesForm from './DishesForm';
 import HeaderSection from '../../items/HeaderSection'
@@ -70,7 +70,7 @@ class Dishes extends Component {
             okType: 'danger',
             cancelText: 'Нет',
             onOk() {
-                const url = path + "/DeleteProducts.php"; // удаление
+                const url = `${path}/DeleteProducts.php`; // удаление
                 fetch(url,
                 {
                     method: 'POST',
@@ -122,7 +122,7 @@ class Dishes extends Component {
           console.error(error);
         });
 
-        const urlCategories = this.props.optionapp[0].serverUrl + "/SelectCategories.php";
+        const urlCategories = `${this.props.optionapp[0].serverUrl}/SelectCategories.php`;
         this.setState({
             flLoading: true,
         })
@@ -144,7 +144,7 @@ class Dishes extends Component {
           console.error(error);
         });
 
-        const urlOptionSets = this.props.optionapp[0].serverUrl + "/SelectOptionSets.php";
+        const urlOptionSets = `${this.props.optionapp[0].serverUrl}/SelectOptionSets.php`;
         this.setState({
             flLoading: true,
         })
@@ -166,17 +166,12 @@ class Dishes extends Component {
           console.error(error);
         });
 
-        const urlTags = this.props.optionapp[0].serverUrl + "/SelectTags.php";
+        const urlTags = `${this.props.optionapp[0].serverUrl}/SelectTags.php`;
         this.setState({
             flLoading: true,
         })
         fetch(urlTags, {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               chUID: this.props.owner.chUID,
@@ -193,11 +188,6 @@ class Dishes extends Component {
         .catch((error) => {
           console.error(error);
         });
-        
-
-        
-
-
     }
 
     emitEmpty = () => {

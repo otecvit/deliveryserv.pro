@@ -92,8 +92,8 @@ class Dashboard extends Component {
     }
 
     // получаем статистику из базы
-    const url = this.props.optionapp[0].serverUrl + "/SelectStatistics.php";
-
+    const url = `${this.props.optionapp[0].serverUrl}/SelectStatistics.php`;
+   
     fetch(url, {
             method: 'POST',
             body: JSON.stringify(

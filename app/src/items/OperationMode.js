@@ -144,7 +144,7 @@ class OperationMode extends Component {
                 if (arr.length - 1 === indexTime) 
                     return (
                     <Row gutter={4} key={indexTime} style={{ marginBottom: 8 }} >
-                        <Col span={4} style={{ marginTop: 6  }}>{item.chDay}:</Col>
+                        <Col span={5} style={{ marginTop: 6  }}>{item.chDay}:</Col>
                         <Col span={1} style={{ textAlign: 'right', marginTop: 6  }}><span>с</span></Col>
                         <Col span={5}> 
                              <TimePicker 
@@ -154,7 +154,7 @@ class OperationMode extends Component {
                                 onChange={(time, timeString) => this.handleChange(timeString, item.iDay, a.iTime, true)}
                                 />
                         </Col>
-                        <Col span={1} style={{ textAlign: 'right', marginTop: 6  }}><span>по</span></Col>
+                        <Col span={2} style={{ textAlign: 'right', marginTop: 6  }}><span>по</span></Col>
                         <Col span={5}>
                              <TimePicker 
                                 value={moment(a.tEndTime, format)} 
@@ -162,16 +162,16 @@ class OperationMode extends Component {
                                 onChange={(time, timeString) => this.handleChange(timeString, item.iDay, a.iTime, false)}
                                 />
                         </Col>
-                        <Col span={1} style={{ marginTop: 4  }}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
-                        <Col span={2}><Button type="default" onClick = {() => this.onDayOff(item)}>Выходной</Button></Col>
+                        <Col span={2} style={{ marginTop: 4, paddingLeft: 16 }}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
+                        <Col span={4}><Button type="default" onClick = {() => this.onDayOff(item)}>Выходной</Button></Col>
                     </Row>
                     ); 
                 else
                     return (
                     <Row gutter={4} key={indexTime} style={{ marginBottom: 8 }} >
-                        <Col span={4} style={{ marginTop: 6  }}>{item.chDay}:</Col>
+                        <Col span={5} style={{ marginTop: 6  }}>{item.chDay}:</Col>
                         <Col span={1} style={{ textAlign: 'right', marginTop: 6  }}><span>с</span></Col>
-                        <Col span={5}> 
+                        <Col span={5}>
                             <TimePicker 
                                 value={moment(a.tStartTime, format)} 
                                 format={format} 
@@ -179,7 +179,7 @@ class OperationMode extends Component {
                                 onChange={(time, timeString) => this.handleChange(timeString, item.iDay, a.iTime, true)}
                                 />
                         </Col>
-                        <Col span={1} style={{ textAlign: 'right', marginTop: 6  }}><span>по</span></Col>
+                        <Col span={2} style={{ textAlign: 'right', marginTop: 6  }}><span>по</span></Col>
                         <Col span={5}>
                            <TimePicker 
                               value={moment(a.tEndTime, format)} 
@@ -187,16 +187,16 @@ class OperationMode extends Component {
                               onChange={(time, timeString) => this.handleChange(timeString, item.iDay, a.iTime, false)}
                               />
                         </Col>
-                        <Col span={1} style={{ marginTop: 4  }}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
-                        <Col span={2}></Col>
+                        <Col span={2} style={{ marginTop: 4, paddingLeft: 16  }}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
+                        <Col span={4}></Col>
                     </Row>
                     ); 
                 });
             else {
                 return (
                 <Row gutter={4} key={index} style={{ marginBottom: 8  }} >
-                    <Col span={5} style={{ marginTop: 6  }}>{item.chDay}:</Col>
-                    <Col span={19}><Button type="default" onClick = {() => this.onDayWork(item)}>Рабочий день</Button></Col>
+                    <Col span={6} style={{ marginTop: 6  }}>{item.chDay}:</Col>
+                    <Col span={18}><Button type="default" onClick = {() => this.onDayWork(item)}>Рабочий день</Button></Col>
                 </Row>
                 );
             }
