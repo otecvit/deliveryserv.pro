@@ -43,6 +43,12 @@ class Customisation extends Component {
         this.props.form.validateFields((err, values) => {
           if (!err) {
             var val = {};
+            console.log({
+              chUID: this.props.owner.chUID,
+              tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
+              chMainImage: this.props.owner.chPathLogo,
+            });
+            
             const url = `${this.props.optionapp[0].serverUrl}/EditCustomisation.php`; // изменяем категорию
             fetch(url, {
               method: 'POST',
@@ -59,6 +65,17 @@ class Customisation extends Component {
                 }
 
                 this.props.onEdit(val);  // вызываем action
+
+                this.setState({
+                  tmpFileName: generateKey(),
+                  fileList: this.props.owner.chPathLogo.length ? [{
+                    uid: '-1',
+                    name: this.props.owner.chPathLogo.replace(/^.*(\\|\/|\:)/, ''),
+                    status: 'done',
+                    url: this.props.owner.chPathLogo,
+                  }] : [],
+                });
+
                 message.success('Изменения сохранены');
                 
               }

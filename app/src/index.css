@@ -37,6 +37,22 @@ body {
   max-height: 80px;
 }
 
+.collapsedLogo {
+  text-align: center;
+  padding: 20px 0 10px 0;
+}
+
+.collapsedLogo img{
+  max-width: 70px;
+  max-height: 35px;
+}
+
+.noLogo {
+  text-align: center;
+  padding: 5px 0;
+}
+
+
 
 thead[class*="ant-table-thead"] th{
   text-align: center;
