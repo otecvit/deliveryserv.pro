@@ -7,6 +7,8 @@ import moment from 'moment'
 import Cookies from 'js-cookie'
 
 import TariffPlans, { Tariffs } from '../items/TariffPlans'
+import OperationMode from '../items/OperationMode'
+
 
 const FormItem = Form.Item;
 const Step = Steps.Step;
@@ -233,87 +235,15 @@ class Setup extends Component {
       }); 
     }
 
-    AddTimePeriod =(e) => {
-      const { arrOperationMode } = this.state;
-
-      const updatedArrOperationMode = arrOperationMode.map(item => {
-        if(item.iDay === e){
-          item.time.push({
-            iTime: generateKey(),
-            tStartTime: "10:00", 
-            tEndTime: "22:00", 
-          });
-        }
-        return item;
-      });
-
-      this.setState({
-        arrOperationMode: updatedArrOperationMode,
-      }); 
-
-    }
-
-    DelTimePeriod = (e, iDelTime) => {
-      const { arrOperationMode } = this.state;
-      const updatedArrOperationMode = arrOperationMode.map(item => {
-        if(item.iDay === e.iDay){
-          const time = e.time.filter(a => a.iTime !== iDelTime );
-          return {...item, time}
-        }
-        return item;
-      });
-
-      this.setState({
-        arrOperationMode: updatedArrOperationMode,
-      }); 
-    }
-
-    onDayOff = (e) => {
-      const { arrOperationMode } = this.state;
-      const updatedArrOperationMode = arrOperationMode.map(item => {
-        if(item.iDay === e.iDay){
-          const newdata = {
-            iDay: e.iDay, 
-            chDay: e.chDay, 
-            blDayOff: true, 
-            time: [] 
-          };
-          return newdata;
-        }
-        return item;
-      });
-
-      this.setState({
-        arrOperationMode: updatedArrOperationMode,
-      });       
-    }
-
-    onDayWork = (e) => {
-      const { arrOperationMode } = this.state;
-      const updatedArrOperationMode = arrOperationMode.map(item => {
-        if(item.iDay === e.iDay){
-          const newdata = {
-            iDay: e.iDay, 
-            chDay: e.chDay, 
-            blDayOff: false, 
-            time: [{ iTime: "1", tStartTime: "10:00", tEndTime: "22:00" }],
-          };
-          return newdata;
-        }
-        return item;
-      });
-
-      this.setState({
-        arrOperationMode: updatedArrOperationMode,
-      });       
-    }
-
     onChangePickup = () => {
       this.setState({
         blPickup: !this.state.blPickup
       });
     }
 
+    updateArrOperationMode = (value) => {
+      this.setState({ arrOperationMode: value })
+     }
 
     saveSetup = () => {
       
@@ -460,84 +390,7 @@ class Setup extends Component {
           </Row>);
       });
       
-      const OperationMode = arrOperationMode.map( (item, index) => {
-        if (!item.blDayOff)
-          return item.time.map( (a, indexTime, arr) => {
-            if (arr.length - 1 === indexTime) 
-              return (
-                <Row gutter={4} key={indexTime} style={{ marginBottom: 0  }} >
-                  <Col span={4} style={{ marginTop: 9, paddingLeft: '0px'  }}>{item.chDay}:</Col>
-                  <Col span={6}> 
-                    <FormItem
-                       style={{ marginBottom: 0 }}
-                    >
-                      <span style={{ marginRight: 5 }}>с</span>
-                      {getFieldDecorator('tStartTime' + index + indexTime, {
-                        initialValue: moment(a.tStartTime, format)
-                      })(
-                        <TimePicker format={format} className="time-picker-width"/>
-                      )}   
-                    </FormItem>         
-                  </Col>
-                  <Col span={6}>
-                    <FormItem
-                      style={{ marginBottom: 0 }}
-                    >
-                      <span style={{ marginRight: 5 }}>по</span>
-                      {getFieldDecorator('tEndTime' + index + indexTime, {
-                        initialValue: moment(a.tEndTime, format)
-                      })(
-                        <TimePicker format={format} className="time-picker-width"/>
-                      )}   
-                    </FormItem>         
-                  </Col>
-                  <Col span={2} style={{ marginTop: 8  }}><Button type="default" shape="circle" icon="plus" size="small" onClick={() => this.AddTimePeriod(item.iDay)}/></Col>
-                  <Col span={6} style={{ marginTop: 4  }}><Button type="default" onClick = {() => this.onDayOff(item)}>Выходной</Button></Col>
-                </Row>
-              ); 
-            else
-              return (
-                <Row gutter={4} key={indexTime} style={{ marginBottom: 0  }} >
-                  <Col span={4} style={{ marginTop: 9, paddingLeft: '0px'  }}>{item.chDay}:</Col>
-                  <Col span={6}> 
-                    <FormItem
-                       style={{ marginBottom: 0 }}
-                    >
-                      <span style={{ marginRight: 5 }}>с</span>
-                      {getFieldDecorator('tStartTime' + index + indexTime, {
-                        initialValue: moment(a.tStartTime, format)
-                      })(
-                        <TimePicker format={format} className="time-picker-width"/>
-                      )}   
-                    </FormItem>         
-                  </Col>
-                  <Col span={6}>
-                    <FormItem
-                      style={{ marginBottom: 0 }}
-                    >
-                      <span style={{ marginRight: 5 }}>по</span>
-                      {getFieldDecorator('tEndTime' + index + indexTime, {
-                        initialValue: moment(a.tEndTime, format)
-                      })(
-                        <TimePicker format={format} className="time-picker-width"/>
-                      )}   
-                    </FormItem>         
-                  </Col>
-                  <Col span={2} style={{ marginTop: 8  }}><Button type="default" shape="circle" icon="minus" size="small" onClick={() => this.DelTimePeriod(item, a.iTime)}/></Col>
-                  <Col span={6}></Col>
-                </Row>
-              ); 
-          });
-        else 
-          return (
-            <Row gutter={4} key={index} style={{ marginBottom: 3  }} >
-              <Col span={4} style={{ marginTop: 9, paddingLeft: 0  }}>{item.chDay}:</Col>
-              <Col span={20} style={{ marginTop: 4  }}><Button type="default" onClick = {() => this.onDayWork(item)}>Рабочий день</Button></Col>
-            </Row>
-          );
-      });
 
-        
     if ((SetupSuccessful) || (typeof this.props.owner.chUID === "undefined")) {
       return <Redirect to="/"/>
     }
@@ -713,7 +566,8 @@ class Setup extends Component {
             </div>
             <Divider dashed />
             <div className="ant-form-item-label"><label>Режим работы</label></div>
-              {OperationMode}
+              {/*OperationMode*/}
+              <OperationMode arrOperationMode = {arrOperationMode} updateData={this.updateArrOperationMode}/>
             <Divider dashed />
             <FormItem
               label="Возможен самовывоз"

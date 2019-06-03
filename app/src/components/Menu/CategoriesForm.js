@@ -203,11 +203,6 @@ class CategoriesForm extends Component {
         fetch(url,
           {
               method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
               body: JSON.stringify(
               {
                 tmpFileName: this.state.tmpFileName + this.state.fileList[0].response,

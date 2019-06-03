@@ -27,6 +27,17 @@ body {
   padding: 4px 11px;
 }
 
+.logo {
+  text-align: center;
+  padding: 20px 0 10px 0;
+}
+
+.logo img {
+  max-width: 150px;
+  max-height: 80px;
+}
+
+
 thead[class*="ant-table-thead"] th{
   text-align: center;
 }

@@ -12,21 +12,17 @@ const generateKey = (pre) => {
 
 class Customisation extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            previewVisible: false,
-            previewImage: '',
-            tmpFileName: generateKey(),
-            fileList: this.props.param ? this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.length ? [{
-              uid: '-1',
-              name: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage.replace(/^.*(\\|\/|\:)/, ''),
-              status: 'done',
-              url: this.props.categories.find(x => x.idCategories ===  this.props.param).chMainImage,
-              
-            }] : [] : [],
-          };
-    }
+    state = {
+      previewVisible: false,
+      previewImage: '',
+      tmpFileName: generateKey(),
+      fileList: this.props.owner.chPathLogo.length ? [{
+        uid: '-1',
+        name: this.props.owner.chPathLogo.replace(/^.*(\\|\/|\:)/, ''),
+        status: 'done',
+        url: this.props.owner.chPathLogo,
+      }] : [],
+    };
 
     handleCancel = () => this.setState({ previewVisible: false })
 
@@ -46,38 +42,61 @@ class Customisation extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
           if (!err) {
+            var val = {};
+            const url = `${this.props.optionapp[0].serverUrl}/EditCustomisation.php`; // изменяем категорию
+            fetch(url, {
+              method: 'POST',
+              body: JSON.stringify(
+              {
+                chUID: this.props.owner.chUID,
+                tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
+                chMainImage: this.props.owner.chPathLogo,
+              })
+            }).then((response) => response.json()).then((responseJsonFromServer) => {
+              if (responseJsonFromServer.status) {
+                val = {
+                  chPathLogo: responseJsonFromServer.tmpFileName,
+                }
 
-
+                this.props.onEdit(val);  // вызываем action
+                message.success('Изменения сохранены');
+                
+              }
+            }).catch((error) => {
+                console.error(error);
+            });            
           }
         });
       }
+
+
 
       componentWillUnmount () {
         this.DeleteTmpFile();
       }
   
       DeleteTmpFile = () => {
-        const url = this.props.optionapp[0].serverUrl + "/DeleteTmpFile.php"; // удаление
-        fetch(url,
-          {
-              method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(
-              {
-                tmpFileName: this.state.fileList.length ? this.state.tmpFileName + this.state.fileList[0].response : "",
-             })
-          }).then((response) => response.json()).then((responseJsonFromServer) =>
-          {
-            //console.log(responseJsonFromServer);
-          }).catch((error) =>
-          {
-            //console.error(error);
-          });
+        if (typeof this.state.fileList[0] !== 'undefined' && typeof this.state.fileList[0].response !== 'undefined') {
+          const url = `${this.props.optionapp[0].serverUrl}/DeleteTmpFile.php`; // удаление
+          fetch(url,
+            {
+                method: 'POST',
+                body: JSON.stringify(
+                {
+                  tmpFileName: this.state.tmpFileName + this.state.fileList[0].response,
+              })
+            }).then((response) => response.json()).then((responseJsonFromServer) =>
+  
+            {
+            }).catch((error) =>
+            {
+              console.error(error);
+            });
+          }
       }
+
+
+
   
 
     render() {
@@ -93,9 +112,6 @@ class Customisation extends Component {
           </div>
         );
 
-         const IconFont = Icon.createFromIconfontCN({
-            scriptUrl: this.props.optionapp[0].scriptIconUrl,
-          });
 
         return (<div>
             <HeaderSection title="Оформление" icon="icon-orders"/>
@@ -108,8 +124,6 @@ class Customisation extends Component {
                     >
                     <div className="dropbox">
                         {getFieldDecorator('chMainImage', {
-                        /*valuePropName: 'fileList',
-                        getValueFromEvent: this.normFile,*/
                         })(
                         <div>
                         <Upload

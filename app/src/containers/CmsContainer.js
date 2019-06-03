@@ -109,11 +109,6 @@ class CmsWrapper extends Component {
         const urlLocation = this.props.optionapp[0].serverUrl + "/SendMailActivation.php"; // изменяем категорию
               fetch(urlLocation, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                     chUIDStaff: this.props.owner.chUIDStaff,
