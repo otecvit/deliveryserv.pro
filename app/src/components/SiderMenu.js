@@ -92,6 +92,7 @@ class SiderMenu extends Component {
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["auto-execution"]) && <Menu.Item key="/auto-execution"><Link to="auto-execution">Автовыполнение</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["customisation"]) && <Menu.Item key="/customisation"><Link to="customisation">Оформление</Link></Menu.Item> }
                     { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["information"]) && <Menu.Item key="/information"><Link to="information">Информация</Link></Menu.Item> }
+                    { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["application"]) && <Menu.Item key="/application"><Link to="application">Приложение</Link></Menu.Item> }
                 </SubMenu>
                 { (this.props.owner.iStaffType === "0" || this.props.owner.arrAccess["license"]) && <Menu.Item key="/license"><Link to="license"><Icon type="credit-card" /><span>Оплата</span></Link></Menu.Item> }
                 <Menu.Item key="/logout"><Icon type="logout" /><span>Выход</span></Menu.Item>

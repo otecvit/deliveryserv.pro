@@ -88,9 +88,6 @@ class Payment extends Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-         const IconFont = Icon.createFromIconfontCN({
-            scriptUrl: this.props.optionapp[0].scriptIconUrl,
-          });
 
         return (<div>
             <HeaderSection title="Оплата" icon="icon-svgmoneybag"/>

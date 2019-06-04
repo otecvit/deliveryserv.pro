@@ -34,6 +34,7 @@ import AutoExecution from '../components/Settings/AutoExecution';
 import Customisation from '../components/Settings/Customisation';
 import Information from '../components/Settings/Information';
 import License from '../components/Settings/License';
+import Application from '../components/Settings/Application';
 
 import СheckNewOrder from '../components/СheckNewOrder';
 
@@ -183,6 +184,7 @@ class CmsWrapper extends Component {
                         <Route exact path="/customisation" component={Customisation}/>
                         <Route exact path="/information" component={Information}/>
                         <Route exact path="/license" component={License}/>
+                        <Route exact path="/application" component={Application}/>
                     </div>
                     </Content>
                     <Footer style={{ textAlign: 'center', color: '#bfbfbf', fontSize: 12 }}>
