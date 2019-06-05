@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
-import { Layout, Switch, Icon, Button, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd'
+import { Layout, Switch, Icon, Button, Row, Col, Form, Select, message, Popconfirm, Modal } from 'antd'
 import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
@@ -29,7 +29,7 @@ class Application extends Component {
 
     handleSubmit = (e) => {
         const { blPlayMarket, blAppStore } = this.state;
-        const { chUID } = this.props.owner;
+        const { idCustomer, chUID, chName } = this.props.owner;
 
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -40,9 +40,11 @@ class Application extends Component {
                         method: 'POST',
                         body: JSON.stringify(
                         {
-                        chUID: chUID,
-                        blPlayMarket:  blPlayMarket ? "1" : "0",
-                        blAppStore: blAppStore ? "1" : "0",
+                            chUID: chUID,
+                            idCustomer: idCustomer,
+                            chName: chName,
+                            blPlayMarket:  blPlayMarket ? "1" : "0",
+                            blAppStore: blAppStore ? "1" : "0",
                         })
                     }).then((response) => response.json()).then((responseJsonFromServer) => {
                         val = {
@@ -51,7 +53,7 @@ class Application extends Component {
                             dDateRequest: responseJsonFromServer.dDateRequest
                         }
                         this.props.onEdit(val);  // вызываем action
-                        message.success('Настройки сохранены');
+                        message.success('Запрос отправлен');
                     }).catch((error) => {
                         console.error(error);
                     });
@@ -62,11 +64,15 @@ class Application extends Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
+        const { dDateRequest, chPathPlayMarket, chPathAppStore } = this.props.owner;
+        const { serverUrlStart } = this.props.optionapp[0];
 
         return (<Fragment>
             <HeaderSection title="Мобильное приложение" icon="icon-menu" />
             <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
+                    { !dDateRequest ? 
+                    <Fragment>
                     <div style={{ padding: "10px 10px 0 10px" }}>Сформируйте запрос, а наши специалисты подготовят и опубликуют мобильное приложение в Play Market и App Store. Срок публикации в Play Market от 3 рабочих дней, в App Store от 14 рабочих дней.</div>
                     <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" style={{marginTop: "15px", padding: 10}}>
                         <FormItem
@@ -94,7 +100,28 @@ class Application extends Component {
                             <Icon type="plus"/>Отправить запрос
                         </Button>
                         </FormItem>
-                </Form>          
+                </Form>      
+                </Fragment> : 
+                    <Fragment>
+                        { chPathPlayMarket === "" && chPathAppStore === "" ?
+                        <div style={{ padding: "10px" }}>Мы работаем над приложением. После публикации ссылки будут размещены на данной странице.</div> :
+                        <Fragment>
+                            <div style={{ padding: "10px" }}>Ссылка на приложение.</div> 
+                            { chPathPlayMarket !== "" && 
+                            <Row style={{ padding: "10px 10px 5px 10px" }}>
+                                <Col>
+                                    <a href={chPathPlayMarket}><img src={`${serverUrlStart}/image/crm/GooglePlayLogo.jpg`} style={{ width: 200 }}/></a>
+                                </Col>
+                            </Row> }
+                            { chPathAppStore !== "" && 
+                            <Row style={{ padding: "5px 10px 10px 10px" }}>
+                                <Col>
+                                    <a href={chPathAppStore}><img src={`${serverUrlStart}/image/crm/AppStoreLogo.jpg`} style={{ width: 200 }}/></a>
+                                </Col>
+                            </Row>}
+                        </Fragment>
+                        }
+                    </Fragment>}
                 </div>
             </Content>
             </Fragment>);
