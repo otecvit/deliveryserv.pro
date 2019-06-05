@@ -7,6 +7,59 @@ const { Content } = Layout;
 const FormItem = Form.Item;
 
 class Application extends Component {
+
+    state = {
+        blPlayMarket: true,
+        blAppStore: true,
+    }
+
+    onChangeAppStore = () => {
+        const { blAppStore } = this.state;
+        this.setState ({
+            blAppStore: !blAppStore
+        });
+    }
+
+    onChangePlayMarket = () => {
+        const { blPlayMarket } = this.state;
+        this.setState ({
+            blPlayMarket: !blPlayMarket,
+        })
+    }
+
+    handleSubmit = (e) => {
+        const { blPlayMarket, blAppStore } = this.state;
+        const { chUID } = this.props.owner;
+
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                    var val = {};
+                    const url = `${this.props.optionapp[0].serverUrl}/GenerateApplication.php`; // изменяем категорию
+                    fetch(url, {
+                        method: 'POST',
+                        body: JSON.stringify(
+                        {
+                        chUID: chUID,
+                        blPlayMarket:  blPlayMarket ? "1" : "0",
+                        blAppStore: blAppStore ? "1" : "0",
+                        })
+                    }).then((response) => response.json()).then((responseJsonFromServer) => {
+                        val = {
+                            blPlayMarket:  blPlayMarket,
+                            blAppStore: blAppStore,
+                            dDateRequest: responseJsonFromServer.dDateRequest
+                        }
+                        this.props.onEdit(val);  // вызываем action
+                        message.success('Настройки сохранены');
+                    }).catch((error) => {
+                        console.error(error);
+                    });
+                
+            }
+        });
+      }
+
     render() {
         const { getFieldDecorator } = this.props.form;
 
@@ -19,21 +72,21 @@ class Application extends Component {
                         <FormItem
                             label="Play Market"
                             >
-                            {getFieldDecorator('blCashCourier', { 
-                                initialValue: this.props.owner.blCashCourier === "true",
+                            {getFieldDecorator('blPlayMarket', { 
+                                initialValue: true,
                                 valuePropName: 'checked'
                             })(
-                                <Switch onChange={this.onChangeCashCourier}/>
+                                <Switch onChange={this.onChangePlayMarket}/>
                             )}
                         </FormItem>
                         <FormItem
                             label="App Store"
                             >
-                            {getFieldDecorator('blCardCourier', { 
-                                initialValue: this.props.owner.blCardCourier === "true",
+                            {getFieldDecorator('blAppStore', { 
+                                initialValue: true,
                                 valuePropName: 'checked'
                             })(
-                                <Switch onChange={this.onChangeCardCourier}/>
+                                <Switch onChange={this.onChangeAppStore}/>
                             )}
                         </FormItem>
                         <FormItem>
@@ -56,5 +109,8 @@ export default connect (
         owner: state.owner,
     }),
     dispatch => ({
+        onEdit: (data) => {
+            dispatch({ type: 'EDIT_OWNER', payload: data});
+        },
     }
   ))(WrappedNormalForm);
