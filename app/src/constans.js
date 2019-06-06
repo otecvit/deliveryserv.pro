@@ -20,6 +20,7 @@ export const arrPageAccess = [
     { keyName: "email-notifications",name: 'Настройки - E-mail уведомления', value: true},
     { keyName: "customisation",     name: 'Настройки - Оформление',   value: true},
     { keyName: "information",       name: 'Настройки - Информация',   value: true},
+    { keyName: "application",       name: 'Настройки - Приложение',   value: true},
     { keyName: "license",           name: 'Оплата',                   value: true},
   ];
 

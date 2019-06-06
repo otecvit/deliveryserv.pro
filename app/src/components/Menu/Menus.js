@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Modal } from 'antd';
+import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, Row, Col, Modal } from 'antd';
 
 import MenusForm from './MenusForm';
 import HeaderSection from '../../items/HeaderSection'
@@ -43,11 +43,6 @@ class Menus extends Component {
         })
         fetch(url, {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               chUID: this.props.owner.chUID,
@@ -71,11 +66,6 @@ class Menus extends Component {
         })
         fetch(urlCategories, {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               chUID: this.props.owner.chUID,
@@ -136,11 +126,6 @@ class Menus extends Component {
                 fetch(url,
                 {
                     method: 'POST',
-                    headers: 
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
                     body: JSON.stringify(
                     {
                         idMenus: idMenus
@@ -256,7 +241,7 @@ class Menus extends Component {
                         chNamePrint = this.props.menus.find(x => x.idMenus ===  record).chNamePrint;
                     }
                     
-                    return (<div>{chNamePrint.length ? chNamePrint : chName}</div>);
+                    return (<div>{chName}</div>);
                 }
             },{ 
                 title: 'Действие', 
@@ -298,36 +283,34 @@ class Menus extends Component {
                         />    
                         <Table
                             columns={columns}
-                            expandedRowRender={({enShow, chNamePrint, chDescription, blDays, arrDays, blTimes, chStartInterval, chEndInterval, arrCategories}) => 
+                            expandedRowRender={({enShow, chDescription, blDays, arrDays, blTimes, chStartInterval, chEndInterval, arrCategories}) => 
                             <Fragment>
                                 <ViewDetailDescription title="Активность" value={enShow === 'true' ? "Да" : "Нет"} />
-                                <ViewDetailDescription title="Отображаемое имя" value={chNamePrint} />
                                 <ViewDetailDescription title="Описание" value={chDescription} />
-                                
-                                
-                                {/*<ViewDetailDescription title="Телефон" value={arrPhones.map(phone => <div key={phone.iPhone}>{phone.chPhone}</div>)} />
-                                <ViewDetailDescription title="Режим работы" value={
-                                    arrOperationMode.map(OperationMode => {
+                                <ViewDetailDescription title="Категории" value={
+                                    arrCategories.map((idCategories, index) => {
                                         return (
-                                            !OperationMode.blDayOff ? 
-                                            OperationMode.time.map((item, index) =>
+                                            <Row key={index}>
+                                                <Col span={24}>{this.props.categories.find(x => x.idCategories ===  idCategories).chName }</Col>
+                                             </Row>
+                                        ) 
+                                    })
+                                } />
+                                <ViewDetailDescription title="Дни недели" value={
+                                    blDays === "true" ? "Ежедневно" :
+                                     arrDays.map((day, index) => {
+                                        return (
                                                 <Row key={index}>
-                                                    <Col span={5}>{OperationMode.chDay}: </Col>
-                                                    <Col span={19}>{item.tStartTime} - {item.tEndTime}</Col>
-                                                </Row>)
-                                            : 
-                                                <Row key={OperationMode.chDay}>
-                                                    <Col span={5}>
-                                                        {OperationMode.chDay}:
-                                                    </Col>
-                                                    <Col span={19}>
-                                                        Выходной
-                                                    </Col>
-                                                </Row>
+                                                    <Col span={24}>{["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"][day-1]}</Col>
+                                                 </Row>
                                     ) 
-                                    })} 
-                                />*/}
-                               
+                                    })} />
+                                <ViewDetailDescription title="Время действия" value={
+                                    blTimes === "true" ? "Постоянно" :
+                                        <Row>
+                                            <Col span={24}>c {chStartInterval} по {chEndInterval}</Col>
+                                        </Row>
+                                    } />
                             </Fragment>
                             }
                             dataSource={!this.state.filtered ? this.props.menus : dataSource}
@@ -335,8 +318,6 @@ class Menus extends Component {
                             pagination={false}
                             loading={flLoading}
                             locale={{emptyText: 'Нет данных'}}
-    
-    
                         />,            
                     </TabPane>
                     <TabPane tab="Создать" key="2">
@@ -356,6 +337,8 @@ class Menus extends Component {
                     </Select>
                     { statusJobRecord === "1"  ? <MenusForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/> : null }
                     </TabPane>
+                    <TabPane tab="Сортировка" key="4">
+                    </TabPane>
                 </Tabs>
                 </div>
             </Content>
@@ -366,6 +349,7 @@ class Menus extends Component {
 export default connect (
     state => ({
         menus: state.menus,
+        categories: state.categories,
         optionapp: state.optionapp,
         owner: state.owner,
     }),

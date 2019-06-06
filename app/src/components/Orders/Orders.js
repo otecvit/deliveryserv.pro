@@ -245,6 +245,7 @@ class Orders extends Component {
             showOrders: false,
             dataSource: this.props.orders,
         });
+        this.CalculatePlaced();
       }
 
       onOpenDropMenu = (flag) => {

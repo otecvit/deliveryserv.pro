@@ -13,37 +13,36 @@ class MenusForm extends Component {
           arrDays: this.props.type !== "0" ? this.props.param.arrDays : [],
           blDays: this.props.type !== "0" ? this.props.param.blDays === "true" : true,
           blTimes: this.props.type !== "0" ? this.props.param.blTimes === "true" : true,
+          chStartInterval: this.props.type !== "0" ? this.props.param.chStartInterval : "0:00:00",
+          chEndInterval: this.props.type !== "0" ? this.props.param.chEndInterval : "23:59:59",
       };
 
     handleSubmit = (e) => {
         e.preventDefault();
+        const { chUID } = this.props.owner;
+        const { chStartInterval, chEndInterval } = this.state;
+
         this.props.form.validateFields((err, values) => {
 
           if (!err) {
             var val = {};
             if (this.props.type === '1') {
 
-              const url = this.props.optionapp[0].serverUrl + "/EditMenus.php"; // изменяем категорию
+              const url = `${this.props.optionapp[0].serverUrl}/EditMenus.php`; // изменяем категорию
               fetch(url, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   idMenus: this.props.param.idMenus,
                   chName: values.chName,
-                  chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
                   chDescription: values.chDescription,
                   arrCategories: this.state.arrCategories,
                   blDays: this.state.blDays ? "1" : "0",
                   arrDays: this.state.blDays ? [] : this.state.arrDays,
                   blTimes: this.state.blTimes ? "1" : "0",
-                  chStartInterval: this.state.blTimes ? "0:00:00" : values.chStartInterval._i,
-                  chEndInterval: this.state.blTimes ? "23:59:59" : values.chEndInterval._i,
+                  chStartInterval: this.state.blTimes === "1" ? "0:00:00" : chStartInterval,
+                  chEndInterval: this.state.blTimes === "1" ? "23:59:59" : chEndInterval,
                   
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
@@ -53,19 +52,22 @@ class MenusForm extends Component {
                     idMenus: this.props.param.idMenus,
                     enShow: values.enShow.toString(),
                     chName: values.chName,
-                    chNamePrint: values.chNamePrint,
                     chDescription: values.chDescription,
                     arrCategories: this.state.arrCategories,
                     blDays: this.state.blDays ? "true" : "false",
                     arrDays: this.state.blDays ? [] : this.state.arrDays,
                     blTimes: this.state.blTimes ? "true" : "false",
-                    chStartInterval: this.state.blTimes ? "0:00:00" : values.chStartInterval._i,
-                    chEndInterval: this.state.blTimes ? "23:59:59" : values.chEndInterval._i,
+                    chStartInterval: this.state.blTimes === "1" ? "0:00:00" : chStartInterval,
+                    chEndInterval: this.state.blTimes === "1" ? "23:59:59" : chEndInterval,
                   }
                 }
                 this.props.onEdit(val);  // вызываем action
                 message.success('Меню изменено');
-                this.props.form.resetFields(); // ресет полей               
+                this.props.form.setFieldsValue({
+                  'enShow': values.enShow.toString() === "true",
+                  'chName': values.chName,
+                });
+
               }).catch((error) => {
                   console.error(error);
               });
@@ -74,42 +76,33 @@ class MenusForm extends Component {
               const url = this.props.optionapp[0].serverUrl + "/InsertMenus.php"; // добавляем набор
               fetch(url, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
+                  chUID: chUID,
                   chName: values.chName,
-                  chNamePrint: values.chNamePrint,
                   enShow: values.enShow ? "1" : "0",
                   chDescription: values.chDescription,
                   arrCategories: this.state.arrCategories,
                   blDays: this.state.blDays ? "1" : "0",
                   arrDays: this.state.blDays ? [] : this.state.arrDays,
-                  blTimes: this.state.blTimes ? "1" : "0",
-                  chStartInterval: this.state.blTimes ? "0:00:00" : values.chStartInterval._i,
-                  chEndInterval: this.state.blTimes ? "23:59:59" : values.chEndInterval._i,
+                  blTimes: this.state.blTimes === "1" ? "1" : "0",
+                  chStartInterval: this.state.blTimes === "1" ? "0:00:00" : chStartInterval,
+                  chEndInterval: this.state.blTimes === "1" ? "23:59:59" : chEndInterval,
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
-                
-                console.log(responseJsonFromServer);
-                
                 val = {
                   dataload: { 
                     key: responseJsonFromServer.toString(),
                     idMenus: responseJsonFromServer.toString(),
                     enShow: values.enShow.toString(),
                     chName: values.chName,
-                    chNamePrint: values.chNamePrint,
                     chDescription: values.chDescription,
                     arrCategories: this.state.arrCategories,
                     blDays: this.state.blDays ? "true" : "false",
                     arrDays: this.state.blDays ? [] : this.state.arrDays,
                     blTimes: this.state.blTimes ? "true" : "false",
-                    chStartInterval: this.state.blTimes ? "0:00:00" : values.chStartInterval._i,
-                    chEndInterval: this.state.blTimes ? "23:59:59" : values.chEndInterval._i,
+                    chStartInterval: this.state.blTimes === "1" ? "0:00:00" : chStartInterval,
+                    chEndInterval: this.state.blTimes === "1" ? "23:59:59" : chEndInterval,
                   }
                 }
 
@@ -134,15 +127,10 @@ class MenusForm extends Component {
 
 
       delete = () => {
-        const url = this.props.optionapp[0].serverUrl + "/DeleteMenus.php"; // удаление
+        const url = `${this.props.optionapp[0].serverUrl}/DeleteMenus.php`; // удаление
         fetch(url,
           {
               method: 'POST',
-              headers: 
-              {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-              },
               body: JSON.stringify(
               {
                 idMenus: this.props.param.idMenus,
@@ -158,7 +146,7 @@ class MenusForm extends Component {
               console.error(error);
           });
           this.props.handler();
-          message.success('Меню удалено'); 
+          message.success('Вариант удален'); 
     }
 
     onChangeBlDays = (e) => {
@@ -189,21 +177,35 @@ class MenusForm extends Component {
 
     componentWillReceiveProps(nextProps) {
       if(nextProps.param !== this.props.param) {
-        /*
-        this.props.form.setFieldsValue({
-          'enShow': this.props.menus.find(x => x.idMenus ===  nextProps.param).enShow === "true",
-          'blDays': this.props.menus.find(x => x.idMenus ===  nextProps.param).blDays,
-          'blTimes': this.props.menus.find(x => x.idMenus ===  nextProps.param).blTimes,
-        });
+        if (nextProps.type === "0") {
+          this.props.form.setFieldsValue({
+            'enShow': true,
+            'chName': '',
+          });
 
-        this.setState({
-            arrCategories: this.props.menus.find(x => x.idMenus ===  nextProps.param).arrCategories,
-            blDays: this.props.menus.find(x => x.idMenus ===  nextProps.param).blDays === "true",
-            arrDays: this.props.menus.find(x => x.idMenus ===  nextProps.param).arrDays,
-            blTimes: this.props.menus.find(x => x.idMenus ===  nextProps.param).blTimes === "true",
-        });
-        */
+        }
+
+        if (nextProps.type === "2" || nextProps.type === "1") {
+          this.props.form.setFieldsValue({
+            'enShow': nextProps.param.enShow === "true",
+            'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
+          });
+
+        }
+      
       }
+    }
+
+    handleChangeTime = (timeString, isStartInterval) => {
+        if (isStartInterval) {
+          this.setState({
+            chStartInterval: `${timeString}:00`,
+          });
+        } else {
+          this.setState({
+            chEndInterval: `${timeString}:00`,
+          });
+        }
     }
 
     render() {
@@ -216,7 +218,7 @@ class MenusForm extends Component {
         
         return (
           <Fragment>
-            { this.props.param ? (       
+            { this.props.type === "1" ? (       
             <div style={{ 
               margin: "15px 0", 
               padding: "15px 0", 
@@ -228,7 +230,7 @@ class MenusForm extends Component {
               borderBottomColor: "#cecece",
                }}>
                <h4>Удалить меню</h4>
-               <Popconfirm title="Удалить меню?" onConfirm={() => this.delete()} okText="Да" cancelText="Нет">
+               <Popconfirm title="Удалить вариант?" onConfirm={() => this.delete()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>
@@ -253,23 +255,10 @@ class MenusForm extends Component {
               hasFeedback
             >
               {getFieldDecorator('chName', {
-                rules: [{ required: true, message: 'Введите наименование меню' }],
+                rules: [{ required: true, message: 'Введите наименование варианта' }],
                 initialValue: this.props.type !== "0" ? this.props.param.chName : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Наименование меню" />
-              )}
-            </FormItem>
-            <FormItem
-              label="Отображаемое имя"  
-              abelCol={{ span: labelColSpan }}
-              style={{ marginBottom: 10 }}
-              hasFeedback
-            >
-              {getFieldDecorator('chNamePrint', {
-                rules: [{ }],
-                initialValue: this.props.type !== "0" ? this.props.param.chNamePrint : ""
-              })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Отображаемое имя" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Наименование" />
               )}
             </FormItem>
             <FormItem
@@ -362,7 +351,10 @@ class MenusForm extends Component {
                     {getFieldDecorator('chStartInterval', {
                         initialValue: this.props.type !== "0" ? moment(this.props.param.chStartInterval, format) : moment('0:00:00', format)
                     })(
-                        <TimePicker format={format} />
+                        <TimePicker 
+                          format={format} 
+                          onChange={(time, timeString) => this.handleChangeTime(timeString, true)}
+                        />
                     )}
                 </FormItem> 
                 <FormItem
@@ -373,7 +365,10 @@ class MenusForm extends Component {
                     {getFieldDecorator('chEndInterval', {
                         initialValue: this.props.type !== "0" ? moment(this.props.param.chEndInterval, format) : moment('23:59:59', format)
                     })(
-                        <TimePicker format={format} />
+                        <TimePicker 
+                          format={format} 
+                          onChange={(time, timeString) => this.handleChangeTime(timeString, false)}
+                        />
                     )}
                 </FormItem> 
             </div> : null}
@@ -396,6 +391,7 @@ export default connect (
       menus: state.menus,
       optionapp: state.optionapp,
       categories: state.categories,
+      owner: state.owner,
   }),
   dispatch => ({
     onAdd: (data) => {

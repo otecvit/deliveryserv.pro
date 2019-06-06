@@ -16,7 +16,7 @@ const CollectionCreateForm = Form.create()(
           width ={500}
           footer={null}
           wrapClassName="status-3"
-          centered
+          style={{ top: 50 }}
         >
               <div className="d-table">
                 <div className="d-tr">

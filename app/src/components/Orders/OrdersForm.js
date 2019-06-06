@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Modal, Form, Input, Radio, Select, message, Tabs, Table, DatePicker  } from 'antd';
-import { Row, Col } from 'antd';
+import { Row, Col } from 'antd'
+
+import { PrintOrder } from '../../items/PDFPrint'
 
 const FormItem = Form.Item;
 const TabPane = Tabs.TabPane;
@@ -60,8 +62,6 @@ const CollectionCreateForm = Form.create()(
   }
 
     componentDidMount() {
-      
-      
       if (!Number(this.props.param.iStatus)) {
         const url = this.props.optionapp[0].serverUrl + "/EditStatusOrder.php"; // изменяем категорию
         fetch(url, {
@@ -108,6 +108,25 @@ const CollectionCreateForm = Form.create()(
       
   }
 
+  handlePrintOrder = (record) => {
+    const url = this.props.optionapp[0].serverUrl + "/SelectOrdersDetail.php";
+    fetch(url, 
+      {
+          method: 'POST',
+          body: JSON.stringify(
+          {
+            idOrder: record.idOrder
+         })
+      })
+    .then((response) => response.json())
+    .then((responseJson) => {
+       PrintOrder(record, responseJson.ordersdetail, this.props.owner.chCurrency);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
     
     render() {
       const { visible, onCancel, onCreate, form } = this.props;
@@ -125,32 +144,40 @@ const CollectionCreateForm = Form.create()(
           width ={500}
           footer={null}
           wrapClassName={currentStatus}
-          centered
+          style={{ top: 50 }}
         >
         
             <Form layout="horizontal">
-                    <FormItem
-                    labelCol={{ span: labelColSpan }}
-                    style={{ marginBottom: "10", width: "100%" }}
-                    >
-                    {getFieldDecorator('iStatus', {
-                        initialValue: Number(this.props.param.iStatus) ? this.props.param.iStatus : "1"
-                    })(
-                    <Select 
-                        placeholder="Выберите статус" 
-                        style={{ width: "100%" }}
-                        onChange={this.onChangeStatus}
-                    >
-                        <Option key="1" value="1">Не подтвержден</Option>
-                        <Option key="2" value="2">Подтвержден</Option>
-                        <Option key="3" value="3">Приготовлен</Option>
-                        <Option key="4" value="4">В пути</Option>
-                        <Option key="5" value="5">Выполнен</Option>
-                        <Option key="6" value="6">Отменен</Option>
+                    <Row gutter={8}>
+                        <Col span={16}>
+                            <FormItem
+                            labelCol={{ span: labelColSpan }}
+                            style={{ marginBottom: "10", width: "100%" }}
+                            >
+                            {getFieldDecorator('iStatus', {
+                                initialValue: Number(this.props.param.iStatus) ? this.props.param.iStatus : "1"
+                            })(
+                            <Select 
+                                placeholder="Выберите статус" 
+                                style={{ width: "100%" }}
+                                onChange={this.onChangeStatus}
+                            >
+                                <Option key="1" value="1">Не подтвержден</Option>
+                                <Option key="2" value="2">Подтвержден</Option>
+                                <Option key="3" value="3">Приготовлен</Option>
+                                <Option key="4" value="4">В пути</Option>
+                                <Option key="5" value="5">Выполнен</Option>
+                                <Option key="6" value="6">Отменен</Option>
 
-                    </Select>
-                    )}
-                    </FormItem>
+                            </Select>
+                            )}
+                            </FormItem>
+                        </Col>
+                        <Col span={8}>
+                            <Button style={{ marginTop: 4, width: "100%" }} onClick={() => this.handlePrintOrder(this.props.param)}>Печать заказа</Button>
+                        </Col>
+                    </Row>
+                        
  
           <Tabs defaultActiveKey="1">
             
