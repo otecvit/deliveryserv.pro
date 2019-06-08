@@ -41,8 +41,8 @@ class MenusForm extends Component {
                   blDays: this.state.blDays ? "1" : "0",
                   arrDays: this.state.blDays ? [] : this.state.arrDays,
                   blTimes: this.state.blTimes ? "1" : "0",
-                  chStartInterval: this.state.blTimes === "1" ? "0:00:00" : chStartInterval,
-                  chEndInterval: this.state.blTimes === "1" ? "23:59:59" : chEndInterval,
+                  chStartInterval: this.state.blTimes ? "0:00:00" : chStartInterval,
+                  chEndInterval: this.state.blTimes ? "23:59:59" : chEndInterval,
                   
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
@@ -57,16 +57,20 @@ class MenusForm extends Component {
                     blDays: this.state.blDays ? "true" : "false",
                     arrDays: this.state.blDays ? [] : this.state.arrDays,
                     blTimes: this.state.blTimes ? "true" : "false",
-                    chStartInterval: this.state.blTimes === "1" ? "0:00:00" : chStartInterval,
-                    chEndInterval: this.state.blTimes === "1" ? "23:59:59" : chEndInterval,
+                    chStartInterval: this.state.blTimes ? "0:00:00" : chStartInterval,
+                    chEndInterval: this.state.blTimes ? "23:59:59" : chEndInterval,
                   }
                 }
                 this.props.onEdit(val);  // вызываем action
                 message.success('Меню изменено');
+                
                 this.props.form.setFieldsValue({
                   'enShow': values.enShow.toString() === "true",
                   'chName': values.chName,
+
                 });
+
+
 
               }).catch((error) => {
                   console.error(error);
@@ -85,9 +89,9 @@ class MenusForm extends Component {
                   arrCategories: this.state.arrCategories,
                   blDays: this.state.blDays ? "1" : "0",
                   arrDays: this.state.blDays ? [] : this.state.arrDays,
-                  blTimes: this.state.blTimes === "1" ? "1" : "0",
-                  chStartInterval: this.state.blTimes === "1" ? "0:00:00" : chStartInterval,
-                  chEndInterval: this.state.blTimes === "1" ? "23:59:59" : chEndInterval,
+                  blTimes: this.state.blTimes ? "1" : "0",
+                  chStartInterval: this.state.blTimes  ? "0:00:00" : chStartInterval,
+                  chEndInterval: this.state.blTimes ? "23:59:59" : chEndInterval,
                 })
               }).then((response) => response.json()).then((responseJsonFromServer) => {
                 val = {
@@ -101,8 +105,8 @@ class MenusForm extends Component {
                     blDays: this.state.blDays ? "true" : "false",
                     arrDays: this.state.blDays ? [] : this.state.arrDays,
                     blTimes: this.state.blTimes ? "true" : "false",
-                    chStartInterval: this.state.blTimes === "1" ? "0:00:00" : chStartInterval,
-                    chEndInterval: this.state.blTimes === "1" ? "23:59:59" : chEndInterval,
+                    chStartInterval: this.state.blTimes ? "0:00:00" : chStartInterval,
+                    chEndInterval: this.state.blTimes ? "23:59:59" : chEndInterval,
                   }
                 }
 
@@ -181,15 +185,36 @@ class MenusForm extends Component {
           this.props.form.setFieldsValue({
             'enShow': true,
             'chName': '',
+            'chDescription': '',
           });
 
+          this.setState({
+            arrCategories: [],  
+            arrDays: [],
+            blDays: true,
+            blTimes: true,
+            chStartInterval: "0:00:00",
+            chEndInterval: "23:59:59",
+          })
         }
 
         if (nextProps.type === "2" || nextProps.type === "1") {
           this.props.form.setFieldsValue({
             'enShow': nextProps.param.enShow === "true",
             'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
+            'chDescription': nextProps.param.chDescription,
+            'arrCategories': nextProps.param.arrCategories,
+            'arrDays': nextProps.param.arrDays,
           });
+
+          this.setState({
+            arrCategories: nextProps.param.arrCategories,
+            arrDays: nextProps.param.arrDays,
+            blDays: nextProps.param.blDays === "true",
+            blTimes: nextProps.param.blTimes === "true",
+            chStartInterval: nextProps.param.chStartInterval,
+            chEndInterval: nextProps.param.chEndInterval,
+          })
 
         }
       
