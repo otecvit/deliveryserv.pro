@@ -155,7 +155,7 @@ class MenusForm extends Component {
 
     onChangeBlDays = (e) => {
         this.setState({
-            blDays: !this.state.blDays,
+            blDays: e.target.value,
         })
     }
 
@@ -174,7 +174,7 @@ class MenusForm extends Component {
     onChangeBlTimes = (e) => {
         this.setState({
             /*blDay: this.props.optionSets.find(x => x.idOptionSets ===  param).blNecessarily === "true",*/
-            blTimes: !this.state.blTimes,
+            blTimes: e.target.value,
         })
     }
 
@@ -199,26 +199,54 @@ class MenusForm extends Component {
         }
 
         if (nextProps.type === "2" || nextProps.type === "1") {
-          this.props.form.setFieldsValue({
-            'enShow': nextProps.param.enShow === "true",
-            'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
-            'chDescription': nextProps.param.chDescription,
-            'arrCategories': nextProps.param.arrCategories,
-            'arrDays': nextProps.param.arrDays,
-          });
+            const format = 'HH:mm';
 
-          this.setState({
+            this.props.form.setFieldsValue({
+              'enShow': nextProps.param.enShow === "true",
+              'chName': nextProps.param.chName + `${nextProps.type === "2" ? " - Копия" : "" }`,
+              'chDescription': nextProps.param.chDescription,
+              'arrCategories': nextProps.param.arrCategories,
+              'blDays': nextProps.param.blDays === "true" ? true : false,
+              'blTimes': nextProps.param.blTimes === "true" ? true : false,
+            });
+
+            this.setState({
             arrCategories: nextProps.param.arrCategories,
             arrDays: nextProps.param.arrDays,
-            blDays: nextProps.param.blDays === "true",
-            blTimes: nextProps.param.blTimes === "true",
+            blDays: nextProps.param.blDays === "true" ? true : false,
+            blTimes: nextProps.param.blTimes === "true" ? true : false,
             chStartInterval: nextProps.param.chStartInterval,
             chEndInterval: nextProps.param.chEndInterval,
-          })
+          }, () => {
+              if (!this.state.blDays) {
+                  this.props.form.setFieldsValue({
+                    'arrDays': this.state.arrDays,
+                  });
+              }
 
+              if (!this.state.blTimes) {
+                  this.props.form.setFieldsValue({
+                    'chStartInterval': moment(this.state.chStartInterval, format),
+                    'chEndInterval': moment(this.state.chEndInterval, format),
+                  });
+              }
+          })
         }
-      
       }
+    }
+
+    componentDidMount() {
+/*
+      const format = 'HH:mm';
+      
+      
+
+      this.props.form.setFieldsValue({
+        'arrDays': this.state.arrDays,
+        'chStartInterval': moment(this.state.chStartInterval, format),
+        'chEndInterval': moment(this.state.chEndInterval, format),
+      });
+      */
     }
 
     handleChangeTime = (timeString, isStartInterval) => {
@@ -321,11 +349,11 @@ class MenusForm extends Component {
             style={{ marginBottom: 10 }}
             >
             {getFieldDecorator('blDays', {
-                initialValue: blDays ? "true" : "false"
+                initialValue: blDays
             })(
                 <RadioGroup onChange={this.onChangeBlDays}>
-                    <Radio value="true">Ежедневно</Radio>
-                    <Radio value="false">Выбрать дни</Radio>
+                    <Radio value={true}>Ежедневно</Radio>
+                    <Radio value={false}>Выбрать дни</Radio>
                 </RadioGroup>
             )}
             </FormItem>
@@ -358,11 +386,11 @@ class MenusForm extends Component {
             style={{ marginBottom: 10 }}
             >
             {getFieldDecorator('blTimes', {
-                initialValue: blTimes ? "true" : "false"
+                initialValue: blTimes
             })(
                 <RadioGroup onChange={this.onChangeBlTimes}>
-                    <Radio value="true">Постоянно</Radio>
-                    <Radio value="false">Интервал</Radio>
+                    <Radio value={true}>Постоянно</Radio>
+                    <Radio value={false}>Интервал</Radio>
                 </RadioGroup>
             )}
             </FormItem>

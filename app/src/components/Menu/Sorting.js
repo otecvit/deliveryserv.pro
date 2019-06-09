@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Button, Spin } from 'antd';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-import TovarSorting from './TovarSorting';
+import TovarSorting from './TovarSorting'
+import MenusSorting from '../Menu/MenusSorting'
 import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
@@ -107,11 +108,6 @@ class Sorting extends Component {
     const url = this.props.optionapp[0].serverUrl + "/EditCategoriesSort.php"; // изменяем категорию
         fetch(url, {
           method: 'POST',
-          headers: 
-          {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-          },
           body: JSON.stringify(
           {
             categories: this.state.items.map( (item, index) => {
@@ -149,6 +145,9 @@ class Sorting extends Component {
       <Content style={{ background: '#fff', margin: '16px 0' }}>
                 <div style={{ padding: 10 }}>
                 <Tabs>
+                    <TabPane tab="Варианты" key="4">
+                      { <MenusSorting /> }
+                    </TabPane>
                     <TabPane tab="Категории" key="1">
                     <Spin spinning={flLoading}>
                       <DragDropContext onDragEnd={this.onDragEnd}>

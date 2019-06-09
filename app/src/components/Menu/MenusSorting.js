@@ -34,7 +34,7 @@ const reorder = (list, startIndex, endIndex) => {
   
   });
 
-class StockSorting extends Component {
+class MenusSorting extends Component {
 
     constructor(props) {
         super(props);
@@ -70,10 +70,9 @@ class StockSorting extends Component {
       }
     
       loadingData = () => {
-
-        const url = `${this.props.optionapp[0].serverUrl}/SelectStock.php`;
+            const url = `${this.props.optionapp[0].serverUrl}/SelectMenus.php`;
             fetch(url, {
-              method: 'POST', 
+              method: 'POST',
               body: JSON.stringify(
               {
                 chUID: this.props.owner.chUID,
@@ -82,27 +81,27 @@ class StockSorting extends Component {
             .then((response) => response.json())
             .then((responseJson) => {
               this.setState({
-                items: responseJson.stock.map((item) => {
-                  return {id: item.idStock, content: item.chName, iSort: item.iSort} 
+                items: responseJson.menus.map((item) => {
+                  return {id: item.idMenus, content: item.chName, iSort: item.iSort} 
                 }),
                 flLoading: false,
             });
             }).catch((error) => {
-                console.error(error);   
+                console.error(error);
             }); 
 
     }
 
       saveSort = (e) => {
         
-        const url = `${this.props.optionapp[0].serverUrl}/EditStockSort.php`; // изменяем категорию
+        const url = `${this.props.optionapp[0].serverUrl}/EditMenusSort.php`; // изменяем категорию
             fetch(url, {
               method: 'POST',
               body: JSON.stringify(
               {
-                products: this.state.items.map( (item, index) => {
+                menus: this.state.items.map( (item, index) => {
                   return {
-                    idStock: item.id,
+                    idMenus: item.id,
                     iSort: index.toString(),
                   }
                 })
@@ -126,7 +125,6 @@ class StockSorting extends Component {
           
           if(nextProps.param !== this.props.param) {
             this.loadingData(nextProps.param);
-            
           }
         }
       
@@ -136,7 +134,6 @@ class StockSorting extends Component {
         const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
         });
-        
 
         return (<div style={{ marginTop: "10px" }}>
             <Spin spinning={flLoading}>
@@ -172,7 +169,7 @@ class StockSorting extends Component {
                       { items.length ?
                       <Button type="primary" onClick={this.saveSort} style={{marginBottom: "10px"}}>
                         <Icon type="plus"/>Сохранить
-                      </Button> : <Alert message="Акции не найдены" type="warning" showIcon />
+                      </Button> : <Alert message="Варианты не найдены" type="warning" showIcon />
                       }
                     </Spin>
         </div>);
@@ -183,11 +180,7 @@ class StockSorting extends Component {
 
 export default connect (
     state => ({
-        stock: state.stock,
         owner: state.owner,
         optionapp: state.optionapp,
     }),
-    dispatch => ({
-
-    })
-  )(StockSorting);
+  )(MenusSorting);

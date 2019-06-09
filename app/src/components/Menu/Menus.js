@@ -6,6 +6,7 @@ import MenusForm from './MenusForm';
 import HeaderSection from '../../items/HeaderSection'
 import ViewDetailDescription from '../../items/ViewDetailDescription'
 
+
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
 const Option = Select.Option;
@@ -144,13 +145,17 @@ class Menus extends Component {
           });
     }
 
-       // обрабатываем нажатие на суффикс "крестик"
     emitEmpty = () => {
         this.searchStringInput.focus(); //
         this.setState({ 
             searchString: '' , // удаляем поисковый запрос
             filtered: false, // сброс фильтрации
+        }, () => {
+            console.log(this.state.dataSource);
+            
         });
+
+
     }
 
 
@@ -227,23 +232,7 @@ class Menus extends Component {
         const { searchString, currentEditRecord, statusJobRecord, dataSource, flLoading } = this.state;
         const suffix = searchString ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
         
-        const columns = [{ 
-                title: 'Имя', 
-                dataIndex: 'idMenus', 
-                key: 'name', 
-                render: (record) => {
-                    //console.log(dataSource);
-                    var chName = "";
-                    var chNamePrint = "";
-
-                    if (dataSource.length) {
-                        chName = this.props.menus.find(x => x.idMenus ===  record).chName;
-                        chNamePrint = this.props.menus.find(x => x.idMenus ===  record).chNamePrint;
-                    }
-                    
-                    return (<div>{chName}</div>);
-                }
-            },{ 
+        const columns = [{ title: 'Имя', dataIndex: 'chName', key: 'name' },{ 
                 title: 'Действие', 
                 key: 'operation', 
                 width: 100, 
@@ -336,8 +325,6 @@ class Menus extends Component {
                         {options}
                     </Select>
                     { statusJobRecord === "1"  ? <MenusForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/> : null }
-                    </TabPane>
-                    <TabPane tab="Сортировка" key="4">
                     </TabPane>
                 </Tabs>
                 </div>
