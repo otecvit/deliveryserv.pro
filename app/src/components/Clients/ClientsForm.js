@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Form } from 'antd';
 
+import { numberWithSpaces } from '../../function/functions'
+
 const CollectionCreateForm = Form.create()(
   class extends React.Component {
    
@@ -49,7 +51,7 @@ const CollectionCreateForm = Form.create()(
                 </div>  
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Сумма заказов</div>
-                  <div className="d-td content-modal-orders">{this.props.param.sumOrder}</div>
+                  <div className="d-td content-modal-orders">{numberWithSpaces(Number(this.props.param.sumOrder).toFixed(2))} {this.props.owner.chCurrency}</div>
                 </div>  
                 <div className="d-tr">
                   <div className="d-td title-modal-orders">Последний заказ</div>
@@ -83,6 +85,7 @@ class OrdersForm extends Component {
                     <CollectionCreateForm
                       orders = {this.props.orders}
                       optionapp = {this.props.optionapp}
+                      owner = {this.props.owner}
                       wrappedComponentRef={this.saveFormRef}
                       visible={this.state.visible}
                       onCancel={this.props.handler} //вызываем функцию родительского компонента
@@ -98,6 +101,7 @@ export default connect (
   state => ({
     orders: state.orders,
     optionapp: state.optionapp,
+    owner: state.owner,
   }),
   dispatch => ({
     onEditStatus: (data) => {

@@ -4,6 +4,7 @@ import { Button, Modal, Form, Input, Radio, Select, message, Tabs, Table, DatePi
 import { Row, Col } from 'antd'
 
 import { PrintOrder } from '../../items/PDFPrint'
+import { numberWithSpaces } from '../../function/functions'
 
 const FormItem = Form.Item;
 const TabPane = Tabs.TabPane;
@@ -253,14 +254,14 @@ const CollectionCreateForm = Form.create()(
                           {Number(item.chPriceProduct).toFixed(2)}
                           {item.arrOption.length ? 
                             <div>
-                              {item.arrOption.map( d => <div key={d.key}>+{Number(d.chChangePrice).toFixed(2)}</div>)}
+                              {item.arrOption.map( d => <div key={d.key}>+{numberWithSpaces(Number(d.chChangePrice).toFixed(2))}</div>)}
                             </div> : null}
                         </Col>
                       </Row>
                       <Row className="order-details-subtotal">
                         <Col span={2}></Col>
                         <Col span={18}>Итого за товар</Col>
-                        <Col span={4} style={{textAlign: "right"}}>{item.arrOption.length ? Number(item.arrOption.map( d => Number(d.chChangePrice)).reduce((a, b) => a + b, Number(item.chPriceProduct))).toFixed(2) : Number(item.chPriceProduct).toFixed(2)}</Col>
+                        <Col span={4} style={{textAlign: "right"}}>{item.arrOption.length ? numberWithSpaces(Number(item.arrOption.map( d => Number(d.chChangePrice)).reduce((a, b) => a + b, Number(item.chPriceProduct))).toFixed(2)) : numberWithSpaces(Number(item.chPriceProduct).toFixed(2))}</Col>
                       </Row>
                     </div>
                   );
@@ -268,7 +269,7 @@ const CollectionCreateForm = Form.create()(
                 <Row className="header-order-total">
                   <Col span={2}></Col>
                   <Col span={18}>Итого сумма заказа, {this.props.owner.chCurrency}</Col>
-                  <Col span={4} style={{textAlign: "right"}}>{Number(this.props.param.chOrderPrice).toFixed(2)}</Col>
+                  <Col span={4} style={{textAlign: "right"}}>{numberWithSpaces(Number(this.props.param.chOrderPrice).toFixed(2))}</Col>
                 </Row>
               </div>
             </TabPane>
@@ -298,11 +299,6 @@ class OrdersForm extends Component {
         const url = this.props.optionapp[0].serverUrl + "/EditStatusOrder.php"; // изменяем категорию
         fetch(url, {
           method: 'POST',
-          headers: 
-          {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-          },
           body: JSON.stringify(
           {
             idOrder: this.props.param.idOrder,

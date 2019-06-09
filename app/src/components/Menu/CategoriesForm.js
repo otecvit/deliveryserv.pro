@@ -130,7 +130,6 @@ class CategoriesForm extends Component {
 
     delete = () => {
       const url = `${this.props.optionapp[0].serverUrl}/DeleteCategories.php`; // удаление
-      
       fetch(url,
         {
             method: 'POST',

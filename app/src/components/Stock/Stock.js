@@ -116,6 +116,10 @@ class Stock extends Component {
         });
       }
 
+    handlerSort = () => {
+        this.loadingData();
+    }
+
       loadingData = () => {
 
         const url = `${this.props.optionapp[0].serverUrl}/SelectStock.php`;
@@ -277,7 +281,7 @@ class Stock extends Component {
                 { statusJobRecord === "1" ? <StockForm handler = {this.handler} param={currentEditRecord} type={statusJobRecord}/> : null }
                 </TabPane>
                 <TabPane tab="Сортировка" key="4">
-                    <StockSorting />
+                    <StockSorting param={this.props.stock} handlerSort = {this.handlerSort}/>
                 </TabPane>
             </Tabs>
             </div>

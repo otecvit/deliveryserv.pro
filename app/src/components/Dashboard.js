@@ -5,6 +5,7 @@ import moment from 'moment'
 import 'moment/locale/ru'
 
 import HeaderSection from '../items/HeaderSection'
+import { numberWithSpaces } from '../function/functions'
 
 const ButtonGroup = Button.Group;
 
@@ -146,7 +147,6 @@ class Dashboard extends Component {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-
   render() {
 
     const { timePeriod, currValuePeriod, arrStatistics } = this.state;
@@ -196,7 +196,7 @@ class Dashboard extends Component {
           </Col>
           <Col span={6} style = {{ textAlign: 'right' }}>
             <div style = {{ fontWeight: 600 }}>Продажи</div>
-            <div style = {{ fontWeight: 300, fontSize: 25 }}>{(arrStatistics[0].SumOrder + arrStatistics[1].SumOrder).toFixed(2)}  {this.props.owner.chCurrency}</div>
+            <div style = {{ fontWeight: 300, fontSize: 25 }}>{numberWithSpaces((arrStatistics[0].SumOrder + arrStatistics[1].SumOrder).toFixed(2))}  {this.props.owner.chCurrency}</div>
             
           </Col>
           <Col span={6}>
@@ -221,7 +221,7 @@ class Dashboard extends Component {
             <Divider style = {{ margin: '5px 0' }}/>
             <Row>
               <Col span={12}><div style = {{ fontWeight: 500, fontSize: 12 }}>Сумма</div></Col>
-              <Col span={12}><div style = {{ fontWeight: 500, fontSize: 12, textAlign: 'right' }}>{arrStatistics[1].SumOrder.toFixed(2)}  {this.props.owner.chCurrency}</div></Col>
+              <Col span={12}><div style = {{ fontWeight: 500, fontSize: 12, textAlign: 'right' }}>{numberWithSpaces(arrStatistics[1].SumOrder.toFixed(2))}  {this.props.owner.chCurrency}</div></Col>
             </Row>
             <Divider dashed style = {{ margin: '1px 0' }}/>
             <Row>
@@ -242,7 +242,7 @@ class Dashboard extends Component {
             <Divider style = {{ margin: '5px 0' }}/>
             <Row>
               <Col span={12}><div style = {{ fontWeight: 500, fontSize: 12 }}>Сумма</div></Col>
-              <Col span={12}><div style = {{ fontWeight: 500, fontSize: 12, textAlign: 'right' }}>{arrStatistics[0].SumOrder.toFixed(2)}  {this.props.owner.chCurrency}</div></Col>
+              <Col span={12}><div style = {{ fontWeight: 500, fontSize: 12, textAlign: 'right' }}>{numberWithSpaces(arrStatistics[0].SumOrder.toFixed(2))}  {this.props.owner.chCurrency}</div></Col>
             </Row>
             <Divider dashed style = {{ margin: '1px 0' }}/>
             <Row>
@@ -263,7 +263,7 @@ class Dashboard extends Component {
             <Divider style = {{ margin: '5px 0' }}/>
             <Row>
               <Col span={12}><div style = {{ fontWeight: 500, fontSize: 12 }}>Сумма</div></Col>
-              <Col span={12}><div style = {{ fontWeight: 500, fontSize: 12, textAlign: 'right' }}>{arrStatistics[2].SumOrder.toFixed(2)}  {this.props.owner.chCurrency}</div></Col>
+              <Col span={12}><div style = {{ fontWeight: 500, fontSize: 12, textAlign: 'right' }}>{numberWithSpaces(arrStatistics[2].SumOrder.toFixed(2))}  {this.props.owner.chCurrency}</div></Col>
             </Row>
             <Divider dashed style = {{ margin: '1px 0' }}/>
             <Row>

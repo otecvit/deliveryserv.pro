@@ -39,8 +39,10 @@ class StockSorting extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          items: [],
-          flLoading: true,
+          items: this.props.stock.map((item) => {
+            return {id: item.idStock, content: item.chName, iSort: item.iSort} 
+          }),
+          flLoading: false,
           currentEditCat: "0",
           dataSource: [],
         };
@@ -65,33 +67,18 @@ class StockSorting extends Component {
         });
       }
 
-      componentDidMount() {
-        this.loadingData();
-      }
-    
-      loadingData = () => {
-
-        const url = `${this.props.optionapp[0].serverUrl}/SelectStock.php`;
-            fetch(url, {
-              method: 'POST', 
-              body: JSON.stringify(
-              {
-                chUID: this.props.owner.chUID,
-              })
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.param !== this.props.param) {
+            this.setState({
+              items: nextProps.param.map((item) => {
+                return {id: item.idStock, content: item.chName, iSort: item.iSort} 
+              }),
             })
-            .then((response) => response.json())
-            .then((responseJson) => {
-              this.setState({
-                items: responseJson.stock.map((item) => {
-                  return {id: item.idStock, content: item.chName, iSort: item.iSort} 
-                }),
-                flLoading: false,
-            });
-            }).catch((error) => {
-                console.error(error);   
-            }); 
-
+        }
+        
     }
+    
+
 
       saveSort = (e) => {
         
@@ -100,7 +87,7 @@ class StockSorting extends Component {
               method: 'POST',
               body: JSON.stringify(
               {
-                products: this.state.items.map( (item, index) => {
+                stock: this.state.items.map( (item, index) => {
                   return {
                     idStock: item.id,
                     iSort: index.toString(),
@@ -109,27 +96,20 @@ class StockSorting extends Component {
               })
             }).then((response) => response.json()).then((responseJsonFromServer) => {
               message.success('Сортировка сохранена');
+              this.props.handlerSort();
             }).catch((error) => {
                 console.error(error);
             });  
             
           }
           
-          onChangeCategory = (e) => {
-            //console.log(e);
-            this.setState ({ 
-                currentEditCat: e.key
-            });
-        }
-
-        componentWillReceiveProps(nextProps) {
-          
-          if(nextProps.param !== this.props.param) {
-            this.loadingData(nextProps.param);
-            
-          }
-        }
-      
+      onChangeCategory = (e) => {
+        //console.log(e);
+        this.setState ({ 
+            currentEditCat: e.key
+        });
+    }
+     
 
     render() {
         const { items, flLoading } = this.state;

@@ -8,6 +8,7 @@ import { PrintOrder } from '../../items/PDFPrint'
 import OrdersForm from './OrdersForm'
 import HeaderSection from '../../items/HeaderSection'
 import ViewDetailDescription from '../../items/ViewDetailDescription'
+import { numberWithSpaces } from '../../function/functions'
 
 const { Content } = Layout;
 const PAGE_HITS = 'hitsPerPage=';
@@ -340,7 +341,7 @@ class Orders extends Component {
                 render: (record) => {
                     return (
                     <div style={{ textAlign: 'center', fontSize: '15px', fontWeight: 'bold' }}>
-                           {Number(record).toFixed(2)} {this.props.owner.chCurrency} 
+                           {numberWithSpaces(Number(record).toFixed(2))} {this.props.owner.chCurrency} 
                     </div>);
                 }
             },{ 

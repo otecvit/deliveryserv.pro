@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 
 import ClientsForm from './ClientsForm'
 import HeaderSection from '../../items/HeaderSection'
+import { numberWithSpaces } from '../../function/functions'
 
 const { Content } = Layout;
 const PAGE_HITS = 'hitsPerPage=';
@@ -33,23 +34,9 @@ class Customers extends Component {
 
     componentDidMount() {
         this.loadingData();
-        this.timer = setInterval(()=> this.getItems(), 10000);
     }
 
-  
-    componentWillUnmount() {
-        this.timer = null; // here...
-    }
-      
-    getItems = () => {
-        //this.CalculatePlaced();
-        /*
-        fetch(this.getEndpoint('api url endpoint"))
-          .then(result => result.json())
-          .then(result => this.setState({ items: result }));
-          */
-    }
-
+ 
     createDropdownMenu = (record) => {
         const menu = (
             <Menu onClick={e => {
@@ -125,37 +112,11 @@ class Customers extends Component {
         }, () => this.loadingData())
     }
 
-    /// определяем сколько прошло времени
-    get_whole_values = (base_value) => {
-        let curr_date = new Date(); // Current date now.
-        let time_fractions = [1000, 60, 60];
-        let time_data = [curr_date - base_value];
-        for (let i = 0; i < time_fractions.length; i++) {
-            time_data.push(parseInt(time_data[i]/time_fractions[i]));
-            time_data[i] = time_data[i] % time_fractions[i];
-        }; 
-        if (time_data[3] >= 24) return ('0' + base_value.getDate()).slice(-2) + '.' + ('0' + (base_value.getMonth()+1)).slice(-2) + '.' +  base_value.getFullYear() + ' ' + base_value.toTimeString().split(' ')[0];
-        if (time_data[3] > 0) return `${time_data[3]} ${this.declOfNum(['час','часа','часов'])(time_data[3])} часа назад`;
-        if (time_data[2] > 0) return `${time_data[2]} ${this.declOfNum(['минуту','минуты','минут'])(time_data[2])} назад`;
-        if (time_data[1] > 0) return `${time_data[1]} ${this.declOfNum(['секунду','секунды','секунд'])(time_data[1])} назад`;
-
-        return ('0' + base_value.getDate()).slice(-2) + '.' + ('0' + (base_value.getMonth()+1)).slice(-2) + '.' +  base_value.getFullYear() + ' ' + base_value.toTimeString().split(' ')[0];
-    };//////////////////////////////
-
-    // склонение числительных
-    declOfNum = (titles) => {
-        var number = Math.abs(number);
-        var cases = [2, 0, 1, 1, 1, 2];
-        return function(number){
-            return  titles[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
-        }
-    };/////////
-
     onRowClick = (record, index, event) => {
-            this.val = record;
-            this.setState({
-                showOrders: !this.state.showOrders,
-            });
+        this.val = record;
+        this.setState({
+            showOrders: !this.state.showOrders,
+        });
      }
 
     styleRow = (record) => {
@@ -232,7 +193,8 @@ class Customers extends Component {
                 }
             },{ 
                 title: 'Регистрация', 
-                dataIndex: 'dDateRegistration', 
+                dataIndex: 'dDateRegistration',
+                width: 100,
                 render: (record) => {
                     //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
@@ -243,6 +205,7 @@ class Customers extends Component {
             },{ 
                 title: 'Количество заказов', 
                 dataIndex: 'countOrder', 
+                width: 100,
                 render: (record) => {
                     //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
@@ -253,16 +216,18 @@ class Customers extends Component {
             },{ 
                 title: 'Сумма заказов', 
                 dataIndex: 'sumOrder', 
+                width: 200,
                 render: (record) => {
                     //moment("06/22/2015", "MM/DD/YYYY", true).isValid(); // true
                     return (
                     <div style={{ textAlign: 'center', fontSize: '15px', fontWeight: 'bold' }}>
-                           {Number(record).toFixed(2)} BYN
+                           {numberWithSpaces(Number(record).toFixed(2))} {this.props.owner.chCurrency}
                     </div>);
                 }
             },{ 
                 title: 'Последний заказа', 
                 dataIndex: 'dLastOrder', 
+                width: 100,
                 render: (record) => {
                     return (
                     <div style={{ textAlign: 'center' }}>
@@ -272,27 +237,11 @@ class Customers extends Component {
             },
         ];
 
-        const IconFont = Icon.createFromIconfontCN({
-            scriptUrl: this.props.optionapp[0].scriptIconUrl,
-          });
-
-
-        //const options = this.props.dishes.map(item => <Option key={item.idDishes}>{item.chName}</Option>);
-
         return (<Fragment>
             <HeaderSection title="Клиенты" icon="icon-team" />
             { this.props.owner.blStatusCustomer  ? 
                 <Content style={{ background: '#fff', margin: '16px 0' }}>
                     <div style={{ padding: 10 }}>
-                    
-                    { this.props.optionapp[0].newOrderCount ? <Alert 
-                                            message={`${this.props.optionapp[0].newOrderCount} ${this.declOfNum(['новый заказ','новых заказа','новых заказов'])(this.props.optionapp[0].newOrderCount)}`} 
-                                            closable 
-                                            type="info" 
-                                            style={{ margin: '16px 0', textAlign: "center" }} 
-                                            closeText="Обновить список" 
-                                            afterClose={this.loadingData}
-                                            className="alert-order"/> : null }
                     <Table
                                 columns={columns}
                                 dataSource={dataSource}
@@ -355,7 +304,7 @@ export default connect (
     }),
     dispatch => ({
         onAdd: (data) => {
-            dispatch({ type: 'LOAD_CUSTOMERS_ALL', payload: data});
+            dispatch({ type: 'LOAD_CUSTOMERS_ALL', payload: data}); 
           },
         onControlOrder: (data) => {
             dispatch({ type: 'EDIT_OPTIONAPP_CONTROL_ORDER', payload: data});

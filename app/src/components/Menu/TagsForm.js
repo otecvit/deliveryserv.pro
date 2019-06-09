@@ -193,8 +193,8 @@ class TagsForm extends Component {
               borderBottomWidth: "1px", 
               borderBottomColor: "#cecece",
                }}>
-               <h4>Удалить категорию</h4>
-               <Popconfirm title="Удалить категорию?" onConfirm={() => this.delete()} okText="Да" cancelText="Нет">
+               <h4>Удалить тег</h4>
+               <Popconfirm title="Удалить тег?" onConfirm={() => this.delete()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
                   </Button>

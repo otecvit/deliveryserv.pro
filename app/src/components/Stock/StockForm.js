@@ -208,12 +208,9 @@ class StockForm extends React.Component {
               }] : []
           });
         }
-      
       }
-
     }
 
-    
     componentWillUnmount () {
       this.DeleteTmpFile();
     }
@@ -227,7 +224,7 @@ class StockForm extends React.Component {
               body: JSON.stringify(
               {
                 tmpFileName: this.state.tmpFileName + this.state.fileList[0].response,
-            })
+              })
           }).then((response) => response.json()).then((responseJsonFromServer) =>
 
           {
@@ -255,7 +252,7 @@ class StockForm extends React.Component {
 
         return (
           <div>
-            { this.props.param ? (       
+            { this.props.type === "1" ? (       
             <div style={{ 
               margin: "15px 0", 
               padding: "15px 0", 
@@ -266,7 +263,7 @@ class StockForm extends React.Component {
               borderBottomWidth: "1px", 
               borderBottomColor: "#cecece",
                }}>
-               <h4>Удалить категорию</h4>
+               <h4>Удалить акцию</h4>
                <Popconfirm title="Удалить категорию?" onConfirm={() => this.delete()} okText="Да" cancelText="Нет">
                   <Button type="primary">
                     Удалить
@@ -292,10 +289,10 @@ class StockForm extends React.Component {
               hasFeedback
             >
               {getFieldDecorator('chName', {
-                rules: [{ required: true, message: 'Введите имя категории' }],
+                rules: [{ required: true, message: 'Введите название акции' }],
                 initialValue: this.props.type !== "0" ? this.props.param.chName + `${this.props.type === "2" ? " - Копия" : "" }` : ""
               })(
-                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Имя категории" />
+                <Input prefix={<Icon type="bars" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Название акции" />
               )}
             </FormItem>
             <FormItem
@@ -388,7 +385,6 @@ export default connect (
     onEdit: (data) => {
       dispatch({ type: 'EDIT_STOCK', payload: data});
     },
-    
     onDelete: (data) => {
       dispatch({ type: 'DELETE_STOCK', payload: data});
     },
