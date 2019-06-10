@@ -62,29 +62,11 @@ class LocationsForm extends React.Component {
               return newdata;
             });
             
-            /*
-            console.log({
-              idLocations: this.props.param,
-              blShow: values.enShow ? "1" : "0",
-              chName: values.chName,
-              chAddress: values.chAddressLocation,
-              arrPhones: arrPhones,
-              blPickup: values.enPickup ? "1" : "0",
-              arrOperationMode: OperationMode,
-            });
-            */
-
-            
             if (this.props.type === '1') {
 
               const url = this.props.optionapp[0].serverUrl + "/EditLocations.php"; // изменяем категорию
               fetch(url, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   idLocations: this.props.param.idLocations,
@@ -116,11 +98,6 @@ class LocationsForm extends React.Component {
              const urlLocation = this.props.optionapp[0].serverUrl + "/InsertLocation.php"; // изменяем категорию
               fetch(urlLocation, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   chUID: this.props.owner.chUID,
@@ -175,11 +152,6 @@ class LocationsForm extends React.Component {
       fetch(url,
         {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               idLocations: this.props.param.idLocations

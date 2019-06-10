@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Alert, Button, Spin } from 'antd';
+import { Icon, message, Alert, Button, Spin } from 'antd';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 // a little function to help us with reordering the result

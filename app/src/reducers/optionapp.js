@@ -4,8 +4,8 @@ const initialState = [
         allOrderCount: 0,
         isLoggedIn: 0,
         statusCloud: 0,
-        serverUrl: "http://mircoffee.by/deliveryserv/app/api/admin",
-        serverUrlStart: "http://mircoffee.by/deliveryserv/app",
+        serverUrl: "https://deliveryserv.pro/app/api/admin",
+        serverUrlStart: "https://deliveryserv.pro/app",
         scriptIconUrl: "//at.alicdn.com/t/font_888167_srr1yn9r6zc.js", //поправить в файле TariffPlans.js
     },       
 ];

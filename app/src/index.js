@@ -6,11 +6,10 @@ import {createStore, applyMiddleware, compose  } from 'redux';
 import thunk from 'redux-thunk';
 import registerServiceWorker from './registerServiceWorker';
 
-import { Layout, LocaleProvider } from 'antd';
+import { LocaleProvider } from 'antd';
 import ruRU from 'antd/lib/locale-provider/ru_RU';
 
 import createHistory from 'history/createBrowserHistory';
-import { Route, Redirect } from 'react-router';
 import { ConnectedRouter} from 'react-router-redux';
 
 import 'antd/dist/antd.css';
@@ -20,11 +19,9 @@ import allReducers from './reducers/index';
 
 import ApplicationContainer from './containers/ApplicationContainer';
 
-
 const history = createHistory();
-const { Header, Content, Footer } = Layout;
 
-const store = createStore(allReducers, compose(applyMiddleware(thunk), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
+const store = createStore(allReducers, compose(applyMiddleware(thunk)/*, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()*/));
 
 const Application = connect(state => ({
   location: state.routing.location
@@ -40,125 +37,6 @@ ReactDOM.render(
     </Provider>,
   document.getElementById('root'),
 );
-
-
-//const Login = <LoginPage  handler = {handler}/>;
-
-/*
-
-const ContentPage =
-<div>
-    <Route exact path="/login" component={Login}/>
-    <Route exact path="/register" component={Registration}/>
-
-    <Route exact path="/categories" component={Categories}/>
-    <Route exact path="/option-sets" component={OptionSets}/>
-    <Route exact path="/dishes" component={Dishes}/>
-    <Route exact path="/menus" component={Menus}/>
-    <Route exact path="/orders" component={Orders}/>
-    <Route exact path="/customers" component={Clients}/>
-    <Route exact path="/locations" component={Locations}/>
-    <Route exact path="/sorting" component={Sorting}/>
-    <Route exact path="/stock" component={Stock}/>
-    <Route exact path="/general-settings" component={GeneralSettings}/>
-    <Route exact path="/times" component={Times}/>
-    <Route exact path="/type-order" component={TypeOrder}/>
-
-    <Route exact path="/" component={Dashboard}/>
-</div>;
-
-
-class MainClass extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handler = this.handler.bind(this)
-    this.state = {
-      loadStatus: false,
-      loadingStatus: false,
-    };
-}
-
-    componentDidMount() {
-      //this.timer = setInterval(()=> this.getItems(), 1000);
-    }
-  
-    componentWillUnmount() {
-      //this.timer = null; // here...
-    }
-    
-    getItems() {
-      this.setState({loadStatus: !this.state.loadStatus})
-    }
-
-    handler = () => {
-      this.setState({loadingStatus: true})
-     
-      
-    
-    }
-
-    render() {
-        const { loadingStatus } = this.state;
- 
-        const MainContent = <Layout style={{ minHeight: '100vh' }}>
-            <SiderMenu/>
-            {this.state.loadStatus ? <СheckNewOrder/> : null}
-          <Layout>
-            <Header style={{ background: '#fff', padding: 0 }}>
-              <div style={{ padding: 16 }}>
-                <HeaderStatus />
-              </div>
-              
-            </Header>
-            <Content>
-              <div style={{ padding: 16, minHeight: 360 }}>
-              {ContentPage}
-              </div>
-            </Content>
-            <Footer style={{ textAlign: 'center' }}>
-              Deliveryserv ©2018 Created by overcode
-            </Footer>
-          </Layout>
-        </Layout>;
- 
-        const MainContent = <Layout style={{ minHeight: '100vh' }}>
-          {ContentPage}
-        </Layout>;
-
-
-    
-        const LoadinContent = <Startup handler = { this.handler }/>
-
-      
-        if (!this.props.optionapp[0].isLoggedIn) {
-          console.log("5");
-          
-          return <Redirect to="/login"/>
-        }
-        
-        return <div>{loadingStatus ? MainContent : LoadinContent}</div>;
-      }
-}
-
-MainClass = connect(
-  state => ({
-    owner: state.owner,
-    optionapp: state.optionapp,
-  }),
-  dispatch => ({}))(MainClass)
-
-
-
-ReactDOM.render(
-    <Provider store = {store}>
-        <ConnectedRouter history={history}>
-            <MainClass />
-        </ConnectedRouter>
-    </Provider>,
-  
-    document.getElementById('root')
-  );
- */
 
 
 registerServiceWorker();

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Button, Radio, Form, Icon, Input, Divider, message, Steps, Select, Switch, Row, Col, TimePicker } from 'antd'
+import { Modal, Button, Radio, Form, Icon, Input, Divider, Tooltip, Steps, Select, Switch, Row, Col, TimePicker } from 'antd'
 import { Link } from 'react-router-dom'
 import { Route, Redirect } from 'react-router'
 import { connect } from 'react-redux'
@@ -7,8 +7,8 @@ import moment from 'moment'
 import Cookies from 'js-cookie'
 
 import TariffPlans, { Tariffs } from '../items/TariffPlans'
+import PhonesLocation from '../items/PhonesLocation'
 import OperationMode from '../items/OperationMode'
-
 
 const FormItem = Form.Item;
 const Step = Steps.Step;
@@ -114,10 +114,12 @@ class Setup extends Component {
       this.props.form.validateFields((err, values) => {
         if (!err) {
             const {chPhoneLocation, arrOperationMode} = this.state;
+
+
             const arrPhones = chPhoneLocation.map( (item, index) => {
               var newArr = {};
               newArr.iPhone= index.toString();
-              newArr.chPhone = values["chPhone" + index];
+              newArr.chPhone = item.chPhone;
               return newArr;
             });
 
@@ -126,9 +128,9 @@ class Setup extends Component {
                   ...item,
                   time: item.time.map( (a, indexTime, arr) => {
                   var newArr = {};
-                  newArr.iTime= index.toString();
-                  newArr.tStartTime = values["tStartTime" + index + indexTime].format('HH:mm');
-                  newArr.tEndTime = values["tEndTime" + index + indexTime].format('HH:mm');
+                  newArr.iTime= indexTime.toString();
+                  newArr.tStartTime = a.tStartTime;
+                  newArr.tEndTime = a.tEndTime;
                   return newArr;
                 })
               };
@@ -165,6 +167,7 @@ class Setup extends Component {
         this.setState({
           chNameLocation: form.getFieldValue('chNameLocation'),
           chAddressLocation: form.getFieldValue('chAddressLocation'),
+
           chPhoneLocation: this.state.chPhoneLocation.map( (item, index) => {
             var newArr = {};
             newArr.iPhone= index.toString();
@@ -324,6 +327,10 @@ class Setup extends Component {
           
     }
 
+    updateArrPhone = (value) => {
+      this.setState({ chPhoneLocation: value })
+   }
+
     // выход из регистрации
     onExit = () => {
 
@@ -342,7 +349,6 @@ class Setup extends Component {
            })
         }).then((response) => response.json()).then((responseJsonFromServer) =>
         {
-          console.log(responseJsonFromServer);
           // удаляяем куки
           Cookies.remove('cookiename');
           // очищаем редюсер
@@ -366,9 +372,7 @@ class Setup extends Component {
 
       const options = timezones.map(item => <Option value={item.name} key={item.name}>{item.value}</Option>);
       const optionsMoney = money.map(item => <Option value={item.value} key={item.value}>{item.name} - {item.value}</Option>)
-      
-      console.log(chPhoneLocation);
-      
+     
       const phonesLocation = chPhoneLocation.map( (item, index, arr) => {
         return (
           <Row gutter={4} key={item.iPhone} style={{ marginBottom: 0  }}>
@@ -431,7 +435,14 @@ class Setup extends Component {
               </Row>
               <Divider dashed />
               <FormItem
-                label="Название организации"  
+                label={
+                  <span>
+                      Наименование организации&nbsp;
+                      <Tooltip title="Укажите юридическое наименование организации. При желании можно указать название торговой марки или бренда.">
+                          <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                      </Tooltip>
+                  </span>
+                }
                 className="content-form"
                 hasFeedback
               >
@@ -560,7 +571,8 @@ class Setup extends Component {
             </div>
             <Divider dashed />
               <div className="ant-form-item-label" style = {{ lineHeight: '19px' }}><label>Номер телефона (необязательно)</label></div>
-              {phonesLocation}
+              {/*phonesLocation*/}
+              <PhonesLocation arrPhones = {chPhoneLocation} updateData={this.updateArrPhone}/>
             <div className="describe-setup-form">
               Укажите номер телефона торгового объекта, либо единый номер
             </div>

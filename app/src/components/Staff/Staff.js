@@ -9,7 +9,6 @@ import { arrPageAccess } from '../../constans'
 
 const { Content } = Layout;
 const TabPane = Tabs.TabPane;
-const FormItem = Form.Item;
 const Option = Select.Option;
 const confirm = Modal.confirm;
 

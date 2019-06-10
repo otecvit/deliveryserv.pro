@@ -6,7 +6,6 @@ import HeaderSection from '../../items/HeaderSection'
 
 const { Content } = Layout;
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 class EmailNotifications extends Component {
 
@@ -25,14 +24,9 @@ class EmailNotifications extends Component {
         this.props.form.validateFields((err, values) => {
           if (!err) {
               var val = {};
-              const url = this.props.optionapp[0].serverUrl + "/EditOwnerSettings.php"; // изменяем категорию
+              const url = `${this.props.optionapp[0].serverUrl}/EditOwnerSettings.php`; // изменяем категорию
               fetch(url, {
                 method: 'POST',
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(
                 {
                   chUID: this.props.owner.chUID,
@@ -116,12 +110,7 @@ class EmailNotifications extends Component {
 
     render() {
         const { emailList, inputVisible, inputValue } = this.state;
-
         const { getFieldDecorator } = this.props.form;
-        
-        const IconFont = Icon.createFromIconfontCN({
-            scriptUrl: this.props.optionapp[0].scriptIconUrl,
-          });
         
         return (<div>
             <HeaderSection title="E-mail уведомления" icon="icon-orders"/>
