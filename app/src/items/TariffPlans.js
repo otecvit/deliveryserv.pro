@@ -63,13 +63,14 @@ export const Tariffs = [
 ];
 
 const AMOUNT_TARIFF = 4; // количество тарифов для отображения
-const CURRENCY = "$"; // валюта
+//const CURRENCY = "$"; // валюта
+//const CURRENCY = this.props.currentCurrency; // валюта
 
 const IconFont = Icon.createFromIconfontCN({
     scriptUrl: "//at.alicdn.com/t/font_888167_srr1yn9r6zc.js",
   });
 
-const TemplateTariff = ({ tarif, active, onClick }) => (
+const TemplateTariff = ({ tarif, active, currency, onClick }) => (
         <div className="subscription-plans-widget" onClick={onClick}>
             <div className={"subscription-plan " + (active && "active")} >
                 <div className={"plan-name " + (active && "active")}>
@@ -78,7 +79,7 @@ const TemplateTariff = ({ tarif, active, onClick }) => (
                 <div className="plan-details">
                 <div className="plan-detail">
                     <p><IconFont type="icon-money"/></p>
-                    <p><span>{tarif.cost}{CURRENCY} - {tarif.period}</span></p>
+                    <p><span>{tarif.cost}{currency} - {tarif.period}</span></p>
                 </div>
                 <div className="plan-detail">
                     <p><IconFont type="icon-orders"/></p>
@@ -86,7 +87,7 @@ const TemplateTariff = ({ tarif, active, onClick }) => (
                 </div>
                 <div className="plan-detail">
                     <p><IconFont type="icon-order"/></p>
-                    <p><span>{tarif.costOverLimit}{CURRENCY}  за заказ сверх лимита</span></p>
+                    <p><span>{tarif.costOverLimit}{currency}  за заказ сверх лимита</span></p>
                 </div>
                 <div className="plan-detail">
                     <p><IconFont type="icon-timer-sand"/></p>
@@ -106,6 +107,7 @@ class TariffPlans extends Component {
         this.state = {
             currentTarif: this.props.currentTariff,
             currentPeriod: this.props.currentTariff ? Tariffs[Tariffs.findIndex(x => x.idTarif === this.props.currentTariff)].period : "месяц",
+            currentCurrency: '$',
         }
     }
 
@@ -139,7 +141,7 @@ class TariffPlans extends Component {
     }
 
     render(){
-        const { currentPeriod, currentTarif } = this.state;
+        const { currentPeriod, currentTarif, currentCurrency } = this.state;
 
         return (
             <Fragment>
@@ -160,6 +162,7 @@ class TariffPlans extends Component {
                             key = {index} 
                             tarif = { item } 
                             active = { currentTarif === item.idTarif ? true : false } 
+                            currency = { currentCurrency }
                             onClick = {(e) => this.onChangeTarif(e, item.idTarif)}/>
                     )
                     }

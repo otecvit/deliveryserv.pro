@@ -7,13 +7,17 @@ import { parrentDomain } from '../constans'
 class HeaderStatus extends Component {
     
     render() {
+        const { owner } = this.props;
+
         const IconFont = Icon.createFromIconfontCN({
             scriptUrl: this.props.optionapp[0].scriptIconUrl,
           });
 
           return (
             <Fragment>
-                <Badge status="success"><IconFont type="icon-user" style={{ fontSize: "20px" }}/></Badge>
+                <Tooltip placement="bottomRight" title={owner.blStatusCustomer ? `Подписка активна до ${owner.dEndSubscription[2]}.${owner.dEndSubscription[1]}.${owner.dEndSubscription[0]}` : "Подписка закончилась"}>
+                    <Badge status={owner.blStatusCustomer ? "success" : "error"}><IconFont type="icon-user" style={{ fontSize: "20px" }}/></Badge>
+                </Tooltip>
                 <Detector 
                     polling={{ url: parrentDomain }}
                     render={({ online }) => (
@@ -33,5 +37,6 @@ class HeaderStatus extends Component {
 export default connect (
     state => ({
       optionapp: state.optionapp,
+      owner: state.owner,
     })
   )(HeaderStatus);

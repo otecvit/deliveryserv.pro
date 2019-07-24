@@ -1,4 +1,3 @@
-
 export const arrPageAccess = [
     { keyName: "dashboard",         name: 'Рабочий стол',             value: true},
     { keyName: "orders",            name: 'Заказы',                   value: true},
@@ -26,3 +25,35 @@ export const arrPageAccess = [
 
   export const parrentDomain = "https://deliveryserv.pro/"
 
+  export const timezones = [
+    { name: 'Europe/Warsaw',      value: "(GMT+01:00) Варшава"},
+    { name: 'Europe/Kiev',        value: "(GMT+02:00) Киев"},
+    { name: 'Europe/Riga',        value: "(GMT+02:00) Рига"},
+    { name: 'Europe/Tallinn',     value: "(GMT+02:00) Таллин"},
+    { name: 'Europe/Vilnius',     value: "(GMT+02:00) Вильнюс"},
+    { name: 'Europe/Minsk',       value: "(GMT+03:00) Минск"},
+    { name: 'Europe/Moscow',      value: "(GMT+03:00) Москва"},
+    { name: 'Asia/Baku',          value: "(GMT+04:00) Баку"},
+    { name: 'Europe/Volgograd',   value: "(GMT+04:00) Волгоград"},
+    { name: 'Asia/Tbilisi',       value: "(GMT+04:00) Тбилиси"},
+    { name: 'Asia/Yerevan',       value: "(GMT+04:00) Ереван"},
+    { name: 'Asia/Tashkent',      value: "(GMT+05:00) Ташкент"},
+    { name: 'Asia/Yekaterinburg', value: "(GMT+06:00) Екатеринбург"},
+    { name: 'Asia/Almaty',        value: "(GMT+06:00) Алматы"},
+    { name: 'Asia/Novosibirsk',   value: "(GMT+07:00) Новосибирск"},
+    { name: 'Asia/Krasnoyarsk',   value: "(GMT+08:00) Красноярск"},
+    { name: 'Asia/Ulaanbaatar',   value: "(GMT+08:00) Улан-Батор"},
+    { name: 'Asia/Irkutsk',       value: "(GMT+09:00) Иркутск"},
+    { name: 'Asia/Yakutsk',       value: "(GMT+10:00) Якутск"},
+    { name: 'Asia/Vladivostok',   value: "(GMT+11:00) Владивосток"},
+    { name: 'Asia/Magadan',       value: "(GMT+12:00) Магадан"},
+  ];
+  
+  export const money = [
+    { name: 'Российский рубль - RUB',       value: "₽"},
+    { name: 'Белорусский рубль - BYN',      value: "BYN"},
+    { name: 'Украинская гривна - UAH',      value: "UAH"},
+    { name: 'Казахстанский тенге - KZT',    value: "KZT"},
+    { name: 'Доллар - USD',                 value: "$"},
+    { name: 'Евро - EUR',                   value: "€"},
+    ];

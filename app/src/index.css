@@ -299,9 +299,19 @@ thead[class*="ant-table-thead"] th{
 }
 
 .text-login-copyright {
-  text-align: center;
   position: relative;
-  top: 44px;
+  top: 35px;
+  text-align: center; 
+  color: rgb(191, 191, 191); 
+  font-size: 12px;
+}
+
+.text-login-copyright a{
+  color: rgb(191, 191, 191); 
+}
+
+.text-login-copyright a:hover{
+  border-bottom: 1px dashed rgb(191, 191, 191);
 }
 
 .content-form .ant-form-item-label {

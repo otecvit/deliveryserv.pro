@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Layout, Tabs, Input, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Button, Spin } from 'antd';
+import { Layout, Tabs, Alert, Icon, Table, Menu, Dropdown, Form, Select, message, Popconfirm, Button, Spin } from 'antd';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import TovarSorting from './TovarSorting'
@@ -179,9 +179,11 @@ class Sorting extends Component {
                           )}
                         </Droppable>
                       </DragDropContext>
+                      { this.state.items.length ?
                       <Button type="primary" onClick={this.saveSortCategories} style={{marginBottom: "10px"}}>
                         <Icon type="plus"/>Сохранить
-                      </Button>
+                      </Button> : <Alert message="Категории не найдены" type="warning" showIcon />
+                      }
                     </Spin>
                     </TabPane>
                     <TabPane tab="Товары" key="2">

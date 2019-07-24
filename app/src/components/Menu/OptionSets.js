@@ -55,11 +55,17 @@ class OptionSets extends Component {
 
     loadingData = () => {
 
-        const url = this.props.optionapp[0].serverUrl + "/SelectOptionSets.php";
+        const url = `${this.props.optionapp[0].serverUrl}/SelectOptionSets.php`;
         this.setState({
             flLoading: true,
         })
-        fetch(url)
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(
+            {
+              chUID: this.props.owner.chUID,
+            })
+        })
         .then((response) => response.json())
         .then((responseJson) => {
             this.props.onAdd(responseJson.optionsets);

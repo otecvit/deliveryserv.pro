@@ -9,50 +9,11 @@ import Cookies from 'js-cookie'
 import TariffPlans, { Tariffs } from '../items/TariffPlans'
 import PhonesLocation from '../items/PhonesLocation'
 import OperationMode from '../items/OperationMode'
+import { timezones, money } from '../constans'
 
 const FormItem = Form.Item;
 const Step = Steps.Step;
 const Option = Select.Option;
-const format = 'HH:mm';
-
-
-const timezones = [
-  { name: 'Europe/Warsaw',      value: "(GMT+01:00) Варшава"},
-  { name: 'Europe/Kiev',        value: "(GMT+02:00) Киев"},
-  { name: 'Europe/Riga',        value: "(GMT+02:00) Рига"},
-  { name: 'Europe/Tallinn',     value: "(GMT+02:00) Таллин"},
-  { name: 'Europe/Vilnius',     value: "(GMT+02:00) Вильнюс"},
-  { name: 'Europe/Minsk',       value: "(GMT+03:00) Минск"},
-  { name: 'Europe/Moscow',      value: "(GMT+03:00) Москва"},
-  { name: 'Asia/Baku',          value: "(GMT+04:00) Баку"},
-  { name: 'Europe/Volgograd',   value: "(GMT+04:00) Волгоград"},
-  { name: 'Asia/Tbilisi',       value: "(GMT+04:00) Тбилиси"},
-  { name: 'Asia/Yerevan',       value: "(GMT+04:00) Ереван"},
-  { name: 'Asia/Tashkent',      value: "(GMT+05:00) Ташкент"},
-  { name: 'Asia/Yekaterinburg', value: "(GMT+06:00) Екатеринбург"},
-  { name: 'Asia/Almaty',        value: "(GMT+06:00) Алматы"},
-  { name: 'Asia/Novosibirsk',   value: "(GMT+07:00) Новосибирск"},
-  { name: 'Asia/Krasnoyarsk',   value: "(GMT+08:00) Красноярск"},
-  { name: 'Asia/Ulaanbaatar',   value: "(GMT+08:00) Улан-Батор"},
-  { name: 'Asia/Irkutsk',       value: "(GMT+09:00) Иркутск"},
-  { name: 'Asia/Yakutsk',       value: "(GMT+10:00) Якутск"},
-  { name: 'Asia/Vladivostok',   value: "(GMT+11:00) Владивосток"},
-  { name: 'Asia/Magadan',       value: "(GMT+12:00) Магадан"},
-];
-
-const money = [
-  { name: 'Российский рубль - RUB',       value: "₽"},
-  { name: 'Украинская гривна - UAH',      value: "₴"},
-  { name: 'Белорусский рубль - BYN',      value: "BYN"},
-  { name: 'Азербайджанский манат - AZN',  value: "₼"},
-  { name: 'Казахстанский тенге - KZT',    value: "₸"},
-  { name: 'Грузинский лари - GEL',        value: "₾"},
-  { name: 'Армянский драм - AMD',         value: "֏"},
-  { name: 'Узбекский сум - UZS',          value: "UZS"},
-  { name: 'Евро - EUR',                   value: "€"},
-  { name: 'Польский злотый - PLN',        value: "zł"},
-  { name: 'Монгольский Тугрик - MNT',     value: "MNT"},
-  ];
 
   const generateKey = (pre) => {
     return `${ new Date().getTime() }`;
@@ -167,26 +128,12 @@ class Setup extends Component {
         this.setState({
           chNameLocation: form.getFieldValue('chNameLocation'),
           chAddressLocation: form.getFieldValue('chAddressLocation'),
-
           chPhoneLocation: this.state.chPhoneLocation.map( (item, index) => {
             var newArr = {};
             newArr.iPhone= index.toString();
             newArr.chPhone = form.getFieldValue("chPhone" + index);
             return newArr;
           }),
-          arrOperationMode: this.state.arrOperationMode.map( (item, index) => {
-            const newdata = {
-                ...item,
-                time: item.time.map( (a, indexTime, arr) => {
-                var newArr = {};
-                newArr.iTime= index.toString();
-                newArr.tStartTime = form.getFieldValue("tStartTime" + index + indexTime).format('HH:mm');
-                newArr.tEndTime = form.getFieldValue("tEndTime" + index + indexTime).format('HH:mm');
-                return newArr;
-              })
-            };
-            return newdata;
-          })
         })
       
     }
@@ -334,15 +281,10 @@ class Setup extends Component {
     // выход из регистрации
     onExit = () => {
 
-      const url = this.props.optionapp[0].serverUrl + "/DeleteOwner.php"; // удаление
+      const url = `${this.props.optionapp[0].serverUrl}/DeleteOwner.php`; // удаление
       fetch(url,
         {
             method: 'POST',
-            headers: 
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(
             {
               idCustomer: this.props.owner.idCustomer
@@ -539,7 +481,14 @@ class Setup extends Component {
             </Row>
             <Divider dashed />
             <FormItem
-              label="Название"  
+              label={
+                <span>
+                    Наименование торгового объекта&nbsp;
+                    <Tooltip title="Укажите наименование торгового объекта. При желании можно также указать название торговой марки или бренда. Информация будет доступно только Вам">
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>
+              }
               className="content-form"
               hasFeedback
             >
@@ -547,15 +496,19 @@ class Setup extends Component {
                 rules: [{required: true, message: 'Заполните это поле'}],
                 initialValue: chNameLocation.length ? chNameLocation : ""
               })(
-                <Input prefix={<IconFont type="icon-map-marker" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+                <Input prefix={<IconFont type="icon-shop1170559easyiconnet" style={{ color: 'rgba(0,0,0,.25)' }} />} />
               )}
             </FormItem>
-            <div className="describe-setup-form">
-              Данное название будет доступно только Вам
-            </div>
             <Divider dashed />
             <FormItem
-              label="Адрес"  
+              label={
+                <span>
+                    Адрес&nbsp;
+                    <Tooltip title="Укажите адрес торгового объекта, пункта самовывоза или юридический адрес организации. Дополнительные адреса можно добавить позже. Информация будет доступна клиентам.">
+                        <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                    </Tooltip>
+                </span>                
+              }
               className="content-form"
               hasFeedback
             >
@@ -566,16 +519,18 @@ class Setup extends Component {
                 <Input prefix={<IconFont type="icon-map-marker" style={{ color: 'rgba(0,0,0,.25)' }} />} />
               )}
             </FormItem>
-            <div className="describe-setup-form">
-              Адрес будет доступен клиентам
-            </div>
             <Divider dashed />
-              <div className="ant-form-item-label" style = {{ lineHeight: '19px' }}><label>Номер телефона (необязательно)</label></div>
+              <div className="ant-form-item-label" style = {{ lineHeight: '19px', marginBottom: '3px' }}>
+                <label>
+                  <span>
+                      Номер телефона (необязательно)&nbsp;
+                      <Tooltip title="Укажите номер телефона торгового объекта, либо единый номер. Дополнительные телефоны можно добавить позже. Информация будет доступна клиентам.">
+                          <Icon type="question-circle-o" style = {{ color: '#615f5f' }}/>
+                      </Tooltip>
+                  </span>                
+                </label></div>
               {/*phonesLocation*/}
               <PhonesLocation arrPhones = {chPhoneLocation} updateData={this.updateArrPhone}/>
-            <div className="describe-setup-form">
-              Укажите номер телефона торгового объекта, либо единый номер
-            </div>
             <Divider dashed />
             <div className="ant-form-item-label"><label>Режим работы</label></div>
               {/*OperationMode*/}
@@ -624,7 +579,7 @@ class Setup extends Component {
               </Col>
             </Row>
             <Divider dashed />
-            <TariffPlans onSelectTariff={this.handleTariff} currentTariff = {currentTarif}/>
+            <TariffPlans onSelectTariff = {this.handleTariff} currentTariff = {currentTarif} />
             <Divider dashed />
             <FormItem>
               <Button type="primary" htmlType="submit" className="button-login" onClick={this.saveSetup}>
