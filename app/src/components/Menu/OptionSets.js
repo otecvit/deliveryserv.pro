@@ -265,6 +265,7 @@ class OptionSets extends Component {
 export default connect (
     state => ({
         optionSets: state.optionSets,
+        owner: state.owner,
         optionapp: state.optionapp,
     }),
     dispatch => ({

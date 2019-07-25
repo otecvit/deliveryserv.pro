@@ -21,7 +21,7 @@ import ApplicationContainer from './containers/ApplicationContainer';
 
 const history = createHistory();
 
-const store = createStore(allReducers, compose(applyMiddleware(thunk), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
+const store = createStore(allReducers, compose(applyMiddleware(thunk)/*, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()*/));
 
 const Application = connect(state => ({
   location: state.routing.location

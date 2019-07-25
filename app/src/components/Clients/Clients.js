@@ -274,7 +274,7 @@ class Customers extends Component {
                 </Content> : 
                 <Content style={{ margin: '16px 0' }}>
                 <Alert
-                    message="Бесплатный пробный период закончился"
+                    message="Период действия подписки закончился"
                     description={
                         <Fragment>
                             <Row>

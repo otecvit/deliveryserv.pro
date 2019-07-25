@@ -44,10 +44,7 @@ class License extends Component {
     selectStatistics = () => {
         
         const { dLastPayment } = this.props.owner;
-        const url = this.props.optionapp[0].serverUrl + "/SelectStatistics.php";
-        
-        //const dEndSubscription = moment([this.props.owner.dEndSubscription[0], this.props.owner.dEndSubscription[1]-1, this.props.owner.dEndSubscription[2]]).format(`LL`);
-
+        const url = `${this.props.optionapp[0].serverUrl}/SelectStatistics.php`;
         const dStart = moment([dLastPayment[0], dLastPayment[1]-1, dLastPayment[2]]).format('YYYY-MM-DD 00:00:00');
         const dEnd = moment().format('YYYY-MM-DD 23:59:59');
         
@@ -55,9 +52,9 @@ class License extends Component {
             method: 'POST',
             body: JSON.stringify(
             {
-            chUID: this.props.owner.chUID,
-            dStart: dStart,
-            dEnd: dEnd,
+                chUID: this.props.owner.chUID,
+                dStart: dStart,
+                dEnd: dEnd,
             })
         })
         .then((response) => response.json())
@@ -132,6 +129,7 @@ class License extends Component {
 
 
         const {currentTariff, currentCost, oldNameTariff, arrStatistics, costExcessLimit, orderExcessLimit} = this.state;
+        const { serverUrlStart } = this.props.optionapp[0];
         const dEndSubscription = moment([this.props.owner.dEndSubscription[0], this.props.owner.dEndSubscription[1]-1, this.props.owner.dEndSubscription[2]]).format(`LL`);
         const chOrderLimit = orderExcessLimit !== 0 ? `${orderExcessLimit} шт. (${costExcessLimit}${CURRENCY})` : `0 шт.`;
         const totalCost = Number(currentCost) + Number(costExcessLimit);
@@ -203,6 +201,15 @@ class License extends Component {
                             Перейти к оплате
                         </Button>
                     </Col>
+                </Row>
+                <Row>
+                    <Col span={24} style = {{ textAlign: 'center', margin: '15px 0' }}>Способы оплаты</Col>
+                </Row>
+                <Row type="flex" justify="center">
+                    <Col span={4} style = {{ textAlign: 'center'}}><img src={`${serverUrlStart}/image/crm/visa_verified2.png`} /></Col>
+                    <Col span={4} style = {{ textAlign: 'center'}}><img src={`${serverUrlStart}/image/crm/visa.png`} /></Col>
+                    <Col span={4} style = {{ textAlign: 'center'}}><img src={`${serverUrlStart}/image/crm/mastercard-securecode.png`} /></Col>
+                    <Col span={4} style = {{ textAlign: 'center'}}><img src={`${serverUrlStart}/image/crm/master-card.png`} /></Col>
                 </Row>
                 </div>
             </Content>          

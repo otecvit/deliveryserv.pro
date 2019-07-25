@@ -23,7 +23,7 @@ export const arrPageAccess = [
     { keyName: "license",           name: 'Оплата',                   value: true},
   ];
 
-  export const parrentDomain = "https://deliveryserv.pro/"
+  export const parrentDomain = "http://deliveryserv.pro/"
 
   export const timezones = [
     { name: 'Europe/Warsaw',      value: "(GMT+01:00) Варшава"},
