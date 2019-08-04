@@ -5,7 +5,7 @@ import {
     Link
 } from 'react-router-dom'
 import { connect } from 'react-redux';
-import { Layout, Spin, Alert } from 'antd';
+import { Layout, Modal, Alert, Button, Tabs } from 'antd';
 import Cookies from 'js-cookie'
 
 import LoadingScreen from '../components/LoadingScreen';
@@ -39,6 +39,47 @@ import Application from '../components/Settings/Application';
 import СheckNewOrder from '../components/СheckNewOrder';
 
 const { Content, Footer } = Layout;
+const { TabPane } = Tabs;
+
+const ModalAbout = ({ visible, handleCancel }) => {
+    return (
+        <Modal
+            title="О компании"
+            visible={visible}
+            onCancel={handleCancel}
+            style={{ top: 40 }}
+            width={700}
+            footer={[
+                <Button key="submit" type="default" onClick={handleCancel}>
+                    Закрыть
+                </Button>,
+            ]}
+            >
+            <Tabs tabPosition="left" style={{ height: 400 }}>
+                <TabPane tab="О нас" key="1">
+                    <h2>О нас</h2>
+                    <p>Мы молодая команда талантливых программистов. Мы поддерживаем высокий уровень предоставляемых услуг. Количество наших клиентов продолжает расти, и мы делаем все, чтобы оправдать ваше доверие.<br/>Спасибо, что выбрали нас!</p>
+                </TabPane>
+                <TabPane tab="Контакты" key="2">
+                    <h2>Контакты</h2>
+                    <p>Получить консультацию можно <b>ежедневно с 8:00 до 21:00.</b></p>
+                    <p>Телефоны:<br/>+375 29 7-096-096<br/>+375 29 518-82-90</p>
+                    <p>Viber: +375295188290<br/>E-mail: info@deliveryserv.pro</p>
+                </TabPane>
+                <TabPane tab="Реквизиты" key="3">
+                    <h2>Реквизиты</h2>
+                    <p>ИП Исаев Антон Валерьевич<br/>
+                    Cвидетельство о государственной регистрации, выдано Администрацией Октябрьского района г. Витебска 8 декабря 2016 г.
+                    </p>
+                    <p>р/с BY95 ALFA 3013 2389 7100 1027 0000<br/>ЗАО «Альфа-Банк» г. Минск, ул. Сурганова, 43-47, МФО ALFABY2X</p>
+                    <p>Адрес для почтовых отправлений:<br/>210009, Республика Беларусь, г. Витебск, ул. Чапаева, 9-33</p>
+                    <p>УНП 390458727</p>
+                    <p>Контактные телефоны: +375 29 7-096-096, +375 29 518-82-90</p>
+                </TabPane>
+            </Tabs>
+        </Modal>
+    )
+};
 
 class CmsWrapper extends Component {
     
@@ -50,6 +91,7 @@ class CmsWrapper extends Component {
             loadingStatus: false,
             checkCookies: false,
             showMessage: false,
+            visibleAbout: false,
           };
     }
     
@@ -126,7 +168,23 @@ class CmsWrapper extends Component {
             showMessage : !showMessage,
         })
     }
+
+    // показываем окно "О компании"
+    showModalAbout = () => {
+        this.setState({
+            visibleAbout: true,
+        });
+    };
+
+    // закрываем окно "О компании"
+    handleCancelAbout = () => {
+        this.setState({
+            visibleAbout: false,
+        });
+    };
     
+
+
 
     render() {
         const { loadingStatus, checkCookies, showMessage } = this.state;
@@ -188,7 +246,11 @@ class CmsWrapper extends Component {
                     </div>
                     </Content>
                     <Footer style={{ textAlign: 'center', color: '#bfbfbf', fontSize: 12 }}>
-                        Deliveryserv ©2019 Created by Overcode
+                        Deliveryserv ©2019 | <a href="#" onClick={this.showModalAbout} className="LinkCopyright">О компании</a>
+                        <ModalAbout 
+                            visible = {this.state.visibleAbout}
+                            handleCancel = {this.handleCancelAbout}
+                        />
                     </Footer>
                 </Layout>
             </Layout> 

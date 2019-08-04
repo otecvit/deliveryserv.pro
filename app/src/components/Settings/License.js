@@ -203,13 +203,46 @@ class License extends Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Col span={24} style = {{ textAlign: 'center', margin: '15px 0' }}>Способы оплаты</Col>
+                    <Col span={24} style = {{ textAlign: 'center', margin: '25px 0 15px 0', fontSize: 22 }}>Способы оплаты</Col>
                 </Row>
                 <Row type="flex" justify="center">
                     <Col span={4} style = {{ textAlign: 'center'}}><img src={`${serverUrlStart}/image/crm/visa_verified2.png`} /></Col>
                     <Col span={4} style = {{ textAlign: 'center'}}><img src={`${serverUrlStart}/image/crm/visa.png`} /></Col>
                     <Col span={4} style = {{ textAlign: 'center'}}><img src={`${serverUrlStart}/image/crm/mastercard-securecode.png`} /></Col>
                     <Col span={4} style = {{ textAlign: 'center'}}><img src={`${serverUrlStart}/image/crm/master-card.png`} /></Col>
+                </Row>
+                <Row>
+                    <Col span={24} style = {{ textAlign: 'center', margin: '45px 0 15px 0', fontSize: 22 }}>Вопросы и ответы</Col>
+                </Row>
+                <Row style={{ marginBottom: 15}}>
+                    <Col span={24}>
+                        <p style={{fontSize: 16, marginBottom: 5}}>Что означает 30 дней бесплатно?</p>
+                        <p style={{fontSize: 12}}>Это период, во время которого вы абсолютно бесплатно можете использовать все функции системы, а также обращаться в службу поддержки пользователей. Оплатите подписку в любой момент, и оставшиеся дни пробного периода мы добавим к оплаченному.</p>
+                    </Col>
+                </Row>
+                <Row style={{ marginBottom: 15}}>
+                    <Col span={24}>
+                        <p style={{fontSize: 16, marginBottom: 5}}>В чем разница между тарифными планами?</p>
+                        <p style={{fontSize: 12}}>Тарифные планы отличаются доступными возможностями, количеством заказов и стоимостью заказа сверх лимита.</p>
+                    </Col>
+                </Row>
+                <Row style={{ marginBottom: 15}}>
+                    <Col span={24}>
+                        <p style={{fontSize: 16, marginBottom: 5}}>Как я могу оплатить подписку?</p>
+                        <p style={{fontSize: 12}}>К оплате принимаются банковские карты Visa или MasterCard. Цены на сайте указаны в долларах, но вы можете совершить оплату картой в любой валюте. При этом будет списана сумма, равная указанной цене в долларах по курсу банка, выпустившего вашу карту.</p>
+                    </Col>
+                </Row>
+                <Row style={{ marginBottom: 15}}>
+                    <Col span={24}>
+                        <p style={{fontSize: 16, marginBottom: 5}}>Я могу перейти на другой тарифный план?</p>
+                        <p style={{fontSize: 12}}>Да, вы в любой момент можете перейти с одного тарифного плана на любой другой.</p>
+                    </Col>
+                </Row>
+                <Row style={{ marginBottom: 15}}>
+                    <Col span={24}>
+                        <p style={{fontSize: 16, marginBottom: 5}}>Что произойдет, когда моя подписка закончится?</p>
+                        <p style={{fontSize: 12}}>По окончании подписки вы не сможете просматривать заказы и список клиентов. При этом вы сохраните доступ ко всей информации в своем аккаунте (адреса, категории, товары и т.д.). Также пользователям мобильного приложения будет выдаваться предупреждение о невозможности заказа.</p>
+                    </Col>
                 </Row>
                 </div>
             </Content>          

@@ -519,3 +519,18 @@ thead[class*="ant-table-thead"] th{
   font-size: 18px;
 }
 
+.LinkCopyright {
+  color: rgb(191, 191, 191);
+  text-decoration: none;
+  -webkit-transition: color 0.2s;
+  transition: color 0.2s;
+}
+
+.LinkCopyright:hover {
+  color: #696969;
+  text-decoration: none;
+}
+
+.LinkCopyright:focus {
+  text-decoration: none;
+}
